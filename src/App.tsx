@@ -1,14 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { type ReactElement } from 'react';
+import { ThemeProvider } from '@shopify/restyle';
 
-const App = () => {
+import theme from '@/theme';
+
+import 'react-native-gesture-handler';
+import { Text } from '@/components';
+
+
+export const App = (): ReactElement => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
-  )
-}
+    <ThemeProvider theme={theme}>
+      <Text>helloe there</Text>
+    </ThemeProvider>
+  );
+};
 
-export default App
-
-const styles = StyleSheet.create({})
+export default App;
