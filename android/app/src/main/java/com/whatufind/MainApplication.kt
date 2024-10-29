@@ -1,4 +1,4 @@
-package com.whatufind
+package com.rnboilerplate
 
 import android.app.Application
 import com.facebook.react.PackageList

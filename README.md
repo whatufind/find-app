@@ -1,6 +1,6 @@
-# What U Find | Find what you need
+# rnboilerplate | Code faster with prebuild boilerplate
 
-Project name is a `WhatUFind` which `multi service app focusing to serve peoples and job seekers`.
+Project name is a `rnboilerplate` which `provides boilerplate code to kickstart your rn projct with restyle theme`.
 
 ## Prerequisites
 
@@ -43,9 +43,9 @@ If everything is set up _correctly_, you should see your new app running in your
 This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
 
-## Contributing to What U Find 
+## Contributing to rnboilerplate 
 <!--- If your README is long or you have some specific process or steps you want contributors to follow, consider creating a separate CONTRIBUTING.md file--->
-To contribute to what u find, follow these steps:
+To contribute to rnboilerplate, follow these steps:
 
 1. Clone this repository.
 2. Create a branch: `git checkout -b <branch_name>`.
@@ -55,7 +55,7 @@ To contribute to what u find, follow these steps:
 
 ## Contributors
 
-Thanks to the following people who have contributed to What U Find project:
+Thanks to the following people who have contributed to rnboilerplate project:
 
 * [@IbrahiimKhan](https://github.com/IbrahiimKhan) 📖
 
