@@ -76,21 +76,21 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
                 name="ServiceStack"
                 component={ServiceStack}
                 options={{
-                    title: 'Top Up',
+                    title: 'Screen2',
                 }}
             />
             <Tab.Screen
                 name="FeedStack"
                 component={FeedStack}
                 options={{
-                    title: 'Shop',
+                    title: 'Screen 3',
                 }}
             />
             <Tab.Screen
                 name="AccountStack"
                 component={Accountscreen}
                 options={{
-                    title: 'Pay',
+                    title: 'Screen4',
                 }}
             />
         </Tab.Navigator>
