@@ -1,16 +1,18 @@
-import React, { type ReactElement } from 'react';
 import { ThemeProvider } from '@shopify/restyle';
+import React, { type ReactElement } from 'react';
 
 import theme from '@/theme';
 
 import 'react-native-gesture-handler';
-import { Text } from '@/components';
-
+import { Navigator } from './navigators';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export const App = (): ReactElement => {
   return (
     <ThemeProvider theme={theme}>
-      <Text>helloe there</Text>
+      <SafeAreaProvider>
+        <Navigator />
+      </SafeAreaProvider>
     </ThemeProvider>
   );
 };
