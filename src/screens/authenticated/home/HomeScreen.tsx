@@ -1,11 +1,12 @@
+import { VectorIcon } from '@/components';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const HomeScreen = () => {
     return (
-        <View>
-            <Text>HomeScreen</Text>
-        </View>
+        <SafeAreaView>
+            <VectorIcon name="home" type="ant" />
+        </SafeAreaView>
     );
 };
 
