@@ -22,7 +22,7 @@ export const VectorIcon: FC<VectorIconProps> = ({
     const FontIcon = getVectorIcon(type);
     const iconColor = theme.colors[color as keyof typeof theme.colors];
     const iconSize = theme.spacing[size as keyof typeof theme.spacing];
-    return <FontIcon {...rest} color={iconColor} size={iconSize} />;
+    return <FontIcon  {...rest} color={iconColor} size={iconSize} />;
 };
 
 export default VectorIcon;
