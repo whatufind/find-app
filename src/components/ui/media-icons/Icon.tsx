@@ -1,11 +1,14 @@
 import { useTheme } from '@/theme/theme-provider';
 import { getIcon, type Icon as IconType } from '@assets/constants/icons';
+import { getImage, type Image as ImageType } from '@assets/constants/images';
 import React, { type FC, type ReactNode } from 'react';
+import { Source } from 'react-native-fast-image';
+import FastImage from './FastImage';
 import { VectorIcon, type VectorIconProps } from './VectorIcon';
 
 export interface IconProps extends Omit<VectorIconProps, 'name'> {
-    icon: IconType | string;
-    variant?: 'vector' | 'svg';
+    icon: IconType | string | ImageType;
+    variant?: 'vector' | 'svg' | 'image';
 }
 
 export const Icon: FC<IconProps> = ({
@@ -21,6 +24,8 @@ export const Icon: FC<IconProps> = ({
     const iconColor = theme.colors[color as keyof typeof theme.colors];
 
     const SvgComponent = getIcon(icon as IconType);
+    const imageSource = getImage(icon as ImageType);
+
 
     const renderIcon = (): ReactNode => {
         switch (variant) {
@@ -29,6 +34,16 @@ export const Icon: FC<IconProps> = ({
             case 'svg':
                 return (
                     <SvgComponent color={iconColor} fontSize={iconSize} width={iconSize} height={iconSize} />
+                );
+            case 'image':
+                return (
+                    <FastImage
+                        source={imageSource as Source}
+                        resizeMode="contain"
+                        width={iconSize}
+                        height={iconSize}
+                        {...rest}
+                    />
                 );
             default:
                 return <VectorIcon name="home" />;
