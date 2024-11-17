@@ -10,6 +10,7 @@ import {
   buttonVariantsTextSize,
   buttonVariantsType,
 } from './variants/button-variants';
+import { dividerVariants } from './variants/divider-variants';
 import { fontFamily, fontSizes, fontWeights, textVariants } from './variants/text-variants';
 
 const { width, height } = Dimensions.get('window');
@@ -123,6 +124,7 @@ const theme = createTheme({
   buttonVariantsText,
   buttonVariantsTextSize,
   buttonVariantsType,
+  dividerVariants,
 
 });
 
