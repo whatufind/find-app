@@ -6,7 +6,7 @@ export const HomeScreen = () => {
     return (
         <SafeAreaView>
             <Icon size={18} icon="avatar" variant="image" />
-
+            <Icon variant="animation" icon={'loader'} />
         </SafeAreaView>
     );
 };

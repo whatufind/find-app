@@ -21,7 +21,7 @@ const config = {
     unstable_allowRequireContext: true,
   },
   resolver: {
-    assetExts: assetExts.filter(ext => ext !== 'svg'),
+    assetExts: [...assetExts.filter(ext => ext !== 'svg'), 'lottie'],
     sourceExts: [...sourceExts, 'svg'],
   },
 };

@@ -1,14 +1,16 @@
 import { useTheme } from '@/theme/theme-provider';
+import { animationType } from '@assets/constants/animations';
 import { getIcon, type Icon as IconType } from '@assets/constants/icons';
 import { getImage, type Image as ImageType } from '@assets/constants/images';
 import React, { type FC, type ReactNode } from 'react';
 import { Source } from 'react-native-fast-image';
+import Animation from '../feedback/Animation';
 import FastImage from './FastImage';
 import { VectorIcon, type VectorIconProps } from './VectorIcon';
 
 export interface IconProps extends Omit<VectorIconProps, 'name'> {
-    icon: IconType | string | ImageType;
-    variant?: 'vector' | 'svg' | 'image';
+    icon: IconType | string | ImageType | animationType;
+    variant?: 'vector' | 'svg' | 'image' | 'animation';
 }
 
 export const Icon: FC<IconProps> = ({
@@ -26,7 +28,6 @@ export const Icon: FC<IconProps> = ({
     const SvgComponent = getIcon(icon as IconType);
     const imageSource = getImage(icon as ImageType);
 
-
     const renderIcon = (): ReactNode => {
         switch (variant) {
             case 'vector':
@@ -34,6 +35,10 @@ export const Icon: FC<IconProps> = ({
             case 'svg':
                 return (
                     <SvgComponent color={iconColor} fontSize={iconSize} width={iconSize} height={iconSize} />
+                );
+            case 'animation':
+                return (
+                    <Animation width={`${iconSize}%`} height={iconSize} animation={icon as animationType} />
                 );
             case 'image':
                 return (

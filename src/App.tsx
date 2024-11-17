@@ -18,3 +18,4 @@ export const App = (): ReactElement => {
 };
 
 export default App;
+  

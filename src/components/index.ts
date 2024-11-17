@@ -1,3 +1,4 @@
+export * from './ui/feedback/Animation';
 export * from './ui/layout/Box';
 export * from './ui/media-icons/FastImage';
 export * from './ui/media-icons/Icon';
