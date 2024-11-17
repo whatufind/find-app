@@ -1,14 +1,14 @@
-import { Clickable, Text } from '@/components';
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 
-export const HomeScreen = () => {
+const HomeScreen = () => {
     return (
-        <SafeAreaView>
-            <Clickable
-            ><Text>hi there</Text></Clickable>
-        </SafeAreaView>
+        <View>
+            <Text>HomeScreen</Text>
+        </View>
     );
 };
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({});

@@ -1,7 +1,15 @@
-import { Dimensions, Platform } from 'react-native';
 import { createTheme } from '@shopify/restyle';
+import { Dimensions, Platform } from 'react-native';
 
 import { colors } from './colors';
+import {
+  buttonVariantsBase,
+  buttonVariantsDisabled,
+  buttonVariantsSize,
+  buttonVariantsText,
+  buttonVariantsTextSize,
+  buttonVariantsType,
+} from './variants/button-variants';
 import { fontFamily, fontSizes, fontWeights, textVariants } from './variants/text-variants';
 
 const { width, height } = Dimensions.get('window');
@@ -109,6 +117,12 @@ const theme = createTheme({
   sizes,
   zIndices,
   breakpoints,
+  buttonVariantsBase,
+  buttonVariantsDisabled,
+  buttonVariantsSize,
+  buttonVariantsText,
+  buttonVariantsTextSize,
+  buttonVariantsType,
 
 });
 
