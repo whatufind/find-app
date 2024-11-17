@@ -11,6 +11,7 @@ import {
   buttonVariantsType,
 } from './variants/button-variants';
 import { dividerVariants } from './variants/divider-variants';
+import { iconButtonVariants } from './variants/icon-button-variants';
 import { fontFamily, fontSizes, fontWeights, textVariants } from './variants/text-variants';
 
 const { width, height } = Dimensions.get('window');
@@ -125,7 +126,7 @@ const theme = createTheme({
   buttonVariantsTextSize,
   buttonVariantsType,
   dividerVariants,
-
+iconButtonVariants,
 });
 
 export type Theme = typeof theme;
