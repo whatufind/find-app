@@ -10,6 +10,7 @@ export * from './ui/layout/VStack';
 export * from './ui/media-icons/FastImage';
 export * from './ui/media-icons/Icon';
 export * from './ui/media-icons/IconButton';
+export * from './ui/media-icons/ImageBanner';
 export * from './ui/media-icons/VectorIcon';
 export * from './ui/typography/Text';
 
