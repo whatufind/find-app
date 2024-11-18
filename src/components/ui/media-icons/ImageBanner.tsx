@@ -13,7 +13,7 @@ type ScaleHeightLocalProps = {
 
 interface RestyleImageBannerProps extends LayoutProps<Theme>, SpacingShorthandProps<Theme>, FastImageProps, BorderProps<Theme> { }
 
-type ImageBannerProps = {
+export type ImageBannerProps = {
     source?: ImageSourcePropType | string;
     variant?: 'local' | 'remote';
 } & RestyleImageBannerProps;

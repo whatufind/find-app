@@ -10,6 +10,7 @@ import {
   buttonVariantsTextSize,
   buttonVariantsType,
 } from './variants/button-variants';
+import { cardVariants } from './variants/card-variants';
 import { dividerVariants } from './variants/divider-variants';
 import { iconButtonVariants } from './variants/icon-button-variants';
 import { fontFamily, fontSizes, fontWeights, textVariants } from './variants/text-variants';
@@ -126,7 +127,8 @@ const theme = createTheme({
   buttonVariantsTextSize,
   buttonVariantsType,
   dividerVariants,
-iconButtonVariants,
+  iconButtonVariants,
+  cardVariants,
 });
 
 export type Theme = typeof theme;

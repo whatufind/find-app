@@ -2,6 +2,7 @@ export * from './ui/feedback/Animation';
 export * from './ui/forms/Button';
 export * from './ui/forms/Clickable';
 export * from './ui/layout/Box';
+export * from './ui/layout/Card';
 export * from './ui/layout/Center';
 export * from './ui/layout/Divider';
 export * from './ui/layout/Grid';
