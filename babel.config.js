@@ -9,6 +9,7 @@ module.exports = {
           '@assets': './assets',
         },
       },
+      'react-native-reanimated/plugin',
     ],
   ],
 };
