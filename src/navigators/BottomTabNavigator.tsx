@@ -1,44 +1,43 @@
-import React, { type FC, type ReactElement } from 'react';
-import { type TextStyle, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+/* eslint-disable react/no-unstable-nested-components */
 import {
     type BottomTabNavigationOptions,
     createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import { type RouteProp } from '@react-navigation/native';
+import React, { type FC, type ReactElement } from 'react';
+import { type TextStyle, type ViewStyle } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '@/theme';
 import {
     type AuthenticatedStackNavigatorScreenProps,
     type BottomTabNavigatorParamList,
 } from '@/types/navigation';
-import { useStringHelper } from '@/utils';
 
-import { HomeStack } from './stacks/HomeStack';
-import { FeedStack } from './stacks/FeedStack';
-import { ServiceStack } from './stacks/ServiceStack';
+import { IconButton } from '@/components';
 import { Accountscreen } from '@/screens/authenticated/account';
+import { FeedStack } from './stacks/FeedStack';
+import { HomeStack } from './stacks/HomeStack';
+import { ServiceStack } from './stacks/ServiceStack';
 
-// const BottomTabIcon = ({
-//     focused,
-//     title,
-// }: {
-//     title: string;
-//     focused: boolean;
-//     color: string;
-//     size: number;
-// }): ReactElement => {
-//     const { camelize } = useStringHelper();
-//     return (
-//         <IconButton
-//             variant="svg"
-//             {...(focused && { iconStyle: 'contained' })}
-//             icon={camelize(title)}
-//             color={focused ? 'black900' : 'secondary300'}
-//             size={7}
-//         />
-//     );
-// };
+const BottomTabIcon = ({
+    focused,
+}: {
+    title: string;
+    focused: boolean;
+    color: string;
+    size: number;
+}): ReactElement => {
+    return (
+        <IconButton
+            variant="vector"
+            {...(focused && { iconStyle: 'contained' })}
+            icon={'home'}
+            color={focused ? 'primary' : 'black'}
+            size={7}
+        />
+    );
+};
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
@@ -60,7 +59,7 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
         tabBarStyle: [$tabBar, { height: 64 + bottom }],
         tabBarLabelStyle: $tabBarLabel,
         tabBarItemStyle: $tabBarItem,
-        // tabBarIcon: props => <BottomTabIcon {...props} title={route.name} />,
+        tabBarIcon: props => <BottomTabIcon {...props} title={route.name} />,
     });
 
     return (
