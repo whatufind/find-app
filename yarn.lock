@@ -6906,6 +6906,11 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
+sonner-native@^0.16.1:
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/sonner-native/-/sonner-native-0.16.1.tgz#a90551a1fa3783534c5f9486374b891e0627f426"
+  integrity sha512-XUzJc0ZOKnqiFfSIVIr7HoRR4L/3NcrY2qLY4SIkumsprt2t4zQT6vwN9pgD+sPszGb5mDHCs9MTPD+4U/b27Q==
+
 source-map-js@^1.0.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"

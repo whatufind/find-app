@@ -41,6 +41,7 @@
     "react-native-svg": "^15.8.0",
     "react-native-svg-transformer": "^1.5.0",
     "react-native-vector-icons": "^10.2.0",
+    "sonner-native": "^0.16.1",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
