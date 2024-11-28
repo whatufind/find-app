@@ -13,7 +13,7 @@ export interface VectorIconProps {
 }
 
 export const VectorIcon: FC<VectorIconProps> = ({
-    type = 'material',
+    type = 'materialCommunity',
     size = 6,
     color = 'black',
     ...rest

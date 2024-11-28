@@ -14,6 +14,7 @@ import {
 import { cardVariants } from './variants/card-variants';
 import { dividerVariants } from './variants/divider-variants';
 import { iconButtonVariants } from './variants/icon-button-variants';
+import { inputSizeVariants, inputValidationStatus, inputVariants } from './variants/input-variants';
 import { fontFamily, fontSizes, fontWeights, textVariants } from './variants/text-variants';
 
 const { width, height } = Dimensions.get('window');
@@ -131,6 +132,8 @@ const theme = createTheme({
   iconButtonVariants,
   cardVariants,
   badgeVariant,badgePosition,badgeType,
+  inputVariants,inputSizeVariants,
+  inputValidationStatus,
 });
 
 export type Theme = typeof theme;
