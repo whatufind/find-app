@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "start:reset": "react-native start --reset-cache",
     "test": "jest",
     "adb": "adb reverse tcp:8081 tcp:8081",
     "clean": "rm -rf node_modules && rm -rf package-lock.json",

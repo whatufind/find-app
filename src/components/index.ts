@@ -2,6 +2,7 @@ export * from './ui/data-display/Badge';
 export * from './ui/data-display/List';
 export * from './ui/feedback/Animation';
 export * from './ui/forms/Button';
+export * from './ui/forms/CheckBox';
 export * from './ui/forms/Clickable';
 export * from './ui/forms/Input';
 export * from './ui/layout/Box';
@@ -17,4 +18,3 @@ export * from './ui/media-icons/IconButton';
 export * from './ui/media-icons/ImageBanner';
 export * from './ui/media-icons/VectorIcon';
 export * from './ui/typography/Text';
-
