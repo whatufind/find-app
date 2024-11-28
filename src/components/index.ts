@@ -5,6 +5,7 @@ export * from './ui/forms/Button';
 export * from './ui/forms/CheckBox';
 export * from './ui/forms/Clickable';
 export * from './ui/forms/Input';
+export * from './ui/forms/Radio';
 export * from './ui/layout/Box';
 export * from './ui/layout/Card';
 export * from './ui/layout/Center';
