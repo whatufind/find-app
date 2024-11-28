@@ -2,6 +2,7 @@ import { createTheme } from '@shopify/restyle';
 import { Dimensions, Platform } from 'react-native';
 
 import { colors } from './colors';
+import { badgePosition, badgeType, badgeVariant } from './variants/badge-variants';
 import {
   buttonVariantsBase,
   buttonVariantsDisabled,
@@ -129,6 +130,7 @@ const theme = createTheme({
   dividerVariants,
   iconButtonVariants,
   cardVariants,
+  badgeVariant,badgePosition,badgeType,
 });
 
 export type Theme = typeof theme;
