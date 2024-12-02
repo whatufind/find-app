@@ -23,3 +23,4 @@ export * from './ui/layout/ContentSafeAreaView';
 export * from './ui/overlay/KeyboardAvoidingView';
 export * from './ui/layout/Header';
 export * from './ui/layout/Screen';
+export * from './ui/forms/Switch';
