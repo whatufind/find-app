@@ -3,7 +3,7 @@ import React, { type FC, type ReactElement } from 'react';
 
 import { type Theme } from '@/theme';
 import { useTheme } from '@/theme/theme-provider';
-import { getVectorIcon, IconKeys } from '@/utils/vectorIcons';
+import { getVectorIcon, IconKeys } from '@/utils';
 
 export interface VectorIconProps {
     type?: IconKeys;
