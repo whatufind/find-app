@@ -1,0 +1,162 @@
+[
+    {
+        "name": "Premium Web Design",
+        "price": 1200,
+        "description": "Professional and responsive web design services.",
+        "category": "Web Development",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 45
+    },
+    {
+        "name": "SEO Optimization",
+        "price": 500,
+        "description": "Boost your website's ranking with expert SEO techniques.",
+        "category": "Digital Marketing",
+        "media": "",
+        "orders": 67
+    },
+    {
+        "name": "Logo Design",
+        "price": 200,
+        "description": "Custom logo designs tailored to your brand.",
+        "category": "Graphic Design",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 130
+    },
+    {
+        "name": "Social Media Management",
+        "price": 800,
+        "description": "Manage your social media presence effectively.",
+        "category": "Social Media",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 90
+    },
+    {
+        "name": "Content Writing",
+        "price": 300,
+        "description": "Engaging and SEO-friendly content for blogs and websites.",
+        "category": "Writing",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 55
+    },
+    {
+        "name": "Mobile App Development",
+        "price": 2500,
+        "description": "Custom mobile applications for Android and iOS.",
+        "category": "App Development",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 25
+    },
+    {
+        "name": "Video Editing",
+        "price": 400,
+        "description": "Professional video editing for all types of content.",
+        "category": "Video Production",
+        "media": "",
+        "orders": 70
+    },
+    {
+        "name": "Photography Services",
+        "price": 600,
+        "description": "Capture your moments with professional photography.",
+        "category": "Photography",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 33
+    },
+    {
+        "name": "Illustration Design",
+        "price": 350,
+        "description": "Unique illustrations for books, media, and branding.",
+        "category": "Graphic Design",
+        "media": "",
+        "orders": 60
+    },
+    {
+        "name": "E-Commerce Development",
+        "price": 2000,
+        "description": "Build an online store to scale your business.",
+        "category": "Web Development",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 40
+    },
+    {
+        "name": "Voiceover Services",
+        "price": 250,
+        "description": "Professional voiceover for ads, videos, and presentations.",
+        "category": "Audio",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 75
+    },
+    {
+        "name": "Cybersecurity Consultation",
+        "price": 1500,
+        "description": "Protect your digital assets with expert advice.",
+        "category": "IT Services",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 18
+    },
+    {
+        "name": "Data Analysis",
+        "price": 700,
+        "description": "Analyze and interpret complex data for better decisions.",
+        "category": "Analytics",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 22
+    },
+    {
+        "name": "Online Course Creation",
+        "price": 1000,
+        "description": "Create engaging and profitable online courses.",
+        "category": "Education",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 28
+    },
+    {
+        "name": "3D Modeling",
+        "price": 1200,
+        "description": "High-quality 3D models for games and media.",
+        "category": "3D Design",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 50
+    },
+    {
+        "name": "Custom T-Shirt Design",
+        "price": 100,
+        "description": "Unique designs for personal or business use.",
+        "category": "Fashion",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 85
+    },
+    {
+        "name": "Event Planning",
+        "price": 1500,
+        "description": "Plan and organize memorable events.",
+        "category": "Event Management",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 12
+    },
+    {
+        "name": "Fitness Training",
+        "price": 500,
+        "description": "Personalized fitness plans and coaching.",
+        "category": "Health & Fitness",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 95
+    },
+    {
+        "name": "Tax Consultation",
+        "price": 400,
+        "description": "Expert advice on taxes and financial planning.",
+        "category": "Finance",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 48
+    },
+    {
+        "name": "Home Cleaning Services",
+        "price": 150,
+        "description": "Thorough and reliable home cleaning solutions.",
+        "category": "Cleaning",
+        "media": "https://housing.com/news/wp-content/uploads/2023/03/Plumbing-services-Know-types-and-how-to-choose-01.png",
+        "orders": 120
+    }
+]
