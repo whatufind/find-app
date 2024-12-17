@@ -17,7 +17,7 @@ export const Header = ({ children }: PropsWithChildren): ReactElement => {
     const containerInsets = useSafeAreaInsetsStyle(['top'], 'margin');
 
     return (
-        <Box height={theme.sizes.minHeaderHeight} style={containerInsets} bg="white" elevation={10}>
+        <Box height={theme.sizes.minHeaderHeight} style={containerInsets} bg="primary" elevation={10}>
             <ContentSafeAreaView height="100%" justifyContent="center">
                 <Box flexDirection="row" justifyContent="space-between" alignItems="center">
                     {children}
@@ -53,8 +53,8 @@ type ContentProps = {
 const Content = ({ title, subTitle = undefined, ...rest }: ContentProps): ReactElement => {
     return (
         <Box {...rest}>
-            <Text variant="b2bold">{title}</Text>
-            {subTitle !== undefined && <Text variant="b3medium">{subTitle}</Text>}
+            <Text variant="b2bold" color="white">{title}</Text>
+            {subTitle !== undefined && <Text color="white" variant="b3medium">{subTitle}</Text>}
         </Box>
     );
 };
