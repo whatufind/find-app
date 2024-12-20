@@ -3,12 +3,16 @@ import { Box, ContentSafeAreaView, Header, IconButton, Input, Screen, ServiceCar
 import services from '@/data/service.json';
 import useHeader from '@/hooks/useHeader';
 import { useGetServicesQuery } from '@/store/apiSlice';
+import { RootState } from '@/store/store';
 import { serviceType } from '@/types/service';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
+import { useSelector } from 'react-redux';
 
 export const HomeScreen = () => {
+    const token = useSelector((state: RootState) => state.user);
+    console.log(token, 'token at home page');
     const HomeHeader = () => {
         return <Header>
             <Header.Content title="Hi Ibrahim" subTitle="Good morning" />
@@ -19,7 +23,8 @@ export const HomeScreen = () => {
     useHeader(HomeHeader);
 
 
-    const { data, isLoading } = useGetServicesQuery();
+    const { data, isLoading, error } = useGetServicesQuery();
+    console.log(error);
     if (isLoading) {
         return <Box justifyContent="center" alignItems="center" flex={1}>
             <ActivityIndicator size="large" />

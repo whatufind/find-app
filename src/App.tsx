@@ -9,7 +9,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
+import { persistor, store } from './store/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 export const App = (): ReactElement => {
   return (
@@ -17,7 +18,9 @@ export const App = (): ReactElement => {
       <ThemeProvider theme={theme}>
         <SafeAreaProvider>
           <Provider store={store}>
-            <Navigator />
+            <PersistGate loading={null} persistor={persistor}>
+              <Navigator />
+            </PersistGate>
           </Provider>
           <Toaster />
         </SafeAreaProvider>

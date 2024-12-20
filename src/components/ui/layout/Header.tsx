@@ -40,6 +40,7 @@ const BackAction = ({ onPress }: { onPress?: () => void }): ReactElement => {
             variant="vector"
             type="ant"
             icon="arrowleft"
+            color="white"
             onPress={onPress ?? navigateBack}
         />
     );

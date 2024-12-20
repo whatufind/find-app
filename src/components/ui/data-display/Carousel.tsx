@@ -75,7 +75,6 @@ export const Carousel: FC<CarouselProps> = ({
                         key={imageIndex}
                         borderRadius="rounded-sm"
                         variant="remote"
-                        height={height}
                         source={image}
                     />
                 ))}
