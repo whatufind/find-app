@@ -15,12 +15,13 @@ import {
 } from '@/components';
 import Carousel from '@/components/ui/data-display/Carousel';
 import useHeader from '@/hooks/useHeader';
-import { IMAGE_URL, useGetServiceByIdQuery } from '@/store/apiSlice';
+import { IMAGE_URL, useGetServiceByIdQuery, useRequestAServiceMutation } from '@/store/apiSlice';
 import { s } from 'react-native-size-matters';
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import { toast } from 'sonner-native';
 
 interface ServiceDetailsProps {
     route: {
@@ -34,7 +35,9 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
     const navigation = useNavigation();
     const { id } = route.params;
     const [modalVisible, setModalVisible] = useState(false);
+    const [requestDetails, setRequestDetails] = useState('');  // State for capturing request details
     const { accessToken } = useSelector((state: RootState) => state.user);
+    const [requestAService, { isLoading: isReqLoading }] = useRequestAServiceMutation();
 
     // Header component for the service details screen
     const HomeHeader = () => (
@@ -48,7 +51,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
     useHeader(HomeHeader);
 
     // Fetching service details using the provided ID
-    const { data, isLoading } = useGetServiceByIdQuery(id);
+    const { data, isLoading, refetch } = useGetServiceByIdQuery(id);
 
     if (isLoading) {
         return (
@@ -60,16 +63,42 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
 
     const images = data?.media?.map((item) => `${IMAGE_URL}/${item.substring(item.lastIndexOf('/') + 1)}`);
 
+    // Validate the request details input
+    const validateRequestDetails = (details: string) => {
+        if (!details.trim()) {
+            toast.error('Please provide a description for your request.');
+            return false;
+        }
+        if (details.length < 10) {
+            toast.error('Request details should be at least 10 characters long.');
+            return false;
+        }
+        return true;
+    };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!accessToken) {
-
             navigation.navigate('Login');
         } else {
+            if (!validateRequestDetails(requestDetails)) {
+                return;
+            }
+
             const payload = {
-                requestDetails: 'I need this service on a specific date.',
+                requestDetails,
+                serviceId: id,
             };
 
+            try {
+                const response = await requestAService({ id, data: payload }).unwrap();
+                toast.success('Request submitted successfully');
+                refetch();
+                setModalVisible(!modalVisible);
+                setRequestDetails('');  // Clear input after submission
+            } catch (err) {
+                const errors = err?.message || err?.data?.message;
+                toast.error(errors);
+            }
         }
     };
 
@@ -138,11 +167,11 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
                         <Button.Text title="Request Now!" />
                     </Button>
                     <Button paddingHorizontal={4} flex={1} variant="success">
-                        <Button.Text title="Contact Provider!" />
+                        <Button.Text title="Contact Provider" />
                     </Button>
                 </HStack>
-
             </ContentSafeAreaView>
+
             <Modal
                 visible={modalVisible}
                 transparent
@@ -154,17 +183,25 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
                         <Text variant="heading2" style={styles.modalTitle}>
                             Describe what you need?
                         </Text>
-                        <Input multiline numberOfLines={10} style={styles.modalInput} />
+                        <Input
+                            multiline
+                            numberOfLines={10}
+                            style={styles.modalInput}
+                            value={requestDetails}
+                            onChangeText={setRequestDetails}  // Bind input to state
+                            placeholder="Describe your request"
+                        />
                         <HStack justifyContent="space-between" mt={3}>
                             <Button onPress={() => setModalVisible(false)} flex={1} marginHorizontal={2}>
                                 <Button.Text title="Cancel" />
                             </Button>
-                            <Button flex={1} onPress={() => {
-                                handleSubmit();
-                            }}
-
-
-                                marginHorizontal={2} variant="success">
+                            <Button
+                                loading={isReqLoading}
+                                flex={1}
+                                onPress={handleSubmit}  // Handle submit
+                                marginHorizontal={2}
+                                variant="success"
+                            >
                                 <Button.Text title="Submit" />
                             </Button>
                         </HStack>

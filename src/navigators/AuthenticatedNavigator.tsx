@@ -7,6 +7,7 @@ import { type AuthenticatedStackNavigatorParamList } from '@/types/navigation';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import ServiceDetails from '@/screens/authenticated/service/ServiceDetails';
 import LoginScreen from '@/screens/unauthenticated/login/LoginScreen';
+import RegisterScreen from '@/screens/unauthenticated/login/RegisterScreen';
 
 const Stack = createNativeStackNavigator<AuthenticatedStackNavigatorParamList>();
 
@@ -18,6 +19,11 @@ export const AuthenticatedNavigator = (): ReactElement => {
                 component={BottomTabNavigator}
                 options={{ animation: 'slide_from_bottom' }}
             />
+            <Stack.Screen
+                name="Register"
+                component={RegisterScreen}
+                options={{ animation: 'slide_from_bottom' }}
+            />
 
             <Stack.Screen
                 name="ServiceDetails"
@@ -27,7 +33,7 @@ export const AuthenticatedNavigator = (): ReactElement => {
             <Stack.Screen
                 name="Login"
                 component={LoginScreen}
-                options={{ animation: 'slide_from_bottom' }}
+                options={{ animation: 'fade' }}
             />
 
 

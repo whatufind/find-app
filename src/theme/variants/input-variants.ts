@@ -35,6 +35,9 @@ export const inputSizeVariants = {
   sm: {
     height: 40,
   },
+  hu: {
+    height: undefined,
+  },
 };
 
 export const inputValidationStatus = {

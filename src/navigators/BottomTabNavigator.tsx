@@ -15,24 +15,26 @@ import {
 } from '@/types/navigation';
 
 import { IconButton } from '@/components';
-import { Accountscreen } from '@/screens/authenticated/account';
 import { FeedStack } from './stacks/FeedStack';
 import { HomeStack } from './stacks/HomeStack';
 import { ServiceStack } from './stacks/ServiceStack';
+import { AccountStack } from './stacks/AccountStack';
 
 const BottomTabIcon = ({
     focused,
+    title,
 }: {
     title: string;
     focused: boolean;
     color: string;
     size: number;
 }): ReactElement => {
+    console.log(title);
     return (
         <IconButton
             variant="vector"
             {...(focused && { iconStyle: 'contained' })}
-            icon={'home'}
+            icon={title === 'AccountStack' ? 'account' : 'home'}
             color={focused ? 'primary' : 'black'}
             size={7}
         />
@@ -87,9 +89,9 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
             />
             <Tab.Screen
                 name="AccountStack"
-                component={Accountscreen}
+                component={AccountStack}
                 options={{
-                    title: 'Screen4',
+                    title: 'Account',
                 }}
             />
         </Tab.Navigator>

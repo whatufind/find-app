@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export const ServiceCard: FC<any> = ({ service }) => {
     const navigation = useNavigation();
+
     return (
         <Card margin={1} variant="elevated" marginHorizontal={7} >
             {service?.media && <ImageBanner variant="remote" source={IMAGE_URL + '/' + service.media[0]?.substring(service.media[0]?.lastIndexOf('/') + 1)} />}
@@ -34,7 +35,7 @@ export const ServiceCard: FC<any> = ({ service }) => {
                 <HStack justifyContent="space-between">
                     <Text variant="b4bold" color="success">{service?.serviceRequests?.length} Sold</Text>
                     <IconButton onPress={() => {
-                        navigation.navigate('ServiceDetails', { id: service?._id });
+                        navigation.navigate('ServiceDetails', { id: service?.id });
                     }} icon="eye" variant="vector" type="ant" color="primary" />
                 </HStack>
             </VStack>

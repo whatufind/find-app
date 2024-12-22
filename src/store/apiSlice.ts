@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../store/store';  // Import RootState type for type safety
 
 // Base URLs for the API and images
-export const BASE_URL = 'http://192.168.1.3:3000/v1';
-export const IMAGE_URL = 'http://192.168.1.3:3000/uploads';
+export const BASE_URL = 'http://192.168.1.5:3000/v1';
+export const IMAGE_URL = 'http://192.168.1.5:3000/uploads';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
@@ -13,7 +13,6 @@ export const apiSlice = createApi({
         prepareHeaders: (headers, { getState }) => {
             // Access token from the Redux store via getState
             const token = (getState() as RootState).user.accessToken;
-            console.log(token, 'what is token');
             if (token) {
                 // Add Authorization header if token exists
                 headers.set('Authorization', `Bearer ${token}`);
@@ -32,7 +31,7 @@ export const apiSlice = createApi({
     endpoints: (builder) => ({
         // Endpoint to fetch all services
         getServices: builder.query<any[], void>({
-            query: () => '/services?sortBy=-createdAt&page=1&limit=10&search=service',
+            query: () => 'services?sortBy=-createdAt&page=1&limit=10',
         }),
 
         // Endpoint to fetch a single service by its ID
@@ -48,6 +47,27 @@ export const apiSlice = createApi({
                 body: credentials,
             }),
         }),
+
+        // Endpoint to request a service (e.g., booking or other requests)
+        requestAService: builder.mutation<any, { id: string; data: any }>({
+            query: ({ id, data }) => ({
+                url: `/services/requests/${id}`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+        register: builder.mutation<any, { email: string; name: string; password: string }>({
+            query: (userData) => ({
+                url: '/auth/register',
+                method: 'POST',
+                body: userData,
+            }),
+        }),
+
+        getUser: builder.query<any, number>({
+            query: (id) => `/users/${id}`,
+        }),
+
     }),
 });
 
@@ -56,4 +76,7 @@ export const {
     useGetServicesQuery,
     useGetServiceByIdQuery,
     useLoginMutation,
+    useRequestAServiceMutation,
+    useRegisterMutation,
+    useGetUserQuery,
 } = apiSlice;

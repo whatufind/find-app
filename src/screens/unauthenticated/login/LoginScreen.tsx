@@ -15,8 +15,25 @@ import { toast } from 'sonner-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/store';
 import { setUser } from '@/store/slice/userSlice';
+import { useNavigation } from '@react-navigation/native';
+import { Badge, Header, HStack, IconButton } from '@/components';
+import useHeader from '@/hooks/useHeader';
+
+
+const LoginHeader = () => {
+    return (
+        <Header >
+            <HStack>
+                <Header.BackAction />
+                <Header.Content title="Login" />
+            </HStack>
+        </Header>
+    );
+};
 
 const LoginScreen = () => {
+    useHeader(LoginHeader);
+    const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -75,6 +92,7 @@ const LoginScreen = () => {
                 }));
 
                 toast.success('Successfully logged in');
+                navigation.goBack();
             }
         } catch (err) {
             // Show server error using Toast
@@ -123,7 +141,7 @@ const LoginScreen = () => {
 
                 <View style={styles.footer}>
                     <Text>Don’t have an account? </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                         <Text style={styles.signUpText}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>

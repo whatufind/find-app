@@ -1,42 +1,134 @@
 /* eslint-disable react/no-unstable-nested-components */
-import { Box, ContentSafeAreaView, Header, IconButton, Input, Screen, ServiceCard } from '@/components';
-import services from '@/data/service.json';
+import {
+    Badge,
+    Box,
+    Center,
+    Clickable,
+    Header,
+    HStack,
+    IconButton,
+    Screen,
+    ServiceCard,
+    Text,
+} from '@/components';
+import CreatePost from '@/components/organism/CreatePost';
+import CreateService from '@/components/organism/CreateService';
+import FindService from '@/components/organism/FindService';
 import useHeader from '@/hooks/useHeader';
 import { useGetServicesQuery } from '@/store/apiSlice';
-import { RootState } from '@/store/store';
-import { serviceType } from '@/types/service';
+import {
+    BottomSheetModal,
+    BottomSheetModalProvider,
+    BottomSheetScrollView,
+    BottomSheetView,
+} from '@gorhom/bottom-sheet';
 import { FlashList } from '@shopify/flash-list';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
-import { useSelector } from 'react-redux';
+import { vs } from 'react-native-size-matters';
 
 export const HomeScreen = () => {
-    const token = useSelector((state: RootState) => state.user);
-    console.log(token, 'token at home page');
+    const [selectedAction, setSelectedAction] = useState<string | null>(null);
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
     const HomeHeader = () => {
-        return <Header>
-            <Header.Content title="Hi Ibrahim" subTitle="Good morning" />
-            <Header.Action icon="notification" variant="svg" color="white" size={10} />
-        </Header>;
+        return (
+            <Header>
+                <Header.Content title="WF" subTitle="Hi Ibrahim, Good Morning" />
+                <HStack>
+                    <IconButton variant="vector" icon="search" color="white" size={10} type="feather" />
+                    <Badge content="0" placement="topRight" variant="danger">
+                        <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
+                    </Badge>
+                </HStack>
+            </Header>
+        );
     };
 
     useHeader(HomeHeader);
-
-
     const { data, isLoading, error } = useGetServicesQuery();
     console.log(error);
-    if (isLoading) {
-        return <Box justifyContent="center" alignItems="center" flex={1}>
-            <ActivityIndicator size="large" />
-        </Box>;
-    }
-    return (
-        <Screen safeAreaEdges={['top']} >
 
+    if (isLoading) {
+        return (
+            <Box justifyContent="center" alignItems="center" flex={1}>
+                <ActivityIndicator size="large" />
+            </Box>
+        );
+    }
+
+    const openBottomSheet = () => {
+        bottomSheetModalRef.current?.present();
+    };
+
+
+    const renderBottomSheetContent = () => (
+        <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
+            <HStack justifyContent="center" g={10} alignItems="center">
+                <Center>
+                    <IconButton
+                        iconStyle={selectedAction === 'post' ? 'contained' : 'outlined'}
+                        size={8}
+                        color="primary"
+                        variant="vector"
+                        icon="paper-plane"
+                        type="entypo"
+                        onPress={() => setSelectedAction('post')}
+                    />
+                    <Text color="primary">Post</Text>
+                </Center>
+                <Center>
+                    <IconButton
+                        iconStyle={selectedAction === 'service' ? 'contained' : 'outlined'}
+                        color="primary"
+                        size={8}
+                        variant="vector"
+                        icon="pencil"
+                        type="entypo"
+                        onPress={() => setSelectedAction('service')}
+                    />
+                    <Text color="primary">Service</Text>
+                </Center>
+                <Center>
+                    <IconButton
+                        iconStyle={selectedAction === 'find' ? 'contained' : 'outlined'}
+                        size={8}
+                        color="primary"
+                        variant="vector"
+                        icon="search"
+                        type="feather"
+                        onPress={() => setSelectedAction('find')}
+                    />
+                    <Text color="primary">Find</Text>
+                </Center>
+            </HStack>
+
+            <BottomSheetScrollView>
+                {selectedAction === 'post' && <CreatePost />}
+                {selectedAction === 'service' && <CreateService />}
+                {selectedAction === 'find' && <FindService />}
+            </BottomSheetScrollView>
+        </BottomSheetView>
+    );
+
+    return (
+        <Screen >
             <Box bg="primary" py={5} px={5}>
-                <Input placeholder="Find what you need!" right={() => <IconButton variant="vector" icon="search" color="primary" type="feather" />} />
+                <Box
+                    width="100%"
+                    height={vs(35)}
+                    borderRadius="rounded-sm"
+                    bg="white"
+                    justifyContent="center"
+                    paddingHorizontal={3}
+                >
+                    <Clickable height="100%" justifyContent="center" onPress={() => openBottomSheet()}>
+                        <Text>What's on your mind?</Text>
+                    </Clickable>
+                </Box>
             </Box>
             <FlashList
+                contentContainerStyle={{ paddingTop: 10 }}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 data={data?.results}
@@ -45,6 +137,17 @@ export const HomeScreen = () => {
                 keyExtractor={(item) => item._id ?? item.id}
                 estimatedItemSize={200}
             />
+
+            <BottomSheetModalProvider>
+                <BottomSheetModal
+                    ref={bottomSheetModalRef}
+                    index={0}
+                    snapPoints={['70%', '90%']}
+                    onDismiss={() => setSelectedAction(null)}
+                >
+                    {renderBottomSheetContent()}
+                </BottomSheetModal>
+            </BottomSheetModalProvider>
         </Screen>
     );
 };
