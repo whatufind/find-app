@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { RootState } from '../store/store';  // Import RootState type for type safety
+import { RootState } from '../store/store'; // Import RootState type for type safety
+
 
 // Base URLs for the API and images
-export const BASE_URL = 'http://192.168.1.5:3000/v1';
-export const IMAGE_URL = 'http://192.168.1.5:3000/uploads';
+export const BASE_URL = 'http://192.168.1.3:3000/v1';
+export const IMAGE_URL = 'http://192.168.1.3:3000/uploads';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
@@ -11,35 +12,42 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: BASE_URL, // Set the base URL for all requests
         prepareHeaders: (headers, { getState }) => {
-            // Access token from the Redux store via getState
-            const token = (getState() as RootState).user.accessToken;
+            const state = getState() as RootState;
+            const token = state.user?.accessToken; // Access token from Redux store
+
             if (token) {
-                // Add Authorization header if token exists
-                headers.set('Authorization', `Bearer ${token}`);
+                headers.set('Authorization', `Bearer ${token}`); // Add Authorization header
             }
+
             return headers;
         },
         fetchFn: async (url, options) => {
             const response = await fetch(url, options);
+
             if (response.status === 401) {
-                // Token expired or unauthorized, remove token and handle login flow
-                // Optionally, dispatch a logout action here
+
+                // Handle unauthorized access (e.g., token expired)
+                // Optionally, dispatch a logout action or refresh token logic
             }
+
             return response;
         },
     }),
     endpoints: (builder) => ({
-        // Endpoint to fetch all services
+        // Fetch all services
         getServices: builder.query<any[], void>({
             query: () => 'services?sortBy=-createdAt&page=1&limit=10',
         }),
+        getServiceCategories: builder.query<any, any>({
+            query: () => '/services/categories/all',
+        }),
 
-        // Endpoint to fetch a single service by its ID
+        // Fetch a single service by ID
         getServiceById: builder.query<any, number>({
             query: (id) => `/services/${id}`,
         }),
 
-        // Endpoint for user login
+        // User login
         login: builder.mutation<any, { email: string; password: string }>({
             query: (credentials) => ({
                 url: '/auth/login',
@@ -48,14 +56,7 @@ export const apiSlice = createApi({
             }),
         }),
 
-        // Endpoint to request a service (e.g., booking or other requests)
-        requestAService: builder.mutation<any, { id: string; data: any }>({
-            query: ({ id, data }) => ({
-                url: `/services/requests/${id}`,
-                method: 'POST',
-                body: data,
-            }),
-        }),
+        // Register a new user
         register: builder.mutation<any, { email: string; name: string; password: string }>({
             query: (userData) => ({
                 url: '/auth/register',
@@ -64,10 +65,41 @@ export const apiSlice = createApi({
             }),
         }),
 
+        // Request a service (e.g., booking)
+        requestAService: builder.mutation<any, { id: string; data: any }>({
+            query: ({ id, data }) => ({
+                url: `/services/requests/${id}`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+
+        // Create a new service
+        createService: builder.mutation<any, FormData>({
+            query: (data) => ({
+                url: '/services',
+                method: 'POST',
+                body: data,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }),
+        }),
+
+        // Fetch user details by ID
         getUser: builder.query<any, number>({
             query: (id) => `/users/${id}`,
         }),
-
+        createPost: builder.mutation<any, FormData>({
+            query: (formData) => ({
+                url: '/posts',
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }),
+        }),
     }),
 });
 
@@ -76,7 +108,10 @@ export const {
     useGetServicesQuery,
     useGetServiceByIdQuery,
     useLoginMutation,
-    useRequestAServiceMutation,
     useRegisterMutation,
+    useRequestAServiceMutation,
+    useCreateServiceMutation,
     useGetUserQuery,
+    useGetServiceCategoriesQuery,
+    useCreatePostMutation,
 } = apiSlice;

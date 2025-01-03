@@ -1,66 +1,67 @@
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { useCreateServiceMutation, useGetServiceCategoriesQuery } from '@/store/apiSlice';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
+import { toast } from 'sonner-native';
+import { Button } from '../ui/forms/Button';
 import { Input } from '../ui/forms/Input';
 import ContentSafeAreaView from '../ui/layout/ContentSafeAreaView';
 import { Text } from '../ui/typography/Text';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import IconButton from '../ui/media-icons/IconButton';
-import { Box } from '../ui/layout/Box';
-import { Button } from '../ui/forms/Button';
 
 const FindService = () => {
-    const [dateTimes, setDateTimes] = useState<Date[]>([]); // Store multiple dates/times
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [showPicker, setShowPicker] = useState(false);
-    const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
+    const navigation = useNavigation();
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [category, setCategory] = useState('');
+    const [createService, { isLoading }] = useCreateServiceMutation();
+    const [categories, setCategories] = useState([]);
+    const { data } = useGetServiceCategoriesQuery({});
 
-    const onChange = (event, selectedDate) => {
-        if (selectedDate) {
-            if (pickerMode === 'date') {
-                // Update date and then show time picker
-                setCurrentDate((prevDate) => new Date(selectedDate.setHours(prevDate.getHours(), prevDate.getMinutes())));
-                setPickerMode('time');
-                setShowPicker(true); // Show time picker next
-            } else {
-                // Add the full date-time to the list
-                setDateTimes((prevDateTimes) => [...prevDateTimes, selectedDate]);
-                setShowPicker(false);
-            }
-        } else {
-            setShowPicker(false);
+    useEffect(() => {
+        if (data) {
+            const formattedCategories = data?.results?.map?.((cat: any) => ({
+                label: cat?.name,
+                value: cat?.id,
+            }));
+            setCategories(formattedCategories);
         }
-    };
+    }, [data]);
 
-    const showDatePicker = () => {
-        setPickerMode('date');
-        setShowPicker(true);
+    const handleSubmit = async () => {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('category', category);
+        formData.append('type', 'find');
+        try {
+            await createService(formData).unwrap();
+            toast.success('Your request submitted');
+        } catch (error) {
+            if (error?.data?.code === 401) {
+                navigation.navigate('Login');
+                return;
+            }
+            toast.error(error?.data?.message || "Couldn't create service");
+        }
     };
 
     return (
         <ContentSafeAreaView gap={5}>
-            <Text variant="heading2" mb={2} textAlign="center" mt={5}>Seek a Service</Text>
-            <Input placeholder="Tell use what you need" />
-            <Input placeholder="Any brief about the service you seeking?" />
+            <Text variant="heading2" mb={2} mt={5} textAlign="center">
+                Find a Service Provider
+            </Text>
+            <Input placeholder="What u Need?" value={title} onChangeText={setTitle} />
+            <Input placeholder="Your requirements" value={description} onChangeText={setDescription} />
             <RNPickerSelect
-                placeholder={{ label: 'Select a category', value: '' }}
-                onValueChange={(value) => console.log(value)}
-                items={[
-                    { label: 'Engineering', value: 'Engineering' },
-                    { label: 'Cleaning', value: 'Cleaning' },
-                    { label: 'Designing', value: 'Designing' },
-                ]}
+                placeholder={{ label: 'What type of service you need?', value: '' }}
+                onValueChange={setCategory}
+                items={categories}
             />
-            <Input placeholder="Your Budget" keyboardType="numeric" />
-
-            <Button mt={5} mb={5} paddingHorizontal={5} >
-                <Button.Text title="Find Provider " />
+            <Button mt={5} mb={5} paddingHorizontal={5} onPress={handleSubmit} disabled={isLoading}>
+                <Button.Text title={isLoading ? 'Finding...' : 'Find'} />
             </Button>
-
         </ContentSafeAreaView>
     );
 };
 
 export default FindService;
-
-const styles = StyleSheet.create({});

@@ -106,23 +106,30 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
         <Screen safeAreaEdges={['top']} preset="scroll">
             <ContentSafeAreaView flex={1} justifyContent="space-between" my={5}>
                 <Box>
-                    <Box
-                        position="absolute"
-                        px={3}
-                        zIndex={50}
-                        right={10}
-                        top={10}
-                        bg="danger"
-                        borderRadius="rounded-full"
-                    >
-                        <Text color="white">{data?.serviceRequests?.length} sold</Text>
-                    </Box>
+
+                    {data?.type !== 'find' &&
+                        <Box
+                            position="absolute"
+                            px={3}
+                            zIndex={50}
+                            right={10}
+                            top={10}
+                            bg="danger"
+                            borderRadius="rounded-full"
+                        >
+                            <Text color="white">{data?.serviceRequests?.length} sold</Text>
+                        </Box>
+                    }
+
                     {images && <Carousel images={images} />}
                     <Card paddingVertical={5} paddingHorizontal={3} marginVertical={5} variant="elevated">
-                        <HStack>
-                            <Text>Pricing: </Text>
-                            <Text fontWeight={800}>${data?.pricing}</Text>
-                        </HStack>
+                        {data?.pricing &&
+
+                            <HStack>
+                                <Text>Pricing: </Text>
+                                <Text fontWeight={800}>${data?.pricing}</Text>
+                            </HStack>
+                        }
                         <Text variant="heading2" color="black">
                             {data?.title}
                         </Text>
@@ -144,28 +151,35 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
                             <Text variant="heading3">{data?.user?.name}</Text>
                         </HStack>
                     </Card>
-                    <Text>Availability</Text>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {data?.availability?.map((item, index) => (
-                            <Box key={index} mr={3} px={3} bg="black" borderRadius="rounded-full" mt={3} mb={5}>
-                                <Text color="white">{moment(item?.day).format('MMMM Do YYYY')}</Text>
-                            </Box>
-                        ))}
-                    </ScrollView>
+                    {data?.type !== 'find' &&
+                        <>
+                            <Text>Availability</Text>
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                showsVerticalScrollIndicator={false}
+                            >
+                                {data?.availability?.map((item, index) => (
+                                    <Box key={index} mr={3} px={3} bg="black" borderRadius="rounded-full" mt={3} mb={5}>
+                                        <Text color="white">{moment(item?.day).format('MMMM Do YYYY')}</Text>
+                                    </Box>
+                                ))}
+                            </ScrollView>
+                        </>
+                    }
                 </Box>
                 <HStack justifyContent="center" g={5}>
-                    <Button
-                        onPress={() => setModalVisible(true)}
-                        paddingHorizontal={4}
-                        flex={1}
-                        variant="primary"
-                    >
-                        <Button.Text title="Request Now!" />
-                    </Button>
+                    {data?.type !== 'find' &&
+
+                        <Button
+                            onPress={() => setModalVisible(true)}
+                            paddingHorizontal={4}
+                            flex={1}
+                            variant="primary"
+                        >
+                            <Button.Text title="Request Now!" />
+                        </Button>
+                    }
                     <Button paddingHorizontal={4} flex={1} variant="success">
                         <Button.Text title="Contact Provider" />
                     </Button>

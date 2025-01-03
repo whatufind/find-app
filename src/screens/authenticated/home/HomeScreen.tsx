@@ -1,9 +1,12 @@
 /* eslint-disable react/no-unstable-nested-components */
+import React, { useRef, useState } from 'react';
 import {
     Badge,
     Box,
+    Button,
     Center,
     Clickable,
+    ContentSafeAreaView,
     Header,
     HStack,
     IconButton,
@@ -23,31 +26,28 @@ import {
     BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import { FlashList } from '@shopify/flash-list';
-import React, { useRef, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { vs } from 'react-native-size-matters';
 
 export const HomeScreen = () => {
+    const [selectedFilter, setSelectedFilter] = useState<'create' | 'find'>('create');
     const [selectedAction, setSelectedAction] = useState<string | null>(null);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const HomeHeader = () => {
-        return (
-            <Header>
-                <Header.Content title="WF" subTitle="Hi Ibrahim, Good Morning" />
-                <HStack>
-                    <IconButton variant="vector" icon="search" color="white" size={10} type="feather" />
-                    <Badge content="0" placement="topRight" variant="danger">
-                        <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
-                    </Badge>
-                </HStack>
-            </Header>
-        );
-    };
+    const HomeHeader = () => (
+        <Header>
+            <Header.Content title="WF" subTitle="Hi Ibrahim, Good Morning" />
+            <HStack>
+                <IconButton variant="vector" icon="search" color="white" size={10} type="feather" />
+                <Badge content="0" placement="topRight" variant="danger">
+                    <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
+                </Badge>
+            </HStack>
+        </Header>
+    );
 
     useHeader(HomeHeader);
     const { data, isLoading, error } = useGetServicesQuery();
-    console.log(error);
 
     if (isLoading) {
         return (
@@ -57,10 +57,11 @@ export const HomeScreen = () => {
         );
     }
 
+    const filteredData = data?.results?.filter((item) => item?.type === selectedFilter);
+
     const openBottomSheet = () => {
         bottomSheetModalRef.current?.present();
     };
-
 
     const renderBottomSheetContent = () => (
         <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
@@ -112,7 +113,7 @@ export const HomeScreen = () => {
     );
 
     return (
-        <Screen >
+        <Screen>
             <Box bg="primary" py={5} px={5}>
                 <Box
                     width="100%"
@@ -127,11 +128,31 @@ export const HomeScreen = () => {
                     </Clickable>
                 </Box>
             </Box>
+            <ContentSafeAreaView my={5}>
+                <HStack g={2}>
+                    <Button
+                        flex={1}
+                        size="sm"
+                        type={selectedFilter === 'create' ? 'contained' : 'outlined'}
+                        onPress={() => setSelectedFilter('create')}
+                    >
+                        <Button.Text title="Providers" />
+                    </Button>
+                    <Button
+                        flex={1}
+                        size="sm"
+                        type={selectedFilter === 'find' ? 'contained' : 'outlined'}
+                        onPress={() => setSelectedFilter('find')}
+                    >
+                        <Button.Text title="Seekers" />
+                    </Button>
+                </HStack>
+            </ContentSafeAreaView>
             <FlashList
                 contentContainerStyle={{ paddingTop: 10 }}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
-                data={data?.results}
+                data={filteredData}
                 ItemSeparatorComponent={() => <Box mb={5} />}
                 renderItem={({ item }: { item: any }) => <ServiceCard service={item} />}
                 keyExtractor={(item) => item._id ?? item.id}
@@ -151,5 +172,8 @@ export const HomeScreen = () => {
         </Screen>
     );
 };
+
+export default HomeScreen;
+
 
 export default HomeScreen;
