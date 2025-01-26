@@ -63,6 +63,8 @@ export const HomeScreen = () => {
         bottomSheetModalRef.current?.present();
     };
 
+    console.log(data, error, 'what is data');
+
     const renderBottomSheetContent = () => (
         <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
             <HStack justifyContent="center" g={10} alignItems="center">
@@ -176,4 +178,3 @@ export const HomeScreen = () => {
 export default HomeScreen;
 
 
-export default HomeScreen;

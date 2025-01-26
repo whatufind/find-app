@@ -30,9 +30,9 @@ export type AuthenticatedStackNavigatorParamList = {
 //all screen params for bottom tab
 export type BottomTabNavigatorParamList = {
     HomeStack: NavigatorScreenParams<HomeStackParamList>;
-    ServiceStack: NavigatorScreenParams<ServiceStackParamList>;
+    CommunityStack: NavigatorScreenParams<CommunityStackParamList>;
     AccountStack: NavigatorScreenParams<AccountStackParamList>;
-    FeedStack: NavigatorScreenParams<FeedStackParamList>;
+    ChatStack: NavigatorScreenParams<FeedStackParamList>;
 };
 
 // 1: home related types
@@ -47,12 +47,12 @@ export type HomeStackScreenProps<T extends keyof HomeStackParamList> = NativeSta
 >;
 
 // 2: service related types
-export type ServiceStackParamList = {
-    Service: undefined;
+export type CommunityStackParamList = {
+    Community: undefined;
 };
 
-export type ServiceStackScreenProps<T extends keyof ServiceStackParamList> =
-    NativeStackScreenProps<ServiceStackParamList, T>;
+export type CommunityStackScreenProps<T extends keyof CommunityStackParamList> =
+    NativeStackScreenProps<CommunityStackParamList, T>;
 
 // 3: feed related types
 export type FeedStackScreenProps<T extends keyof FeedStackParamList> = NativeStackScreenProps<
@@ -102,7 +102,7 @@ declare global {
             UnAuthenticatedStackNavigatorParamList,
             AuthenticatedStackNavigatorParamList,
             HomeStackParamList,
-            ServiceStackParamList,
+            CommunityStackParamList,
             AccountStackParamList,
             FeedStackParamList { }
     }

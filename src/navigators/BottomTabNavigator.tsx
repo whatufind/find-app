@@ -17,7 +17,7 @@ import {
 import { IconButton } from '@/components';
 import { FeedStack } from './stacks/FeedStack';
 import { HomeStack } from './stacks/HomeStack';
-import { ServiceStack } from './stacks/ServiceStack';
+import { CommunityStack } from './stacks/CommuniityStack';
 import { AccountStack } from './stacks/AccountStack';
 
 const BottomTabIcon = ({
@@ -32,11 +32,13 @@ const BottomTabIcon = ({
     console.log(title);
     return (
         <IconButton
+
             variant="vector"
+            type={title === 'CommunityStack' ? 'ionicon' : 'materialCommunity'}
             {...(focused && { iconStyle: 'contained' })}
-            icon={title === 'AccountStack' ? 'account' : 'home'}
-            color={focused ? 'primary' : 'black'}
-            size={7}
+            icon={title === 'ChatStack' ? 'chat' : title === 'CommunityStack' ? 'people' : title === 'AccountStack' ? 'account' : 'home'}
+            color={focused ? 'primary' : 'secondary'}
+            size={8}
         />
     );
 };
@@ -56,7 +58,7 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
         tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarActiveTintColor: theme.colors.black900,
-        tabBarShowLabel: true,
+        tabBarShowLabel: false,
         headerShadowVisible: false,
         tabBarStyle: [$tabBar, { height: 64 + bottom }],
         tabBarLabelStyle: $tabBarLabel,
@@ -74,17 +76,17 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
                 }}
             />
             <Tab.Screen
-                name="ServiceStack"
-                component={ServiceStack}
+                name="CommunityStack"
+                component={CommunityStack}
                 options={{
-                    title: 'Screen2',
+                    title: 'Community',
                 }}
             />
             <Tab.Screen
-                name="FeedStack"
+                name="ChatStack"
                 component={FeedStack}
                 options={{
-                    title: 'Screen 3',
+                    title: 'Chats',
                 }}
             />
             <Tab.Screen

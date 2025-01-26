@@ -6,7 +6,7 @@ import { type BottomTabNavigatorScreenProps, type FeedStackParamList } from '@/t
 
 const Stack = createNativeStackNavigator<FeedStackParamList>();
 
-export const FeedStack: FC<BottomTabNavigatorScreenProps<'FeedStack'>> = () => {
+export const FeedStack: FC<BottomTabNavigatorScreenProps<'ChatStack'>> = () => {
     return (
         <Stack.Navigator
             screenOptions={{
