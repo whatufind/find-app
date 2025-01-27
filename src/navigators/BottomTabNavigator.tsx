@@ -29,7 +29,6 @@ const BottomTabIcon = ({
     color: string;
     size: number;
 }): ReactElement => {
-    console.log(title);
     return (
         <IconButton
 
