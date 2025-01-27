@@ -11,7 +11,7 @@ export const cardVariants = {
   outlined: {
     borderRadius: 'rounded-sm',
     borderWidth: 1,
-    borderColor: 'primary',
+    borderColor: 'secondary100',
     elevation: 0,
   },
   elevated: {

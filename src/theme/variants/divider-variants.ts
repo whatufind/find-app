@@ -1,7 +1,7 @@
 export const dividerVariants = {
     defaults: {
       borderWidth: 0,
-      borderColor: 'secondary200',
+      borderColor: 'secondary400',
     },
     line: {
       borderWidth: 1,

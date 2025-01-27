@@ -58,7 +58,7 @@ const FindService = () => {
                 items={categories}
             />
             <Button mt={5} mb={5} paddingHorizontal={5} onPress={handleSubmit} disabled={isLoading}>
-                <Button.Text title={isLoading ? 'Finding...' : 'Find'} />
+                <Button.Text title={ 'Get Service'} />
             </Button>
         </ContentSafeAreaView>
     );

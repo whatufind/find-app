@@ -3,8 +3,8 @@ import { RootState } from '../store/store'; // Import RootState type for type sa
 
 
 // Base URLs for the API and images
-export const BASE_URL = 'http://192.168.0.103:3000/v1';
-export const IMAGE_URL = 'http://192.168.0.103:3000/uploads';
+export const BASE_URL = 'http://192.168.148.114:3000/v1';
+export const IMAGE_URL = 'http://192.168.148.114:3000/uploads';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
