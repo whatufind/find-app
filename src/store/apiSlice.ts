@@ -113,6 +113,19 @@ export const apiSlice = createApi({
                 params:{...dynamicQuery},
             }),
         }),
+        geUser: builder.query<any[], { userId: any }>({
+            query: (dynamicQuery) => ({
+              url: `/users/${dynamicQuery.userId}`,
+              params: { ...dynamicQuery },
+            }),
+          }),
+        getServiceRequesters: builder.query<any[], any>({
+            query: (dynamicQuery) => ({
+              url: 'services/requests/all',
+              params: { ...dynamicQuery },
+            }),
+          }),
+
     }),
 });
 
@@ -128,5 +141,7 @@ export const {
     useGetServiceCategoriesQuery,
     useCreatePostMutation,
     useGetPostsQuery,
-    useGetServieReviewsQuery
+    useGetServieReviewsQuery,
+    useGeUserQuery,
+    useGetServiceRequestersQuery,
 } = apiSlice;
