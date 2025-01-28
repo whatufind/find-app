@@ -136,7 +136,7 @@ export const HomeScreen = () => {
           backgroundColor="white"
           iconStyle="contained"
           variant="vector"
-          size={16}
+          size={12}
           type="material"
         />
       </Box>

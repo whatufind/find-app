@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import VStack from '../ui/layout/VStack';
 import Checkbox, {CheckboxStatus} from '../ui/forms/CheckBox';
 import HStack from '../ui/layout/HStack';
+import moment from 'moment';
 
 const CreateService = () => {
   const navigation = useNavigation();
@@ -41,6 +42,7 @@ const CreateService = () => {
   const [createService, {isLoading}] = useCreateServiceMutation();
   const [categories, setCategories] = useState([]);
   const {data, error} = useGetServiceCategoriesQuery({});
+  const [checked, setChecked] = useState(false);
 
   const {refetch} = useGetServicesQuery({});
 
@@ -58,12 +60,17 @@ const CreateService = () => {
     if (currentDay && currentTimeRange) {
       setAvailabilityEntries(prevEntries => [
         ...prevEntries,
-        {day: currentDay.toISOString(), timeRange: currentTimeRange},
+        {
+          day: moment(currentDay).format('YYYY-MM-DD'), // Ensure date format is consistent
+          timeRange: currentTimeRange,
+        },
       ]);
-      setCurrentDay(new Date());
-      setCurrentTimeRange('');
+      setCurrentDay(new Date()); // Reset to the current date to avoid reusing the previous date
+      setCurrentTimeRange('');  // Clear the time range input
     }
   };
+
+
 
   const removeAvailabilityEntry = (index: number) => {
     setAvailabilityEntries(prevEntries =>
@@ -71,11 +78,15 @@ const CreateService = () => {
     );
   };
 
+
+
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || currentDay;
-    setShowDatePicker(false);
-    setCurrentDay(currentDate);
+    if (selectedDate) {
+      setCurrentDay(selectedDate); // Set the selected date properly
+    }
+    setShowDatePicker(false); // Close the picker
   };
+
 
   const handleTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || new Date();
@@ -130,6 +141,10 @@ const CreateService = () => {
     formData.append('pricing', price);
     formData.append('type', 'create');
 
+    if (checked) {
+     setAvailabilityEntries([]);
+    }
+
     // Append availability
     availabilityEntries.forEach((entry, index) => {
       formData.append(`availability[${index}][day]`, entry.day);
@@ -145,7 +160,7 @@ const CreateService = () => {
       await createService(formData).unwrap();
       toast.success('Service created successfully');
       refetch();
-    } catch (error:any) {
+    } catch (error: any) {
       if (error?.data?.code === 401) {
         navigation.navigate('Login');
         return;
@@ -224,21 +239,35 @@ const CreateService = () => {
       )}
 
       {availabilityEntries.map((entry, index) => (
-        <Box key={index} flexDirection="row" alignItems="center" mt={2}>
-          <Text>{`${entry.day} - ${entry.timeRange}`}</Text>
+        <Box
+          borderBottomWidth={1}
+          borderBottomColor="black50"
+          key={index}
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={2}>
+          <Text>{`${moment(entry?.day).format('MMMM Do YYYY, h:mm:ss a')} - ${
+            entry.timeRange
+          }`}</Text>
           <IconButton
             onPress={() => removeAvailabilityEntry(index)}
             type="ant"
             icon="delete"
-            color="primary"
+            color="danger"
             variant="vector"
           />
         </Box>
       ))}
       <HStack flex={1}>
-        <Checkbox status={CheckboxStatus.Unchecked} />
+        <Checkbox
+          status={checked ? CheckboxStatus.Checked : CheckboxStatus.Unchecked}
+          onPress={() => {
+            setChecked(!checked);
+          }}
+        />
         <Box>
-          <Text>Always Available</Text>
+          <Text>Always Open</Text>
         </Box>
       </HStack>
       <Button paddingHorizontal={5} type="outlined" onPress={handleChooseMedia}>

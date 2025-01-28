@@ -142,22 +142,26 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
           </Card>
 
           <Card padding={5} gap={5}>
-            <VStack>
-              <Text>Availability</Text>
-              {data?.availability?.map((item, index) => (
+            <VStack >
+              <Text mb={2}>Availability</Text>
+             <Box flex={1} flexDirection="row"
+            g={4}
+            flexWrap="wrap"
+            overflow="hidden">
+             {data?.availability?.map((item, index) => (
                 <Box
+                px={2}
+              alignSelf="flex-start"
                   key={index}
-                  mr={3}
-                  px={3}
                   bg="black"
                   borderRadius="rounded-full"
-                  mt={3}
-                  mb={5}>
+                >
                   <Text color="white">
                     {moment(item?.day).format('MMMM Do YYYY')}
                   </Text>
                 </Box>
               ))}
+             </Box>
               {data?.availability?.length === 0 && (
                 <Box
                   bg="success"

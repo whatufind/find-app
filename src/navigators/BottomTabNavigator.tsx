@@ -74,13 +74,13 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
                     title: 'Home',
                 }}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 name="CommunityStack"
                 component={CommunityStack}
                 options={{
                     title: 'Community',
                 }}
-            />
+            /> */}
             <Tab.Screen
                 name="ChatStack"
                 component={FeedStack}
