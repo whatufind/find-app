@@ -35,9 +35,13 @@ export const apiSlice = createApi({
     }),
     endpoints: (builder) => ({
         // Fetch all services
-        getServices: builder.query<any[], void>({
-            query: () => 'services?sortBy=-createdAt&page=1&limit=10',
+        getServices: builder.query<any[], any>({
+            query: dynamicQuery=> ({
+                url:'services',
+                params:{...dynamicQuery},
+            }),
         }),
+
         getServiceCategories: builder.query<any, any>({
             query: () => '/services/categories/all',
         }),
