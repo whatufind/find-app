@@ -1,3 +1,4 @@
+/* eslint-disable no-catch-shadow */
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
@@ -12,6 +13,7 @@ import {Button} from '../ui/forms/Button';
 import {
   useCreateServiceMutation,
   useGetServiceCategoriesQuery,
+  useGetServicesQuery,
 } from '@/store/apiSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {toast} from 'sonner-native';
@@ -38,7 +40,9 @@ const CreateService = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [createService, {isLoading}] = useCreateServiceMutation();
   const [categories, setCategories] = useState([]);
-  const {data} = useGetServiceCategoriesQuery({});
+  const {data, error} = useGetServiceCategoriesQuery({});
+
+  const {refetch} = useGetServicesQuery({});
 
   useEffect(() => {
     if (data) {
@@ -87,9 +91,7 @@ const CreateService = () => {
 
     launchImageLibrary(options, response => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
       } else if (response.errorCode) {
-        console.error('ImagePicker Error:', response.errorMessage);
       } else {
         const files = response.assets?.map(asset => ({
           uri: asset.uri,
@@ -105,6 +107,22 @@ const CreateService = () => {
   };
 
   const handleSubmit = async () => {
+    if (!title) {
+      toast.warning('Title is required');
+      return;
+    }
+    if (!description) {
+      toast.warning('Description is required');
+      return;
+    }
+    if (!category) {
+      toast.warning('Category is required');
+      return;
+    }
+    if (!price) {
+      toast.warning('Price is required');
+      return;
+    }
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
@@ -126,7 +144,8 @@ const CreateService = () => {
     try {
       await createService(formData).unwrap();
       toast.success('Service created successfully');
-    } catch (error) {
+      refetch();
+    } catch (error:any) {
       if (error?.data?.code === 401) {
         navigation.navigate('Login');
         return;
@@ -159,7 +178,7 @@ const CreateService = () => {
         />
       </Box>
       <Input
-        placeholder="Price of your service"
+        placeholder="৳ Price of your service"
         value={price}
         keyboardType="numeric"
         onChangeText={setPrice}

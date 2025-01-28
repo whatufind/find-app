@@ -11,6 +11,7 @@ import { FastImage } from '../ui/media-icons/FastImage';
 import { Text } from '../ui/typography/Text';
 import { useNavigation } from '@react-navigation/native';
 import Clickable from '../ui/forms/Clickable';
+import IconButton from '../ui/media-icons/IconButton';
 
 export const ServiceCard: FC<any> = ({service}) => {
   // navigation.navigate('ServiceDetails', { id: service?.id });
@@ -18,6 +19,16 @@ export const ServiceCard: FC<any> = ({service}) => {
   return (
    <Clickable onPress={()=>navigation.navigate('ServiceDetails', { id: service?.id })}>
      <Card variant="outlined" paddingBottom={5}>
+     <Box py={2} px={5} flexDirection="row" g={4} alignItems="center" my={2}>
+      <Box  borderColor="primary" borderWidth={2} p={2}  borderRadius="rounded-full">
+      <FastImage style={{borderRadius:theme.borderRadii['rounded-full']}} width={s(25)} height={s(25)} source={{uri:service?.user?.profilePicture}}/>
+      </Box>
+        <VStack>
+        <Text variant="b2medium">{service?.user?.name}</Text>
+        <Text variant="b5regular">Technician</Text>
+        </VStack>
+      </Box>
+      <Divider borderWidth={0.5}/>
         <Box width={50} height={50} position="absolute" zIndex={10} right={-20} top={-30} borderRadius="rounded-full" bg="primary"/>
       {service?.media?.[0] && (
         <FastImage
@@ -34,16 +45,7 @@ export const ServiceCard: FC<any> = ({service}) => {
           height={theme.sizes.safeWidth}
         />
       )}
-      <Box py={2} px={5} flexDirection="row" g={4} alignItems="center">
-      <Box  borderColor="primary" borderWidth={2} p={2}  borderRadius="rounded-full">
-      <FastImage style={{borderRadius:theme.borderRadii['rounded-full']}} width={s(25)} height={s(25)} source={{uri:service?.user?.profilePicture}}/>
-      </Box>
-        <VStack>
-        <Text variant="b2medium">{service?.user?.name}</Text>
-        <Text variant="b5regular">Technician</Text>
-        </VStack>
-      </Box>
-      <Divider borderWidth={0.5}/>
+
       <VStack px={5} py={2}>
         <HStack flex={1} justifyContent="space-between">
           <Box flex={1}>
@@ -56,6 +58,12 @@ export const ServiceCard: FC<any> = ({service}) => {
           {service.description}
         </Text>
       </VStack>
+      <Divider borderWidth={0.5}/>
+      <HStack justifyContent="space-between" px={5} pt={5}>
+        <IconButton icon="like2" variant="vector" type="ant" padding={0}/>
+        <IconButton icon="comment" variant="vector" size={9} type="evil" padding={0}/>
+        <IconButton icon="share" variant="vector" type="fa" padding={0}/>
+      </HStack>
     </Card>
    </Clickable>
   );

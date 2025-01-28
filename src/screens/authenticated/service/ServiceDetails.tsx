@@ -132,12 +132,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
         <Box g={5}>
           {images && <Carousel images={images} />}
           <Card paddingVertical={5} paddingHorizontal={3} variant="elevated">
-            {data?.pricing && (
-              <HStack>
-                <Text>Pricing: </Text>
-                <Text fontWeight={800}>${data?.pricing}</Text>
-              </HStack>
-            )}
+
             <Text variant="b2medium" color="black">
               {data?.title}
             </Text>
@@ -174,14 +169,19 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
                 </Box>
               )}
             </VStack>
-            <Box>
-              <Box>
-                <Text>Category</Text>
-              </Box>
-              <Box>
-                <Text color="black">{data?.category?.name}</Text>
-              </Box>
-            </Box>
+
+            {data?.pricing && (
+              <HStack>
+                <Text>Pricing: </Text>
+                <Text fontWeight={800}>${data?.pricing}</Text>
+              </HStack>
+            )}
+            {data?.category && (
+              <HStack>
+                <Text>Category: </Text>
+                <Text fontWeight={800}>{data?.category?.name}</Text>
+              </HStack>
+            )}
           </Card>
           <Card padding={5}>
             <Text mb={2} variant="heading3">
