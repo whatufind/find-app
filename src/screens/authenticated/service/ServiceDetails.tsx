@@ -6,6 +6,7 @@ import {
   FastImage,
   Header,
   HStack,
+  Icon,
   Input,
   Screen,
   Text,
@@ -16,6 +17,7 @@ import useHeader from '@/hooks/useHeader';
 import {
   IMAGE_URL,
   useGetServiceByIdQuery,
+  useGetServieReviewsQuery,
   useRequestAServiceMutation,
 } from '@/store/apiSlice';
 import {RootState} from '@/store/store';
@@ -23,10 +25,11 @@ import theme from '@/theme';
 import {colors} from '@/theme/colors';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
 import moment from 'moment';
 import React, {useRef, useState} from 'react';
 import {ActivityIndicator} from 'react-native';
-import {s} from 'react-native-size-matters';
+import {s, vs} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 import {toast} from 'sonner-native';
 
@@ -44,6 +47,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [requestDetails, setRequestDetails] = useState(''); // State for capturing request details
   const {accessToken} = useSelector((state: RootState) => state.user);
+  const {data: reviews} = useGetServieReviewsQuery({serviceId: id});
+
   const [requestAService, {isLoading: isReqLoading}] =
     useRequestAServiceMutation();
   const sheetRef = useRef<BottomSheet>(null);
@@ -132,7 +137,6 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
         <Box g={5}>
           {images && <Carousel images={images} />}
           <Card paddingVertical={5} paddingHorizontal={3} variant="elevated">
-
             <Text variant="b2medium" color="black">
               {data?.title}
             </Text>
@@ -142,26 +146,27 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
           </Card>
 
           <Card padding={5} gap={5}>
-            <VStack >
+            <VStack>
               <Text mb={2}>Availability</Text>
-             <Box flex={1} flexDirection="row"
-            g={4}
-            flexWrap="wrap"
-            overflow="hidden">
-             {data?.availability?.map((item, index) => (
-                <Box
-                px={2}
-              alignSelf="flex-start"
-                  key={index}
-                  bg="black"
-                  borderRadius="rounded-full"
-                >
-                  <Text color="white">
-                    {moment(item?.day).format('MMMM Do YYYY')}
-                  </Text>
-                </Box>
-              ))}
-             </Box>
+              <Box
+                flex={1}
+                flexDirection="row"
+                g={4}
+                flexWrap="wrap"
+                overflow="hidden">
+                {data?.availability?.map((item, index) => (
+                  <Box
+                    px={2}
+                    alignSelf="flex-start"
+                    key={index}
+                    bg="black"
+                    borderRadius="rounded-full">
+                    <Text color="white">
+                      {moment(item?.day).format('MMMM Do YYYY')}
+                    </Text>
+                  </Box>
+                ))}
+              </Box>
               {data?.availability?.length === 0 && (
                 <Box
                   bg="success"
@@ -211,6 +216,40 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
             </Box>
           </Card>
         </Box>
+        <Text variant="heading2" my={5}>Reviews </Text>
+        <FlashList
+          data={reviews?.results}
+          ItemSeparatorComponent={()=><Box height={vs(10)}/> }
+          keyExtractor={item => item?.id}
+          renderItem={({item}) => (
+            <Card variant="outlined" padding={5}>
+               <Box py={2} flexDirection="row" g={3} alignItems="center">
+              <Box
+                borderColor="primary"
+                borderWidth={2}
+                p={2}
+                borderRadius="rounded-full">
+                <FastImage
+                  style={{borderRadius: theme.borderRadii['rounded-full']}}
+                  width={s(25)}
+                  height={s(25)}
+                  source={{uri: item?.user?.profilePicture}}
+                />
+              </Box>
+              <VStack>
+                <Text variant="b2medium">{item?.user?.name}</Text>
+               <HStack  g={2}>
+               {Array(item?.rating).fill(null).map((_, index) => (
+    <Icon key={index} icon="star" color="warning" size={6} type="ant" variant="vector" />
+  ))}
+               </HStack>
+              </VStack>
+            </Box>
+              <Text variant="b3regular">{item?.comment}</Text>
+            </Card>
+          )}
+          estimatedItemSize={43.3}
+        />
       </ContentSafeAreaView>
 
       <Box
@@ -241,7 +280,11 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
         enablePanDownToClose
         snapPoints={['40%']}>
         <BottomSheetView style={{flex: 1}}>
-          <ContentSafeAreaView flex={1} justifyContent="space-between" pb={5} g={3}>
+          <ContentSafeAreaView
+            flex={1}
+            justifyContent="space-between"
+            pb={5}
+            g={3}>
             <Text variant="heading2">Describe what you need?</Text>
             <Input
               placeholder="Your Service Description"

@@ -180,6 +180,7 @@ export const HomeScreen = () => {
       </Box>
       <ContentSafeAreaView flex={1}>
         <FlashList
+        ListEmptyComponent={()=><Text textAlign="center" mt={3} variant="heading3" color="black">No Service Found</Text>}
           contentContainerStyle={{paddingTop: 10}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}

@@ -107,6 +107,12 @@ export const apiSlice = createApi({
         getPosts: builder.query<any[], void>({
             query: () => 'posts?sortBy=-createdAt&page=1&limit=10',
         }),
+        getServieReviews:builder.query<any[], any>({
+            query: dynamicQuery=> ({
+                url:'services/reviews/all',
+                params:{...dynamicQuery},
+            }),
+        }),
     }),
 });
 
@@ -122,4 +128,5 @@ export const {
     useGetServiceCategoriesQuery,
     useCreatePostMutation,
     useGetPostsQuery,
+    useGetServieReviewsQuery
 } = apiSlice;
