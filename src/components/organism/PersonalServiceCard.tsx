@@ -81,7 +81,9 @@ export const PersonalServiceCard: FC<any> = ({service}) => {
             <Icon icon="clipboard-notes" variant="vector" type="foundation"/>
           <Text>{service?.serviceRequests?.length} Orders</Text>
           </Center>
-          <Button  height={s(24)} px={3}>
+          <Button  height={s(24)} px={3}
+            onPress={() => navigation.navigate('Requesters', {id: service?.id})}
+          >
             <Button.Text title="View Orders" />
           </Button>
         </HStack>

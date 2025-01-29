@@ -13,10 +13,7 @@ export const AccountScreen = () => {
     const { userId } = useSelector((state: RootState) => state.user);
     const {data:user,isLoading,error} = useGeUserQuery({userId});
     const {data:services,isLoading:isServiceLoading,error:serviceErr} = useGetServicesQuery({user:userId,sortBy:'-createdAt'});
-    const {error:serviceReqestersErr,data:requesters,isLoading:isServiceReqestersLoading } = useGetServiceRequestersQuery({owner:userId});
 
-
-    console.log(requesters);
     const AccountHeader = () => {
         return (
             <Header>

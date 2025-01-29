@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../store/store'; // Import RootState type for type safety
+import { navigate } from '@/utils/navigationHelper';
+
 
 
 // Base URLs for the API and images
@@ -25,9 +27,9 @@ export const apiSlice = createApi({
             const response = await fetch(url, options);
 
             if (response.status === 401) {
-
-                // Handle unauthorized access (e.g., token expired)
-                // Optionally, dispatch a logout action or refresh token logic
+                //do navigate to Login route
+                console.log('exe');
+                navigate('Login');
             }
 
             return response;
@@ -115,15 +117,28 @@ export const apiSlice = createApi({
         }),
         geUser: builder.query<any[], { userId: any }>({
             query: (dynamicQuery) => ({
-              url: `/users/${dynamicQuery.userId}`,
-              params: { ...dynamicQuery },
+                url: `/users/${dynamicQuery.userId}`,
+                params: { ...dynamicQuery },
             }),
-          }),
+        }),
         getServiceRequesters: builder.query<any[], any>({
             query: (dynamicQuery) => ({
-              url: 'services/requests/all',
-              params: { ...dynamicQuery },
+                url: 'services/requests/all',
+                params: { ...dynamicQuery },
             }),
+        }),
+        updateServiceRequest: builder.mutation<any, any>({
+            query: ({ id, status }) => {
+              console.log('Service Request ID:', id); // Log the ID
+              return {
+                url: `services/requests/${id}`,
+                method: 'PATCH',
+                body: status,
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              };
+            },
           }),
 
     }),
@@ -144,4 +159,5 @@ export const {
     useGetServieReviewsQuery,
     useGeUserQuery,
     useGetServiceRequestersQuery,
+    useUpdateServiceRequestMutation,
 } = apiSlice;

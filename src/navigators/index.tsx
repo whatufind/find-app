@@ -7,6 +7,7 @@ import { type NavigationProps, type RootNavigatorParamList } from '@/types/navig
 
 import { AuthenticatedNavigator } from './AuthenticatedNavigator';
 import { UnAuthenticatedNavigator } from './UnAuthenticatedNavigator';
+import { navigationRef } from '@/utils/navigationHelper';
 
 export const Stack = createNativeStackNavigator<RootNavigatorParamList>();
 
@@ -15,6 +16,7 @@ export const Navigator = (props: NavigationProps): ReactElement => {
 
     return (
         <NavigationContainer
+        ref={navigationRef}
             {...props}
 
         //To do : implement bootsplash for splash screen
