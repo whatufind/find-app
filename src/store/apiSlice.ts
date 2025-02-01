@@ -93,9 +93,10 @@ export const apiSlice = createApi({
         }),
 
         // Fetch user details by ID
-        getUser: builder.query<any, number>({
+        getUser: builder.query<any, string>({
             query: (id) => `/users/${id}`,
         }),
+
         createPost: builder.mutation<any, FormData>({
             query: (formData) => ({
                 url: '/posts',
@@ -128,20 +129,28 @@ export const apiSlice = createApi({
             }),
         }),
         updateServiceRequest: builder.mutation<any, any>({
-            query: ({ id, status }) => {
-              console.log('Service Request ID:', id); // Log the ID
-              return {
-                url: `services/requests/${id}`,
-                method: 'PATCH',
-                body: status,
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-              };
-            },
+            query: ({ id, status }) => ({
+              url: `services/requests/${id}`, // Use dynamic ID
+              method: 'PATCH',
+              body: {
+                status, // Pass the actual status
+                requestDetails: 'updated request today', // Fix typo
+              },
+              headers: {
+                'Content-Type': 'application/json', // Change to correct content type
+              },
+            }),
+          }),
+          updateUser: builder.mutation<any, { id: string; formData: FormData }>({
+            query: ({ id, formData }) => ({
+              url: 'services/requests',
+              method: 'PATCH',
+              body: formData,
+              params: { id },
+            }),
           }),
 
-    }),
+        }),
 });
 
 // Export hooks for use in React components
@@ -160,4 +169,5 @@ export const {
     useGeUserQuery,
     useGetServiceRequestersQuery,
     useUpdateServiceRequestMutation,
+    useUpdateUserMutation,
 } = apiSlice;

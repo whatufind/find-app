@@ -13,11 +13,16 @@ export interface NavigationProps extends Partial<ComponentProps<typeof Navigatio
 export type RootNavigatorParamList = {
     UnAuthenticatedStack: NavigatorScreenParams<UnAuthenticatedStackNavigatorParamList>;
     AuthenticatedStack: NavigatorScreenParams<AuthenticatedStackNavigatorParamList>;
+    AccountDrawer: NavigatorScreenParams<AccountDrawerStackNavigatorParamList>;
 };
 
 //unauthenticated stack related types
 
 export type UnAuthenticatedStackNavigatorParamList = {
+    Login: undefined;
+};
+
+export type AccountDrawerStackNavigatorParamList = {
     Login: undefined;
 };
 

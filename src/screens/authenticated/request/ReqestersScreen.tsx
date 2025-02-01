@@ -30,7 +30,7 @@ export const RequestersScreen = ({route}: any) => {
   const {id} = route?.params || {};
   const {userId, userName} = useSelector((state: RootState) => state.user);
   const [updateServiceRequest] = useUpdateServiceRequestMutation();
-  const {data, isLoading} = useGetServiceRequestersQuery({
+  const {data,refetch, isLoading} = useGetServiceRequestersQuery({
     owner: userId,
     serviceId: id,
   });
@@ -49,19 +49,18 @@ export const RequestersScreen = ({route}: any) => {
 
   const updateStatus = async (status: string, id: string) => {
     try {
-      console.log(id);
+      console.log(id,status);
       const res = await updateServiceRequest({
         status,
          id,
       }).unwrap();
+      refetch();
 
-      console.log(res);
     } catch (e) {
-
+console.log(e,'____');
       toast.error( e?.data?.message || 'Failed to update the service requests');
     }
   };
-
   const renderItem = ({item}: {item: any}) => {
     return (
       <Card
@@ -92,17 +91,18 @@ export const RequestersScreen = ({route}: any) => {
         <HStack g={5} mt={3}>
           <Center>
             <IconButton
-              onPress={() => updateStatus('pending', item?.serviceId)}
+              onPress={() => updateStatus('pending', item?.id)}
               padding={0}
               icon="pending"
               variant="vector"
               type="material"
-              color={item?.status === 'pending' ? 'primary' : 'secondary200'}
+              color={item?.status === 'pending' ? 'secondary' : 'secondary200'}
             />
-            <Text variant="b5regular">Cancel</Text>
+            <Text variant="b5regular">Pending</Text>
           </Center>
           <Center>
             <IconButton
+              onPress={() => updateStatus('rejected', item?.id)}
               padding={0}
               icon="cancel"
               variant="vector"
@@ -113,16 +113,18 @@ export const RequestersScreen = ({route}: any) => {
           </Center>
           <Center>
             <IconButton
+              onPress={() => updateStatus('approved', item?.id)}
               padding={0}
               icon="check-circle"
               variant="vector"
               type="feather"
-              color={item?.status === 'approved' ? 'primary' : 'secondary200'}
+              color={item?.status === 'approved' ? 'success' : 'secondary200'}
             />
             <Text variant="b5regular">Approved</Text>
           </Center>
           <Center>
             <IconButton
+              onPress={() => updateStatus('completed', item?.id)}
               padding={0}
               icon="clipboard-check"
               variant="vector"
@@ -140,6 +142,7 @@ export const RequestersScreen = ({route}: any) => {
     <Screen background="white">
       <ContentSafeAreaView flex={1} mt={5} g={5}>
         <FlashList
+        extraData={[1]}
           data={data?.results || []}
           renderItem={renderItem}
           ItemSeparatorComponent={() => <Box height={vs(10)} />}

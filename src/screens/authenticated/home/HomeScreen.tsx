@@ -16,6 +16,8 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
+import useHeader from '@/hooks/useHeader';
+import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
@@ -33,6 +35,7 @@ import {ActivityIndicator} from 'react-native';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
+  const safeAreaInset = useSafeAreaInsetsStyle(['top']);
   const [selectedAction, setSelectedAction] = useState<string>('service');
   const bottomSheetModalRef = useRef<BottomSheet>(null);
   const [search, setSearch] = useState('');
@@ -120,6 +123,7 @@ export const HomeScreen = () => {
 
   return (
     <Screen preset="fixed">
+      <Box  style={safeAreaInset} bg="primary" />
       <Box
         elevation={5}
         bg="white"
