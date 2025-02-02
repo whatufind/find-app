@@ -1,27 +1,27 @@
 /* eslint-disable no-catch-shadow */
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import FastImage from 'react-native-fast-image';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {Input} from '../ui/forms/Input';
-import ContentSafeAreaView from '../ui/layout/ContentSafeAreaView';
-import {Text} from '../ui/typography/Text';
-import IconButton from '../ui/media-icons/IconButton';
-import {Box} from '../ui/layout/Box';
-import {Button} from '../ui/forms/Button';
 import {
   useCreateServiceMutation,
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
 } from '@/store/apiSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {toast} from 'sonner-native';
-import {useNavigation} from '@react-navigation/native';
-import VStack from '../ui/layout/VStack';
-import Checkbox, {CheckboxStatus} from '../ui/forms/CheckBox';
-import HStack from '../ui/layout/HStack';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list';
+import FastImage from 'react-native-fast-image';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { toast } from 'sonner-native';
+import { Button } from '../ui/forms/Button';
+import Checkbox, { CheckboxStatus } from '../ui/forms/CheckBox';
+import { Input } from '../ui/forms/Input';
+import { Box } from '../ui/layout/Box';
+import ContentSafeAreaView from '../ui/layout/ContentSafeAreaView';
+import HStack from '../ui/layout/HStack';
+import VStack from '../ui/layout/VStack';
+import IconButton from '../ui/media-icons/IconButton';
+import { Text } from '../ui/typography/Text';
 
 const CreateService = () => {
   const navigation = useNavigation();
@@ -49,8 +49,8 @@ const CreateService = () => {
   useEffect(() => {
     if (data) {
       const formattedCategories = data?.results?.map?.((cat: any) => ({
-        label: cat?.name,
-        value: cat?.id,
+        key: cat?.id,
+        value: cat?.name,
       }));
       setCategories(formattedCategories);
     }
@@ -66,11 +66,9 @@ const CreateService = () => {
         },
       ]);
       setCurrentDay(new Date()); // Reset to the current date to avoid reusing the previous date
-      setCurrentTimeRange('');  // Clear the time range input
+      setCurrentTimeRange(''); // Clear the time range input
     }
   };
-
-
 
   const removeAvailabilityEntry = (index: number) => {
     setAvailabilityEntries(prevEntries =>
@@ -78,15 +76,12 @@ const CreateService = () => {
     );
   };
 
-
-
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
       setCurrentDay(selectedDate); // Set the selected date properly
     }
     setShowDatePicker(false); // Close the picker
   };
-
 
   const handleTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || new Date();
@@ -142,7 +137,7 @@ const CreateService = () => {
     formData.append('type', 'create');
 
     if (checked) {
-     setAvailabilityEntries([]);
+      setAvailabilityEntries([]);
     }
 
     // Append availability
@@ -155,6 +150,8 @@ const CreateService = () => {
     media.forEach(file => {
       formData.append('media', file);
     });
+
+    console.log(formData);
 
     try {
       await createService(formData).unwrap();
@@ -186,11 +183,7 @@ const CreateService = () => {
         onChangeText={setDescription}
       />
       <Box borderWidth={1} borderColor="secondary100" borderRadius="rounded-sm">
-        <RNPickerSelect
-          placeholder={{label: 'Select a category', value: ''}}
-          onValueChange={setCategory}
-          items={categories}
-        />
+        <SelectList setSelected={val => setCategory(val)} data={categories} />
       </Box>
       <Input
         placeholder="৳ Price of your service"
