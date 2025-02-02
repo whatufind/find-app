@@ -5,23 +5,24 @@ import {
   useGetServicesQuery,
 } from '@/store/apiSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { SelectList } from 'react-native-dropdown-select-list';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet} from 'react-native';
+import {SelectList} from 'react-native-dropdown-select-list';
 import FastImage from 'react-native-fast-image';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { toast } from 'sonner-native';
-import { Button } from '../ui/forms/Button';
-import Checkbox, { CheckboxStatus } from '../ui/forms/CheckBox';
-import { Input } from '../ui/forms/Input';
-import { Box } from '../ui/layout/Box';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {toast} from 'sonner-native';
+import {Button} from '../ui/forms/Button';
+import Checkbox, {CheckboxStatus} from '../ui/forms/CheckBox';
+import {Input} from '../ui/forms/Input';
+import {Box} from '../ui/layout/Box';
 import ContentSafeAreaView from '../ui/layout/ContentSafeAreaView';
 import HStack from '../ui/layout/HStack';
 import VStack from '../ui/layout/VStack';
 import IconButton from '../ui/media-icons/IconButton';
-import { Text } from '../ui/typography/Text';
+import {Text} from '../ui/typography/Text';
+import {detectDevice} from '@/utils';
 
 const CreateService = () => {
   const navigation = useNavigation();
@@ -166,6 +167,7 @@ const CreateService = () => {
     }
   };
 
+  console.log(showTimePicker);
   return (
     <ContentSafeAreaView gap={5} mt={4}>
       <Input
@@ -217,7 +219,7 @@ const CreateService = () => {
         <DateTimePicker
           value={currentDay}
           mode="date"
-          display="default"
+          display={detectDevice?.isIOS ? 'spinner' : 'default'}
           onChange={handleDateChange}
         />
       )}
@@ -226,7 +228,7 @@ const CreateService = () => {
         <DateTimePicker
           value={new Date()}
           mode="time"
-          display="default"
+          display={detectDevice?.isIOS ? 'spinner' : 'default'}
           onChange={handleTimeChange}
         />
       )}
