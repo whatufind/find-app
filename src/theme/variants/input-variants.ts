@@ -1,6 +1,8 @@
+import {vs} from 'react-native-size-matters';
+
 export const inputVariants = {
   defaults: {
-    height: 46,
+    height: vs(36),
     flexGrow: 1,
     width: 'auto',
     backgroundColor: 'white',
@@ -14,8 +16,8 @@ export const inputVariants = {
   },
   outline: {
     borderWidth: 1,
-    borderColor: 'secondary100',
-    borderRadius: 'rounded-sm',
+    borderColor: 'secondary200',
+    borderRadius: 'rounded-xs',
   },
   underlined: {
     borderBottomWidth: 1,
@@ -24,25 +26,27 @@ export const inputVariants = {
 
 export const inputSizeVariants = {
   defaults: {
-    height: 46,
+    height: vs(36),
   },
   default: {
-    height: 46,
+    height: vs(36),
   },
   lg: {
-    height: 56,
+    height: vs(40),
+  },
+  hu:{
+    height:vs(80),
   },
   sm: {
-    height: 40,
+    height: vs(32),
   },
-  hu: {
-    height: 200,
-  },
-
 };
 
 export const inputValidationStatus = {
   defaults: {},
+  default: {
+    borderColor: 'neutral',
+  },
   success: {
     borderColor: 'success',
   },
@@ -54,5 +58,8 @@ export const inputValidationStatus = {
   },
   warning: {
     borderColor: 'warning',
+  },
+  dark: {
+    borderColor: 'black',
   },
 };

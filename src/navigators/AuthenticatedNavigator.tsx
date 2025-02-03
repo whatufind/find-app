@@ -23,13 +23,11 @@ export const AuthenticatedNavigator = (): ReactElement => {
             <Stack.Screen
                 name="Register"
                 component={RegisterScreen}
-                options={{ animation: 'slide_from_bottom' }}
             />
 
             <Stack.Screen
                 name="ServiceDetails"
                 component={ServiceDetails}
-                options={{ animation: 'slide_from_bottom' }}
             />
             <Stack.Screen
                 name="Login"
