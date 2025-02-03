@@ -1,228 +1,145 @@
-import React, { useState } from 'react';
 import {
-    View,
-    TextInput,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    Platform,
-    Alert,
-    ToastAndroid,
-} from 'react-native';
-import { useLoginMutation } from '@/store/apiSlice'; // Import the login mutation
-import { toast } from 'sonner-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/store/store';
-import { setUser } from '@/store/slice/userSlice';
-import { useNavigation } from '@react-navigation/native';
-import { Badge, Header, HStack, IconButton } from '@/components';
+  Box,
+  Button,
+  ContentSafeAreaView,
+  Header,
+  HStack,
+  IconButton,
+  Input,
+  Screen,
+  Text,
+} from '@/components';
 import useHeader from '@/hooks/useHeader';
+import {useLoginMutation} from '@/store/apiSlice';
+import {setUser} from '@/store/slice/userSlice';
+import {AppDispatch} from '@/store/store';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {s} from 'react-native-size-matters';
+import {useDispatch} from 'react-redux';
+import {toast} from 'sonner-native';
+import * as yup from 'yup';
 
 
-const LoginHeader = () => {
-    return (
-        <Header >
-            <HStack>
-                <Header.BackAction />
-                <Header.Content title="Login" />
-            </HStack>
-        </Header>
-    );
-};
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Please enter a valid email')
+    .required('Email is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+});
 
 const LoginScreen = () => {
-    useHeader(LoginHeader);
-    const navigation = useNavigation();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const dispatch = useDispatch<AppDispatch>();
-    const [login, { isLoading }] = useLoginMutation(); // Call login mutation
-    const validateEmail = (email) => {
-        const regex = /\S+@\S+\.\S+/;
-        return regex.test(email);
-    };
+  const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const [login, {isLoading}] = useLoginMutation();
+  const [showPass, setShowPass] = useState(false);
 
-    const validatePassword = (password) => {
-        return password.length >= 6; // Password should be at least 6 characters
-    };
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-    const handleLogin = async () => {
-        // Reset previous errors
-        setEmailError('');
-        setPasswordError('');
+  const handleLogin = async data => {
+    try {
+      const response = await login(data).unwrap();
+      if (response) {
+        const {tokens, user} = response;
+        dispatch(
+          setUser({
+            userId: user.id,
+            userName: user.name,
+            accessToken: tokens.access.token,
+            refreshToken: tokens.refresh.token,
+          }),
+        );
+        toast.success('Successfully logged in');
+        navigation.goBack();
+      }
+    } catch (err) {
+      const errorMessage =
+        err?.message || err?.data?.message || "Can't login, please try again.";
+      toast.error(errorMessage);
+    }
+  };
 
-        let isValid = true;
-
-        // Email Validation
-        if (!email) {
-            setEmailError('Email is required');
-            isValid = false;
-        } else if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email');
-            isValid = false;
-        }
-
-        // Password Validation
-        if (!password) {
-            setPasswordError('Password is required');
-            isValid = false;
-        } else if (!validatePassword(password)) {
-            setPasswordError('Password must be at least 6 characters');
-            isValid = false;
-        }
-
-        if (!isValid) { return; } // If validation fails, stop here
-
-        try {
-            // Call the login API
-            const response = await login({ email, password }).unwrap();
-
-            if (response) {
-                const { tokens, user } = response; // Destructure the tokens and user data from the response
-
-                // Dispatch the setUser action with the necessary data
-                dispatch(setUser({
-                    userId: user.id,
-                    userName: user.name,
-                    accessToken: tokens.access.token,
-                    refreshToken: tokens.refresh.token,
-                }));
-
-                toast.success('Successfully logged in');
-                navigation.goBack();
-            }
-        } catch (err) {
-            // Show server error using Toast
-            const errors = err?.message || err?.data?.message;
-            const errorMessage = errors || "Can't login, please try again.";
-            toast.error(errorMessage);
-        }
-    };
-
-    return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            style={styles.container}
-        >
-            <View style={styles.logoContainer}>
-                {/* Optional: Add your logo here */}
-            </View>
-            <View style={styles.formContainer}>
-                <Text style={styles.title}>Find what you need!</Text>
-                <Text style={styles.subtitle}>Please log in to continue</Text>
-
-                <TextInput
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    style={[styles.input, emailError ? styles.inputError : null]}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
+  return (
+    <Screen background="white">
+      <ContentSafeAreaView flex={1} justifyContent="center">
+        <Box flex={1} alignItems="center" justifyContent="center">
+          <Box
+            alignSelf="center"
+            width={s(100)}
+            height={s(100)}
+            bg="primary"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius="rounded-full">
+            <Text fontSize={s(50)} color="white">
+              WF
+            </Text>
+          </Box>
+        </Box>
+        <Box flex={2}>
+          <Box g={3}>
+            <Text>Your Email Id</Text>
+            <Controller
+              control={control}
+              name="email"
+              render={({field: {onChange, value}}) => (
+                <Input
+                  placeholder="Email"
+                  value={value}
+                  onChangeText={onChange}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                 />
-                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+              )}
+            />
+            <Text color="danger">{errors?.email?.message}</Text>
+          </Box>
 
-                <TextInput
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    style={[styles.input, passwordError ? styles.inputError : null]}
-                    secureTextEntry
+          <Box>
+            <Text g={3}>Your Email Id</Text>
+            <Controller
+              control={control}
+              name="password"
+              render={({field: {onChange, value}}) => (
+                <Input
+                  placeholder="Password"
+                  value={value}
+                  onChangeText={onChange}
+                  secureTextEntry={!showPass}
+                  // eslint-disable-next-line react/no-unstable-nested-components
+                  right={() => (
+                    <IconButton
+                      onPress={() => setShowPass(!showPass)}
+                      icon={showPass ? 'eye' : 'eye-off'}
+                      variant="vector"
+                      type="feather"
+                    />
+                  )}
                 />
-                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+              )}
+            />
 
-                <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={isLoading}>
-                    <Text style={styles.buttonText}>{isLoading ? 'Logging in...' : 'Login'}</Text>
-                </TouchableOpacity>
-
-                <Text style={styles.forgotPassword}>Forgot your password?</Text>
-
-                <View style={styles.footer}>
-                    <Text>Don’t have an account? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.signUpText}>Sign Up</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </KeyboardAvoidingView>
-    );
+            <Text color="danger">{errors?.password?.message}</Text>
+          </Box>
+          <Button mt={5} disabled={isLoading} onPress={handleSubmit(handleLogin)}>
+            <Button.Text title={isLoading ? 'Logging in...' : 'Login'} />
+          </Button>
+        </Box>
+      </ContentSafeAreaView>
+    </Screen>
+  );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-        backgroundColor: '#ffffff',
-    },
-    logoContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    formContainer: {
-        flex: 2,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 8,
-        color: '#007bff',
-        textTransform: 'uppercase',
-    },
-    subtitle: {
-        fontSize: 16,
-        textAlign: 'center',
-        color: '#7c7c7c',
-        marginBottom: 20,
-    },
-    input: {
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#cccccc',
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        marginBottom: 16,
-        backgroundColor: '#f9f9f9',
-    },
-    inputError: {
-        borderColor: 'red',
-    },
-    button: {
-        backgroundColor: '#007bff',
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 8,
-        marginTop: 16,
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    forgotPassword: {
-        textAlign: 'center',
-        color: '#7c7c7c',
-        marginTop: 8,
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 16,
-    },
-    signUpText: {
-        color: '#007bff',
-        fontWeight: 'bold',
-    },
-    errorText: {
-        color: 'red',
-        fontSize: 12,
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-});
 
 export default LoginScreen;
