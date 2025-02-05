@@ -62,10 +62,10 @@ import * as yup from 'yup';
     };
 
     return (
-      <Screen background="primary">
+      <Screen background="white">
         <StatusBar barStyle="light-content" translucent backgroundColor={theme.colors.primary} />
-        <Box style={safeAreaInsets} />
-        <Box flex={1} justifyContent="center">
+        <Box style={safeAreaInsets} bg="primary" />
+        <Box flex={1} justifyContent="center" bg="primary">
           <Box flex={1} alignItems="center" justifyContent="center">
             <Box
               alignSelf="center"
