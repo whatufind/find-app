@@ -96,16 +96,16 @@ const LoginScreen = () => {
           </Box>
         </Box>
         <Box flex={2} bg="white" paddingTop={10} borderTopLeftRadius="rounded-hu" px={5} borderTopRightRadius="rounded-hu">
-        <Text textAlign="center" variant="heading2">Login Your Account</Text>
+        <Text textAlign="center" variant="heading2" mb={5}>Login Your Account</Text>
           <Box g={3}>
-            <Text color="white">Your Email Id</Text>
+            <Text color="black">Your Email Id</Text>
             <Controller
               control={control}
               name="email"
               render={({field: {onChange, value}}) => (
                 <Input
                   size="sm"
-                  placeholder="Email"
+                  placeholder="Enter Your Email"
                   value={value}
                   onChangeText={onChange}
                   keyboardType="email-address"
@@ -117,14 +117,14 @@ const LoginScreen = () => {
           </Box>
 
           <Box>
-            <Text g={3}>Your Email Id</Text>
+            <Text g={3}>Your Password</Text>
             <Controller
               control={control}
               name="password"
               render={({field: {onChange, value}}) => (
                 <Input
                   size="sm"
-                  placeholder="Password"
+                  placeholder="Enter Your PasswordPassword"
                   value={value}
                   onChangeText={onChange}
                   secureTextEntry={!showPass}

@@ -21,7 +21,7 @@ import {
     useGeUserQuery,
 } from '@/store/apiSlice';
 import { RootState } from '@/store/store';
-import { useNavigation } from '@react-navigation/native';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -35,7 +35,7 @@ const AccountHeader = ({ user }) => {
             <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
         </Badge>
           <IconButton variant="vector"
-          onPress={()=>navigation.navigate('AccountDrawer')}
+          onPress={()=>navigation.dispatch(DrawerActions.openDrawer())}
           icon="setting" color="white" size={10} type="ant" />
         </HStack>
       </Header>);

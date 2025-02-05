@@ -1,20 +1,19 @@
-import AccountInfoScreen from '@/screens/authenticated/account/AccountInfoScreen';
-import ManageAccountScreen from '@/screens/authenticated/account/ManageAccountScreen';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import * as React from 'react';
+import {AccountStack} from '../stacks/AccountStack';
+import DrawerContent from '@/screens/authenticated/account/DrawerContent';
 
 const Drawer = createDrawerNavigator();
 
-
 export default function AccountDrawerNavigator() {
   return (
-      <Drawer.Navigator initialRouteName="AccountInfo"
+    <Drawer.Navigator
+      initialRouteName="Account"
       screenOptions={{
-        // headerShown: false,
+        headerShown: false,
       }}
-      >
-        <Drawer.Screen name="AccountInfo" component={AccountInfoScreen} />
-        <Drawer.Screen name="Manage Profile" component={ManageAccountScreen} />
-      </Drawer.Navigator>
+      drawerContent={props => <DrawerContent {...props} />}>
+      <Drawer.Screen name="Account" component={AccountStack} />
+    </Drawer.Navigator>
   );
 }

@@ -19,6 +19,7 @@ import { FeedStack } from './stacks/FeedStack';
 import { HomeStack } from './stacks/HomeStack';
 import { CommunityStack } from './stacks/CommuniityStack';
 import { AccountStack } from './stacks/AccountStack';
+import AccountDrawerNavigator from './drawers/AccountDrawerNavigator';
 
 const BottomTabIcon = ({
     focused,
@@ -90,7 +91,7 @@ export const BottomTabNavigator: FC<BottomTabNavigatorProps> = (): ReactElement 
             />
             <Tab.Screen
                 name="AccountStack"
-                component={AccountStack}
+                component={AccountDrawerNavigator}
                 options={{
                     title: 'Account',
                 }}
