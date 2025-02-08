@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import LoginScreen from '@/screens/unauthenticated/login/LoginScreen';
 import AccountInfoScreen from '@/screens/authenticated/account/AccountInfoScreen';
+import ManageAccountScreen from '@/screens/authenticated/account/ManageAccountScreen';
 
 const Stack = createNativeStackNavigator<AccountStackParamList>();
 
@@ -39,6 +40,13 @@ export const AccountStack: FC<BottomTabNavigatorScreenProps<'AccountStack'>> = (
             <Stack.Screen
                 name="Account Info"
                 component={AccountInfoScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="Manage Account"
+                component={ManageAccountScreen}
                 options={{
                     headerShown: false,
                 }}

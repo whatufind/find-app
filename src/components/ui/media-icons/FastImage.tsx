@@ -1,4 +1,6 @@
 import {
+    border,
+    BorderProps,
     createRestyleComponent,
     layout,
     type LayoutProps,
@@ -12,11 +14,12 @@ import { type Theme } from '@/theme';
 
 type Props = LayoutProps<Theme> &
     SpacingProps<Theme> &
+    BorderProps<Theme>&
     FastImageProps & {
         source: Source;
     };
 
-const RestyleComponent = createRestyleComponent<Props, Theme>([layout, spacing], RNFastImage);
+const RestyleComponent = createRestyleComponent<Props, Theme>([layout, spacing,border], RNFastImage);
 
 export const FastImage: FC<Props> = ({ source, ...rest }): ReactElement => {
     return <RestyleComponent source={source} {...rest} />;

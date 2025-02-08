@@ -14,6 +14,7 @@ import {
     VStack,
 } from '@/components';
 import PersonalServiceCard from '@/components/organism/PersonalServiceCard';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
     useGetServiceRequestersQuery,
@@ -50,11 +51,11 @@ const ProfileSection = ({ user }) => (
     borderBottomRightRadius="rounded-lg"
   >
     <Center>
-      <Box alignItems="center" width={50} height={50} borderRadius="rounded-full" justifyContent="center" backgroundColor="white">
-        <FastImage width={20} height={20} source={{ uri: user?.profilePicture }} />
+      <Box alignItems="center" overflow="hidden" width={50} height={50} borderRadius="rounded-full" justifyContent="center" backgroundColor="white">
+        <FastImage width={50} height={50} source={{ uri: getImageUrl(user?.profilePicture) }} />
       </Box>
       <Text variant="heading3" color="white">{user?.name}</Text>
-      <Text variant="heading3" color="white">{user?.professions?.[0]}</Text>
+      <Text variant="heading3" color="white">{user?.professions?.[0]?.name}</Text>
     </Center>
   </Box>
 );

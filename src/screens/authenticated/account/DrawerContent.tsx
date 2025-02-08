@@ -9,6 +9,7 @@ import {Box, ContentSafeAreaView, Divider, FastImage, HStack, Text, VStack} from
 import {useSelector} from 'react-redux';
 import {RootState} from '@/store/store';
 import {useGeUserQuery} from '@/store/apiSlice';
+import { getImageUrl } from '@/helper/image';
 
 type DrawerItemProps = {
   icon: string;
@@ -18,8 +19,7 @@ type DrawerItemProps = {
 
 const DrawerList: DrawerItemProps[] = [
   {icon: 'account', label: 'Account Details', navigateTo: 'Account Info'},
-  {icon: 'account-multiple', label: 'Profile', navigateTo: 'Account Info'},
-  {icon: 'account-group', label: 'User', navigateTo: 'User'},
+  {icon: 'account-group', label: 'Manage Account', navigateTo: 'Manage Account'},
   {icon: 'bookshelf', label: 'Library', navigateTo: ''},
 ];
 
@@ -52,6 +52,7 @@ const DrawerItems: React.FC = () => {
   );
 };
 
+
 const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
   const {userId} = useSelector((state: RootState) => state.user);
   const {data: user, isLoading: isUserLoading} = useGeUserQuery({userId});
@@ -63,13 +64,15 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
          <FastImage
             width={40}
             height={40}
-            source={{uri: user?.profilePicture}}
+            borderRadius="rounded-full"
+
+            source={{uri: getImageUrl(user?.profilePicture)}}
           />
           <VStack>
             <Text variant="heading3" numberOfLines={1}>
               {user?.name}
             </Text>
-            <Text>Technician</Text>
+            <Text>{user?.professions?.[0]?.name}</Text>
           </VStack>
          </HStack>
          <Divider mt={5} borderColor="primary50"/>

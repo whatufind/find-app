@@ -9,6 +9,7 @@ import ServiceDetails from '@/screens/authenticated/service/ServiceDetails';
 import LoginScreen from '@/screens/unauthenticated/login/LoginScreen';
 import RegisterScreen from '@/screens/unauthenticated/login/RegisterScreen';
 import ReqestersScreen from '@/screens/authenticated/request/ReqestersScreen';
+import PublicProfileScreen from '@/screens/authenticated/public/PublicProfileScreen';
 
 const Stack = createNativeStackNavigator<AuthenticatedStackNavigatorParamList>();
 
@@ -37,6 +38,11 @@ export const AuthenticatedNavigator = (): ReactElement => {
             <Stack.Screen
                 name="Requesters"
                 component={ReqestersScreen}
+                options={{ animation: 'fade' }}
+            />
+            <Stack.Screen
+                name="Public Profile"
+                component={PublicProfileScreen}
                 options={{ animation: 'fade' }}
             />
 
