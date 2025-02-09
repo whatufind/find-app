@@ -20,7 +20,6 @@ type DrawerItemProps = {
 const DrawerList: DrawerItemProps[] = [
   {icon: 'account', label: 'Account Details', navigateTo: 'Account Info'},
   {icon: 'account-group', label: 'Manage Account', navigateTo: 'Manage Account'},
-  {icon: 'bookshelf', label: 'Library', navigateTo: ''},
 ];
 
 const DrawerLayout: React.FC<DrawerItemProps> = ({icon, label, navigateTo}) => {
