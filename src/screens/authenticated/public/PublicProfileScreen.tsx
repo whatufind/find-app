@@ -60,7 +60,7 @@ export const PublicProfileScreen = () => {
                   </Text>
                 </VStack>
                 <HStack>
-                  <Button size="sm" px={5}>
+                  <Button size="sm" height={s(20)} px={5}>
                     <Button.Text title="Follow" />
                   </Button>
                   <IconButton
@@ -68,6 +68,7 @@ export const PublicProfileScreen = () => {
                     type="ionicon"
                     variant="vector"
                   />
+                  <IconButton icon="phone" type="ant" variant="vector" />
                 </HStack>
               </HStack>
             </HStack>
@@ -97,10 +98,61 @@ export const PublicProfileScreen = () => {
             ))}
           </HStack>
         </ScrollView>
-        <HStack>
-          <Text color="black" variant="b3bold">Nationality:</Text>
-          <Text>Bangladeshi</Text>
-        </HStack>
+        <Box
+          g={3}
+          backgroundColor="white"
+          borderRadius="rounded-sm"
+          mt={5}
+          p={5}>
+          <HStack g={3}>
+            <Text color="black" variant="b3bold">
+              Nationality:
+            </Text>
+            <Text>Bangladeshi</Text>
+          </HStack>
+          <HStack g={3}>
+            <Text color="black" variant="b3bold">
+              Location:
+            </Text>
+            <Text>Dhaka Bangladesh</Text>
+          </HStack>
+          <HStack g={3}>
+            <Text color="black" variant="b3bold">
+              Contact Number:
+            </Text>
+            <Text>{user?.phone}</Text>
+          </HStack>
+          <HStack g={3}>
+            <Text color="black" variant="b3bold">
+              Primary Profession:
+            </Text>
+            <Text>{user?.professions?.[0]?.name}</Text>
+          </HStack>
+          <VStack>
+            <Text color="black" variant="b3bold">
+              Other Professions:
+            </Text>
+            <HStack flexWrap="nowrap" g={3}>
+              {user?.professions?.slice(1)?.map(profession => (
+                <Button px={3} key={profession?.id} size="sm" height={vs(15)}>
+                  <Button.Text title={profession?.name} />
+                </Button>
+              ))}
+            </HStack>
+          </VStack>
+          <VStack>
+            <Text color="black" variant="b3bold">
+            Skills:
+            </Text>
+            <HStack flexWrap="nowrap" g={3}>
+              {user?.skills?.map(skill => (
+                <Button variant="black" px={3} key={skill?.id} size="sm" height={vs(15)}>
+                  <Button.Text title={skill?.name} />
+                </Button>
+              ))}
+            </HStack>
+          </VStack>
+        </Box>
       </ContentSafeAreaView>
     </Screen>
   );
