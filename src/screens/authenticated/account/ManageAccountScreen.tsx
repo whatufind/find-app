@@ -11,6 +11,7 @@ import {
   Text,
   VStack,
 } from '@/components';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetProfessionsQuery,
@@ -136,11 +137,9 @@ export const ManageAccountScreen = () => {
         <Center>
           <Box
             alignItems="center"
-            width={50}
-            height={50}
-            borderRadius="rounded-full"
-            justifyContent="center"
-            backgroundColor="white">
+            width={70}
+            height={70}
+           >
             <IconButton
               zIndex={10}
               iconStyle="contained"
@@ -154,9 +153,13 @@ export const ManageAccountScreen = () => {
               color="primary"
             />
             <FastImage
-              width={20}
-              height={20}
-              source={{uri: user?.profilePicture}}
+            borderWidth={2}
+            borderColor="white"
+            borderRadius="rounded-full"
+
+              width={70}
+              height={70}
+              source={{uri: getImageUrl(user?.profilePicture)}}
             />
           </Box>
           <Text variant="heading3" color="white">

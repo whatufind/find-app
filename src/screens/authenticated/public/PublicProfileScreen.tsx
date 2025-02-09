@@ -16,7 +16,7 @@ import {
 } from '@/components';
 import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
-import {useGetServicesQuery, useGeUserQuery} from '@/store/apiSlice';
+import {useCreateChatMutation, useGetServicesQuery, useGeUserQuery} from '@/store/apiSlice';
 import {RootState} from '@/store/store';
 import theme from '@/theme';
 import {FlashList} from '@shopify/flash-list';
@@ -26,7 +26,20 @@ import {useNavigation} from '@react-navigation/native';
 const PublicProfileScreenHeader = () => <Box />;
 
 const ProfileHeader = ({user}) => {
+  const [createChat, { isLoading }] = useCreateChatMutation();
   const navigation = useNavigation();
+
+
+  const handleCreateChat = async () => {
+    try {
+      const data = await createChat({ userId: user.id }).unwrap();
+      console.log('Chat created:', data);
+      // Navigate to chat screen after creating chat
+      // navigation.navigate('ChatScreen', { chatId: data.id });
+    } catch (error) {
+      console.error('Error creating chat:', error);
+    }
+  };
   return (
     <Box height={theme.sizes.safeWidth / 1.5}>
       <Box position="absolute" zIndex={20} top={40} left={20}>
@@ -64,6 +77,7 @@ const ProfileHeader = ({user}) => {
                 <Button.Text title="Follow" />
               </Button>
               <IconButton
+              onPress={()=>handleCreateChat()}
                 icon="chatbubble-ellipses-outline"
                 type="ionicon"
                 variant="vector"
@@ -143,9 +157,8 @@ const Reviews = () => (
   </Box>
 );
 
-export const PublicProfileScreen = () => {
-  const {userId} = useSelector((state: RootState) => state.user);
-  const {data: user} = useGeUserQuery({userId});
+export const PublicProfileScreen = ({route}) => {
+  const {data: user} = useGeUserQuery({userId: route?.params?.id});
   const tabs = ['About', 'Top services', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
 

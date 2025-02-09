@@ -36,50 +36,36 @@ export const AccountInfoScreen = () => {
   console.log(user,'user information');
   const ProfileSection = () => (
     <Center>
-      <Box
-        alignItems="center"
-        width={50}
-        height={50}
-        borderRadius="rounded-full"
-        justifyContent="center"
-        backgroundColor="primary">
+
         <FastImage
-          width={20}
-          height={20}
+        borderRadius="rounded-full"
+        borderColor="primary"
+        borderWidth={2}
+          width={50}
+          height={50}
           source={{uri: getImageUrl(user?.profilePicture)}}
         />
-      </Box>
-      <Text variant="heading3" color="white">
-        {user?.name}
-      </Text>
-      <Text variant="heading3" color="white">
-        {user?.professions?.[0]?.name?.name}
-      </Text>
     </Center>
   );
   return (
     <Screen>
       <ProfileSection />
-      <ContentSafeAreaView g={5}>
+      <ContentSafeAreaView g={5} mt={5}>
         <VStack g={3}>
           <Text>Your Name</Text>
-          <Input />
+          <Input editable={false} value={user?.name} />
         </VStack>
         <VStack g={3}>
           <Text>Your Email</Text>
-          <Input />
+          <Input editable={false} value={user?.email} />
         </VStack>
         <VStack g={3}>
           <Text>Your Phone</Text>
-          <Input />
+          <Input editable={false}  value={user?.phone} />
         </VStack>
         <VStack g={3}>
-          <Text>Your Name</Text>
-          <Input />
-        </VStack>
-        <VStack g={3}>
-          <Text>Your Name</Text>
-          <Input />
+          <Text>Your Primary Profession</Text>
+          <Input editable={false} value={user?.professions?.[0]?.name} />
         </VStack>
       </ContentSafeAreaView>
     </Screen>

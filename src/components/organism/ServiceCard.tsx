@@ -19,7 +19,7 @@ export const ServiceCard: FC<any> = ({service}) => {
   const navigation = useNavigation();
 
   const navigateToPublicProfile = () => {
-    navigation.navigate('AuthenticatedStack', {screen: 'Public Profile'});
+    navigation.navigate('AuthenticatedStack', {screen: 'Public Profile', params: {id: service?.user?.id}});
   };
 
   const heroImage = getImageUrl(service?.user?.profilePicture);

@@ -17,7 +17,7 @@ import {
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
 import useHeader from '@/hooks/useHeader';
-import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
+import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
@@ -123,7 +123,7 @@ export const HomeScreen = () => {
 
   return (
     <Screen preset="fixed">
-      <Box  style={safeAreaInset} bg="primary" />
+      <Box style={safeAreaInset} bg="primary" />
       <Box
         elevation={5}
         bg="white"
@@ -184,7 +184,11 @@ export const HomeScreen = () => {
       </Box>
       <ContentSafeAreaView flex={1}>
         <FlashList
-        ListEmptyComponent={()=><Text textAlign="center" mt={3} variant="heading3" color="black">No Service Found</Text>}
+          ListEmptyComponent={() => (
+            <Text textAlign="center" mt={3} variant="heading3" color="black">
+              No Service Found
+            </Text>
+          )}
           contentContainerStyle={{paddingTop: 10}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}

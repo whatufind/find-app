@@ -164,6 +164,18 @@ export const apiSlice = createApi({
     getProfessions: builder.query<any[], void>({
       query: () => 'professions',
     }),
+
+    createChat: builder.mutation<any, {userId:string}>({
+      query: formData => ({
+        url: '/chats',
+        method: 'POST',
+        body: formData,
+      }),
+    }),
+
+    getChats: builder.query<any, void>({ query: () => '/chats' }),
+
+
   }),
 });
 
@@ -186,4 +198,6 @@ export const {
   useGetSkillsQuery,
   useGetProfessionsQuery,
   useUpdateUserMutation,
+  useCreateChatMutation,
+  useGetChatsQuery
 } = apiSlice;
