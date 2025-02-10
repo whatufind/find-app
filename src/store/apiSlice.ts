@@ -27,7 +27,6 @@ export const apiSlice = createApi({
 
       if (response.status === 401) {
         //do navigate to Login route
-        console.log('exe');
         navigate('Login');
       }
 
@@ -146,10 +145,6 @@ export const apiSlice = createApi({
     }),
     updateUser: builder.mutation<void, {id: string; userData: FormData}>({
         query: ({id, userData}) => {
-          // Log the id and userData
-          console.log('ID:', id);
-          console.log('User Data:', userData);
-
           return {
             url: `users/${id}`,
             method: 'PATCH',

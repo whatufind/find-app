@@ -152,8 +152,6 @@ const CreateService = () => {
       formData.append('media', file);
     });
 
-    console.log(formData);
-
     try {
       await createService(formData).unwrap();
       toast.success('Service created successfully');
@@ -167,7 +165,6 @@ const CreateService = () => {
     }
   };
 
-  console.log(showTimePicker);
   return (
     <ContentSafeAreaView gap={5} mt={4}>
       <Input

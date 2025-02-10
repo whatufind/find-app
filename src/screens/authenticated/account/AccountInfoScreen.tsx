@@ -33,7 +33,6 @@ export const AccountInfoScreen = () => {
   useHeader(AccountHeader);
 
 
-  console.log(user,'user information');
   const ProfileSection = () => (
     <Center>
 

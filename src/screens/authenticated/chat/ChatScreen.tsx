@@ -1,10 +1,12 @@
 import {
+  Animation,
   Box,
-  Button,
+  ContentSafeAreaView,
   FastImage,
   Header,
   HStack,
   Icon,
+  IconButton,
   Input,
   Screen,
   Text,
@@ -13,14 +15,16 @@ import {
 import {socket} from '@/config/socketConfig';
 import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
+import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
+import {useSendMessageMutation} from '@/store/apiSlice';
 import {RootState} from '@/store/store';
 import React, {useEffect, useState} from 'react';
+import {ActivityIndicator} from 'react-native';
 import {s} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 import Messages from './Messages';
-import {useSendMessageMutation} from '@/store/apiSlice';
-import {ActivityIndicator} from 'react-native';
 import theme from '@/theme';
+import { toast } from 'sonner-native';
 
 export const ChatScreen = ({route}) => {
   // eslint-disable-next-line react/no-unstable-nested-components
@@ -54,7 +58,7 @@ export const ChatScreen = ({route}) => {
   const [typing, setTyping] = useState(false);
   const [newMessage, setNewMessage] = useState('');
 
-  const [sendMessage, {isLoading}] = useSendMessageMutation();
+  const [sendMessage] = useSendMessageMutation();
 
   useEffect(() => {
     // Listen for messages from the server
@@ -72,16 +76,12 @@ export const ChatScreen = ({route}) => {
       formData.append('chatId', chatId);
       formData.append('content', newMessage);
 
-      // Append each file to the FormData object
-
       // Clear the message input after sending
       setNewMessage('');
-      console.log('execute');
       try {
         const data = await sendMessage(formData).unwrap();
-        console.log(data);
       } catch (error) {
-        console.log('failed to send message');
+       toast.error('Failed to send message');
       }
     }
   };
@@ -109,20 +109,36 @@ export const ChatScreen = ({route}) => {
     }, timerLength);
   };
 
+  const safeAreaInset = useSafeAreaInsetsStyle(['bottom']);
   return (
     <Screen>
-      {isTyping && (
-        <Box position="absolute" top={20} zIndex={10}>
-          <ActivityIndicator />
-        </Box>
-      )}
-      {chatId && <Messages chatId={chatId} />}
-      <Box>
-      <Input value={newMessage} onChangeText={e => handleTyping(e)} />
+      <ContentSafeAreaView flex={1}>
+        {chatId && <Messages chatId={chatId} />}
+        {isTyping && <Animation animation={'loader'} />}
+      </ContentSafeAreaView>
+      <Box
+        g={3}
+        px={5}
+        bg="white"
+        flexDirection="row"
+        pt={5}
+        alignItems="center">
+        <Input
+          placeholder="Type message"
+          size="sm"
+          value={newMessage}
+          onChangeText={e => handleTyping(e)}
+        />
+        <IconButton
+          color="primary"
+          onPress={handleSendMessage}
+          iconStyle="contained"
+          icon="send"
+          variant="vector"
+          type="feather"
+        />
       </Box>
-      <Button onPress={handleSendMessage}>
-        <Button.Text title="send" />
-      </Button>
+      <Box style={safeAreaInset} bg="white" />
     </Screen>
   );
 };

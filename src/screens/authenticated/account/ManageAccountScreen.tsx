@@ -11,7 +11,7 @@ import {
   Text,
   VStack,
 } from '@/components';
-import { getImageUrl } from '@/helper/image';
+import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetProfessionsQuery,
@@ -25,6 +25,7 @@ import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {MultipleSelectList} from 'react-native-dropdown-select-list';
 import {useSelector} from 'react-redux';
+import {toast} from 'sonner-native';
 import * as Yup from 'yup';
 
 const editSchema = Yup.object({
@@ -114,17 +115,11 @@ export const ManageAccountScreen = () => {
     );
 
     try {
-      console.log('Form Data:', formData);
-      console.log('Update Data:', updateData);
-
-      const res = await updateUser({ id: userId, userData: updateData }).unwrap();
-      console.log(res, 'Response from API');
-      console.log('User updated successfully');
+      const res = await updateUser({id: userId, userData: updateData}).unwrap();
     } catch (error) {
-      console.log('Failed to update user', error);
+      toast.error('Failed to update user');
     }
   };
-
 
   return (
     <Screen preset="auto">
@@ -135,11 +130,7 @@ export const ManageAccountScreen = () => {
         borderBottomLeftRadius="rounded-lg"
         borderBottomRightRadius="rounded-lg">
         <Center>
-          <Box
-            alignItems="center"
-            width={70}
-            height={70}
-           >
+          <Box alignItems="center" width={70} height={70}>
             <IconButton
               zIndex={10}
               iconStyle="contained"
@@ -153,10 +144,9 @@ export const ManageAccountScreen = () => {
               color="primary"
             />
             <FastImage
-            borderWidth={2}
-            borderColor="white"
-            borderRadius="rounded-full"
-
+              borderWidth={2}
+              borderColor="white"
+              borderRadius="rounded-full"
               width={70}
               height={70}
               source={{uri: getImageUrl(user?.profilePicture)}}

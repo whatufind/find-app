@@ -56,7 +56,6 @@ export const RequestersScreen = ({route}: any) => {
       refetch();
 
     } catch (e) {
-console.log(e,'____');
       toast.error( e?.data?.message || 'Failed to update the service requests');
     }
   };

@@ -85,7 +85,6 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   );
 
   const openBottomSheet = () => {
-    console.log('execute');
     sheetRef.current?.expand();
   };
 
