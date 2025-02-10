@@ -99,7 +99,6 @@ export const HomeScreen = () => {
     enableLocationIfNeeded();
   }, []);
 
-  console.log(userLocation);
 
   const safeAreaInset = useSafeAreaInsetsStyle(['top']);
   const [selectedAction, setSelectedAction] = useState<string>('service');

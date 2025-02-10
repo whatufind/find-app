@@ -16,7 +16,9 @@ import useHeader from '@/hooks/useHeader';
 import {useGetChatsQuery} from '@/store/apiSlice';
 import {getImageUrl} from '@/helper/image';
 import {s} from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/store/store';
 
 // Header Component
 const HomeHeader = () => (
@@ -45,32 +47,33 @@ const HomeHeader = () => (
 
 // Chat Item Component
 const ChatItem = ({item}: {item: any}) => {
-  const user = item.users?.[1];
-
+  const {userId} = useSelector((state: RootState) => state.user);
+  const target = item?.users.find(tUser => tUser.id !== userId);
   const navigation = useNavigation();
 
   return (
     <Box g={3} py={4}>
-     <Clickable
-     onPress={()=>navigation.navigate('Chat',{targetId:user?.id})}
-     >
-     <HStack g={3} px={5}>
-        <FastImage
-          width={s(40)}
-          height={s(40)}
-          borderRadius="rounded-full"
-          borderWidth={1}
-          borderColor="primary"
-          source={{uri: getImageUrl(user?.profilePicture)}}
-        />
-        <Box>
-          <Text variant="b2medium">{user?.name || 'Unknown'}</Text>
-          <Text variant="b3regular" numberOfLines={1}>
-            Hey buddy, what's up
-          </Text>
-        </Box>
-      </HStack>
-     </Clickable>
+      <Clickable
+        onPress={() =>
+          navigation.navigate('Chat', {user: target, chatId: item?._id})
+        }>
+        <HStack g={3} px={5}>
+          <FastImage
+            width={s(40)}
+            height={s(40)}
+            borderRadius="rounded-full"
+            borderWidth={1}
+            borderColor="primary"
+            source={{uri: getImageUrl(target?.profilePicture)}}
+          />
+          <Box>
+            <Text variant="b2medium">{target?.name || 'Unknown'}</Text>
+            <Text variant="b3regular" numberOfLines={1}>
+              Hey buddy, what's up
+            </Text>
+          </Box>
+        </HStack>
+      </Clickable>
       <Divider borderColor="neutral100" borderWidth={0.7} />
     </Box>
   );

@@ -23,6 +23,8 @@ import VStack from '../ui/layout/VStack';
 import IconButton from '../ui/media-icons/IconButton';
 import {Text} from '../ui/typography/Text';
 import {detectDevice} from '@/utils';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/store/store';
 
 const CreateService = () => {
   const navigation = useNavigation();
@@ -44,7 +46,7 @@ const CreateService = () => {
   const [categories, setCategories] = useState([]);
   const {data, error} = useGetServiceCategoriesQuery({});
   const [checked, setChecked] = useState(false);
-
+  const location = useSelector((state: RootState) => state.location);
   const {refetch} = useGetServicesQuery({});
 
   useEffect(() => {
@@ -136,6 +138,8 @@ const CreateService = () => {
     formData.append('category', category);
     formData.append('pricing', price);
     formData.append('type', 'create');
+    formData.append('location[latitude]',location.latitude );
+    formData.append('location[longitude]',location.longitude );
 
     if (checked) {
       setAvailabilityEntries([]);
@@ -161,6 +165,7 @@ const CreateService = () => {
         navigation.navigate('Login');
         return;
       }
+      console.log(error?.data?.message);
       toast.error(error?.data?.message || "Couldn't create service");
     }
   };

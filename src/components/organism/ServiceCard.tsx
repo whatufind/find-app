@@ -14,11 +14,25 @@ import IconButton from '../ui/media-icons/IconButton';
 import {Text} from '../ui/typography/Text';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/store/store';
+import getDistance from 'geolib/es/getDistance';
+import Icon from '../ui/media-icons/Icon';
 
 export const ServiceCard: FC<any> = ({service}) => {
   const {userId} = useSelector((state: RootState) => state.user);
-  const {latitude,longitude} = useSelector((state: RootState) => state.location);
-  // navigation.navigate('ServiceDetails', { id: service?.id });
+  const userLocation = useSelector((state: RootState) => state.location);
+  const serviceLocation = service?.location ? service?.location : userLocation;
+
+  const distance = getDistance(
+    {
+      latitude: userLocation.latitude || 0,
+      longitude: userLocation.longitude || 0,
+    },
+    {
+      latitude: serviceLocation.latitude || 0,
+      longitude: serviceLocation.longitude || 0,
+    },
+  );
+
   const navigation = useNavigation();
 
   const navigateToPublicProfile = () => {
@@ -60,10 +74,21 @@ export const ServiceCard: FC<any> = ({service}) => {
               source={{uri: heroImage}}
             />
           </Box>
-          <VStack>
-            <Text variant="b2medium">{service?.user?.name}</Text>
-            <Text variant="b5regular">Technician</Text>
-          </VStack>
+          <HStack flex={1} justifyContent="space-between">
+            <VStack>
+              <Text variant="b2medium">{service?.user?.name}</Text>
+              <Text variant="b5regular">Technician</Text>
+            </VStack>
+            {distance ? (
+              <HStack>
+                <Icon icon="location" type="evil" variant="vector" />
+                <Text>
+                  {(distance * 0.000621)?.toFixed(2)}
+                  Miles
+                </Text>
+              </HStack>
+            ) : null}
+          </HStack>
         </Clickable>
         <Divider borderWidth={0.5} />
         <Box

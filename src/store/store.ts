@@ -11,7 +11,7 @@ import locationReducer from './slice/locationSlice';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage, // Use AsyncStorage as the storage engine
-    whitelist: ['location'], // Only persist the user slice
+    // whitelist: ['user'], // Only persist the user slice
     // blacklist: ['user.register'], // If `register` is in the `user` state, blacklist it
 };
 
