@@ -17,6 +17,7 @@ import {RootState} from '@/store/store';
 
 export const ServiceCard: FC<any> = ({service}) => {
   const {userId} = useSelector((state: RootState) => state.user);
+  const {latitude,longitude} = useSelector((state: RootState) => state.location);
   // navigation.navigate('ServiceDetails', { id: service?.id });
   const navigation = useNavigation();
 

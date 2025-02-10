@@ -8,7 +8,6 @@ import {
   HStack,
   IconButton,
   Input,
-  List,
   Radio,
   Screen,
   ServiceCard,
@@ -16,12 +15,13 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import useHeader from '@/hooks/useHeader';
 import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
 } from '@/store/apiSlice';
+import {setLocation} from '@/store/slice/locationSlice';
+import {AppDispatch} from '@/store/store';
 import theme from '@/theme';
 import {colors} from '@/theme/colors';
 import BottomSheet, {
@@ -29,12 +29,78 @@ import BottomSheet, {
   BottomSheetScrollView,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
+import Geolocation from '@react-native-community/geolocation';
 import {FlashList} from '@shopify/flash-list';
-import React, {useRef, useState} from 'react';
-import {ActivityIndicator} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
+import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
+import {useDispatch} from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [userLocation, setUserLocation] = useState<any>({
+    longitude: 0,
+    latitude: 0,
+  });
+
+  const fetchCurrentLocation = async () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        dispatch(setLocation({latitude, longitude}));
+      },
+      error => console.log(error),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+    );
+  };
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'This app needs access to your location.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        fetchCurrentLocation();
+      } else {
+        console.warn('Location permission denied');
+      }
+    } else {
+      Geolocation.requestAuthorization();
+      fetchCurrentLocation();
+    }
+  };
+
+  const enableLocationIfNeeded = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const enabled = await promptForEnableLocationIfNeeded();
+        if (enabled) {
+          await requestLocationPermission();
+        }
+      } else {
+        Geolocation.requestAuthorization();
+        fetchCurrentLocation();
+      }
+    } catch (error) {
+      console.error('Error enabling location', error);
+    }
+  };
+
+  useEffect(() => {
+    enableLocationIfNeeded();
+  }, []);
+
+  console.log(userLocation);
+
   const safeAreaInset = useSafeAreaInsetsStyle(['top']);
   const [selectedAction, setSelectedAction] = useState<string>('service');
   const bottomSheetModalRef = useRef<BottomSheet>(null);

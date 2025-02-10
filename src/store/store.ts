@@ -6,12 +6,12 @@ import { apiSlice } from './apiSlice';  // Import your apiSlice
 import { persistStore, persistReducer } from 'redux-persist'; // Redux persist
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage for persistence
 import userReducer from './slice/userSlice'; // Import the user slice
-
+import locationReducer from './slice/locationSlice';
 // Persist configuration for the user slice
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage, // Use AsyncStorage as the storage engine
-    // whitelist: ['user'], // Only persist the user slice
+    whitelist: ['location'], // Only persist the user slice
     // blacklist: ['user.register'], // If `register` is in the `user` state, blacklist it
 };
 
@@ -25,6 +25,7 @@ export const store = configureStore({
         [apiSlice.reducerPath]: apiSlice.reducer,
         // Persisted user slice
         user: persistedUserReducer,
+        location:locationReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
