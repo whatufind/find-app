@@ -1,7 +1,3 @@
-import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
-import {s, vs} from 'react-native-size-matters';
-import {useSelector} from 'react-redux';
 import {
   Box,
   Button,
@@ -14,28 +10,34 @@ import {
   Text,
   VStack,
 } from '@/components';
+import PersonalServiceCard from '@/components/organism/PersonalServiceCard';
 import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
-import {useCreateChatMutation, useGetServicesQuery, useGeUserQuery} from '@/store/apiSlice';
+import {
+  useCreateChatMutation,
+  useGetServicesQuery,
+  useGeUserQuery,
+} from '@/store/apiSlice';
 import {RootState} from '@/store/store';
 import theme from '@/theme';
-import {FlashList} from '@shopify/flash-list';
-import PersonalServiceCard from '@/components/organism/PersonalServiceCard';
 import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
+import React, {useState} from 'react';
+import {ScrollView} from 'react-native';
+import {s, vs} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 
 const PublicProfileScreenHeader = () => <Box />;
 
 const ProfileHeader = ({user}) => {
-  const [createChat, { isLoading }] = useCreateChatMutation();
+  const [createChat, {isLoading}] = useCreateChatMutation();
   const navigation = useNavigation();
-
 
   const handleCreateChat = async () => {
     try {
-      const data = await createChat({ userId: user.id }).unwrap();
-      console.log('Chat created:', data);
-      // Navigate to chat screen after creating chat
-      // navigation.navigate('ChatScreen', { chatId: data.id });
+      const data = await createChat({userId: user.id}).unwrap();
+      const target = data?.users.find(tUser => tUser.id === user?.id);
+      navigation.navigate('Chat', {user: target, chatId: data?._id});
     } catch (error) {
       console.error('Error creating chat:', error);
     }
@@ -77,7 +79,7 @@ const ProfileHeader = ({user}) => {
                 <Button.Text title="Follow" />
               </Button>
               <IconButton
-              onPress={()=>handleCreateChat()}
+                onPress={() => handleCreateChat()}
                 icon="chatbubble-ellipses-outline"
                 type="ionicon"
                 variant="vector"

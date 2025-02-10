@@ -30,7 +30,7 @@ import { useSelector } from 'react-redux';
 const AccountHeader = ({ user }) => {
     const navigation = useNavigation();
     return ( <Header>
-        <Header.Content title="WF" subTitle={`Hi ${user?.name}, Good Morning`} />
+        <Header.Content title="WF" />
         <HStack>
           <Badge content="0" placement="topRight" variant="danger">
             <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
@@ -71,8 +71,8 @@ const StatsCard = ({ value, label }) => (
     gap={2}
     paddingHorizontal={5}
   >
-    <Text variant="b2bold" color="primary" textAlign="center">{value}</Text>
-    <Text textAlign="center" color="primary" variant="b2bold">{label}</Text>
+    <Text variant="b3semiBold" color="primary" textAlign="center">{value}</Text>
+    <Text textAlign="center" color="primary" variant="b3semiBold">{label}</Text>
   </Card>
 );
 
@@ -92,7 +92,7 @@ export const AccountScreen = () => {
     <Screen>
       <ProfileSection user={user} />
       <ContentSafeAreaView flex={1}>
-        <HStack g={5} mt={5} justifyContent="center">
+        <HStack g={5} mt={5} justifyContent="center" px={5}>
           <StatsCard value={services?.results?.length || 0} label="Services" />
           <StatsCard value={requests?.results?.length || 0} label="Requesters" />
           <StatsCard value={5} label="Completed" />

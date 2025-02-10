@@ -36,6 +36,10 @@ export type AuthenticatedStackNavigatorParamList = {
   Login: undefined;
   Requesters: undefined;
   'Public Profile': undefined;
+  Chat: {
+    user: {email: string; id: string; name: string; profilePicture: string};
+    chatId:string
+  };
 };
 
 //all screen params for bottom tab

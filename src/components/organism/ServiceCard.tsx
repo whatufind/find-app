@@ -1,25 +1,36 @@
-import {IMAGE_URL} from '@/store/apiSlice';
+import {getImageUrl} from '@/helper/image';
 import theme from '@/theme';
+import {useNavigation} from '@react-navigation/native';
 import React, {FC} from 'react';
 import {s} from 'react-native-size-matters';
+import Clickable from '../ui/forms/Clickable';
 import {Box} from '../ui/layout/Box';
 import Card from '../ui/layout/Card';
 import Divider from '../ui/layout/Divider';
 import HStack from '../ui/layout/HStack';
 import VStack from '../ui/layout/VStack';
 import {FastImage} from '../ui/media-icons/FastImage';
-import {Text} from '../ui/typography/Text';
-import {useNavigation} from '@react-navigation/native';
-import Clickable from '../ui/forms/Clickable';
 import IconButton from '../ui/media-icons/IconButton';
-import { getImageUrl } from '@/helper/image';
+import {Text} from '../ui/typography/Text';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/store/store';
 
 export const ServiceCard: FC<any> = ({service}) => {
+  const {userId} = useSelector((state: RootState) => state.user);
   // navigation.navigate('ServiceDetails', { id: service?.id });
   const navigation = useNavigation();
 
   const navigateToPublicProfile = () => {
-    navigation.navigate('AuthenticatedStack', {screen: 'Public Profile', params: {id: service?.user?.id}});
+    if (userId === service?.user?.id) {
+      navigation.navigate('Root', {
+        screen: 'AccountStack',
+      });
+    } else {
+      navigation.navigate('AuthenticatedStack', {
+        screen: 'Public Profile',
+        params: {id: service?.user?.id},
+      });
+    }
   };
 
   const heroImage = getImageUrl(service?.user?.profilePicture);
@@ -45,7 +56,7 @@ export const ServiceCard: FC<any> = ({service}) => {
               style={{borderRadius: theme.borderRadii['rounded-full']}}
               width={s(25)}
               height={s(25)}
-              source={{uri: heroImage }}
+              source={{uri: heroImage}}
             />
           </Box>
           <VStack>
@@ -68,12 +79,7 @@ export const ServiceCard: FC<any> = ({service}) => {
           <FastImage
             resizeMode="cover"
             source={{
-              uri:
-                IMAGE_URL +
-                '/' +
-                service?.media[0]?.substring(
-                  service.media[0]?.lastIndexOf('/') + 1,
-                ),
+              uri: getImageUrl(service?.media[0]),
             }}
             width={theme.sizes.safeWidth}
             height={theme.sizes.safeWidth}

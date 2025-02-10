@@ -10,6 +10,7 @@ import LoginScreen from '@/screens/unauthenticated/login/LoginScreen';
 import RegisterScreen from '@/screens/unauthenticated/login/RegisterScreen';
 import ReqestersScreen from '@/screens/authenticated/request/ReqestersScreen';
 import PublicProfileScreen from '@/screens/authenticated/public/PublicProfileScreen';
+import ChatScreen from '@/screens/authenticated/chat/ChatScreen';
 
 const Stack = createNativeStackNavigator<AuthenticatedStackNavigatorParamList>();
 
@@ -43,6 +44,11 @@ export const AuthenticatedNavigator = (): ReactElement => {
             <Stack.Screen
                 name="Public Profile"
                 component={PublicProfileScreen}
+                options={{ animation: 'fade' }}
+            />
+            <Stack.Screen
+                name="Chat"
+                component={ChatScreen}
                 options={{ animation: 'fade' }}
             />
 

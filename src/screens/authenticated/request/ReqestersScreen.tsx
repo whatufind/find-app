@@ -49,7 +49,6 @@ export const RequestersScreen = ({route}: any) => {
 
   const updateStatus = async (status: string, id: string) => {
     try {
-      console.log(id,status);
       const res = await updateServiceRequest({
         status,
          id,

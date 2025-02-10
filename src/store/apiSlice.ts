@@ -1,6 +1,7 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import {RootState} from '../store/store'; // Import RootState type for type safety
 import {navigate} from '@/utils/navigationHelper';
+import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
 export const BASE_URL = 'http://192.168.30.225:3000/v1';
@@ -33,6 +34,7 @@ export const apiSlice = createApi({
       return response;
     },
   }),
+  tagTypes: ['Messages'],
   endpoints: builder => ({
     // Fetch all services
     getServices: builder.query<any[], any>({
@@ -175,6 +177,29 @@ export const apiSlice = createApi({
 
     getChats: builder.query<any, void>({ query: () => '/chats' }),
 
+    sendMessage: builder.mutation<any, FormData>({
+      query: (formData) => ({
+        url: '/messages',
+        method: 'POST',
+        body: formData,
+      }),
+      invalidatesTags: ['Messages'],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          socket.emit('new message', data); // Emit message event after a successful request
+        } catch (error) {
+          console.error('Message sending failed:', error);
+        }
+      },
+    }),
+
+    getAllMessagesFromAChat: builder.query<any[], string>({
+      query: (chatId) => `/messages/${chatId}`,
+      providesTags: ['Messages'],
+    }),
+
+
 
   }),
 });
@@ -199,5 +224,7 @@ export const {
   useGetProfessionsQuery,
   useUpdateUserMutation,
   useCreateChatMutation,
-  useGetChatsQuery
+  useGetChatsQuery,
+  useSendMessageMutation,
+  useGetAllMessagesFromAChatQuery,
 } = apiSlice;
