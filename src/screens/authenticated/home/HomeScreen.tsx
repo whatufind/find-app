@@ -108,7 +108,7 @@ export const HomeScreen = () => {
   const [bottomSheetFor, setBottomSheetFor] = useState<bottomSheetType>('');
   const [selectedCategory, setselectedCategory] = useState('');
 
-  const {data, isLoading, error} = useGetServicesQuery({
+  const {data, isLoading, error,refetch} = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
     ...(selectedCategory && {category: selectedCategory}),
@@ -259,7 +259,7 @@ export const HomeScreen = () => {
           showsVerticalScrollIndicator={false}
           data={data?.results}
           ItemSeparatorComponent={() => <Box mb={5} />}
-          renderItem={({item}: {item: any}) => <ServiceCard service={item} />}
+          renderItem={({item}: {item: any}) => <ServiceCard refetch={refetch} service={item} />}
           keyExtractor={item => item._id ?? item.id}
           estimatedItemSize={200}
         />

@@ -124,7 +124,7 @@ const LoginScreen = () => {
               render={({field: {onChange, value}}) => (
                 <Input
                   size="sm"
-                  placeholder="Enter Your PasswordPassword"
+                  placeholder="Enter Your Password"
                   value={value}
                   onChangeText={onChange}
                   secureTextEntry={!showPass}

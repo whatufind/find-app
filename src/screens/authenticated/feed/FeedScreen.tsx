@@ -69,7 +69,7 @@ const ChatItem = ({item}: {item: any}) => {
           <Box>
             <Text variant="b2medium">{target?.name || 'Unknown'}</Text>
             <Text variant="b3regular" numberOfLines={1}>
-              Hey buddy, what's up
+            {item?.latestMessage?.content}
             </Text>
           </Box>
         </HStack>

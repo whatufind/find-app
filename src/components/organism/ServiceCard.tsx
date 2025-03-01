@@ -1,7 +1,7 @@
 import {getImageUrl} from '@/helper/image';
 import theme from '@/theme';
 import {useNavigation} from '@react-navigation/native';
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {s} from 'react-native-size-matters';
 import Clickable from '../ui/forms/Clickable';
 import {Box} from '../ui/layout/Box';
@@ -16,11 +16,18 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/store/store';
 import getDistance from 'geolib/es/getDistance';
 import Icon from '../ui/media-icons/Icon';
+import Geocoder from 'react-native-geocoding';
+import {useLikeAServiceMutation} from '@/store/apiSlice';
+import Center from '../ui/layout/Center';
 
-export const ServiceCard: FC<any> = ({service}) => {
+Geocoder.init('e3193649-0706-47d9-93f6-459236b83ed4');
+
+export const ServiceCard: FC<any> = ({service,refetch}) => {
   const {userId} = useSelector((state: RootState) => state.user);
   const userLocation = useSelector((state: RootState) => state.location);
   const serviceLocation = service?.location ? service?.location : userLocation;
+  const [location, setLocation] = useState<string>('');
+  const [likeAService, {isLoading}] = useLikeAServiceMutation();
 
   const distance = getDistance(
     {
@@ -50,9 +57,35 @@ export const ServiceCard: FC<any> = ({service}) => {
 
   const heroImage = getImageUrl(service?.user?.profilePicture);
 
+  const handleLikeService = async () => {
+    try {
+      const data = await likeAService({serviceId: service.id}).unwrap();
+refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const result = await Geocoder.from(
+          userLocation.latitude,
+          userLocation.longitude,
+        );
+        const address = result.results[0].formatted_address;
+        setLocation(address);
+      } catch (error) {
+        // console.error('Error fetching location:', error);
+        setLocation('Error fetching location');
+      }
+    };
+
+    fetchLocation();
+  }, [userLocation]);
+
   return (
-    <Clickable
-      onPress={() => navigation.navigate('ServiceDetails', {id: service?.id})}>
+    <>
       <Card variant="outlined" paddingBottom={5}>
         <Clickable
           onPress={() => navigateToPublicProfile()}
@@ -101,32 +134,50 @@ export const ServiceCard: FC<any> = ({service}) => {
           borderRadius="rounded-full"
           bg="primary"
         />
-        {service?.media?.[0] && (
-          <FastImage
-            resizeMode="cover"
-            source={{
-              uri: getImageUrl(service?.media[0]),
-            }}
-            width={theme.sizes.safeWidth}
-            height={theme.sizes.safeWidth}
-          />
-        )}
+        <Clickable
+          onPress={() =>
+            navigation.navigate('ServiceDetails', {id: service?.id})
+          }>
+          {service?.media?.[0] && (
+            <FastImage
+              resizeMode="cover"
+              source={{
+                uri: getImageUrl(service?.media[0]),
+              }}
+              width={theme.sizes.safeWidth}
+              height={theme.sizes.safeWidth}
+            />
+          )}
 
-        <VStack px={5} py={2}>
-          <HStack flex={1} justifyContent="space-between">
-            <Box flex={1}>
-              <Text variant="b1medium" color="black" numberOfLines={2}>
-                {service.title}
-              </Text>
-            </Box>
+          <VStack px={5} py={2}>
+            <HStack flex={1} justifyContent="space-between">
+              <Box flex={1}>
+                <Text variant="b1medium" color="black" numberOfLines={2}>
+                  {service.title}
+                </Text>
+              </Box>
+            </HStack>
+            <Text mb={3} color="black400" numberOfLines={10}>
+              {service.description}
+            </Text>
+          </VStack>
+        </Clickable>
+        <HStack justifyContent="space-between" px={5} pt={5}>
+          <HStack alignItems="center" justifyContent="center" mt={2}>
+            <Icon icon="heart" size={6} color="danger" />
+            <Icon icon="like1" color="primary" type="ant" size={6} variant="vector" />
+            <Text ml={3}>{service?.likes ?? 0}</Text>
           </HStack>
-          <Text mb={3} color="black400" numberOfLines={10}>
-            {service.description}
-          </Text>
-        </VStack>
+        </HStack>
         <Divider borderWidth={0.5} />
         <HStack justifyContent="space-between" px={5} pt={5}>
-          <IconButton icon="like2" variant="vector" type="ant" padding={0} />
+          <IconButton
+            icon="like2"
+            variant="vector"
+            type="ant"
+            padding={0}
+            onPress={() => handleLikeService()}
+          />
           <IconButton
             icon="comment"
             variant="vector"
@@ -137,7 +188,7 @@ export const ServiceCard: FC<any> = ({service}) => {
           <IconButton icon="share" variant="vector" type="fa" padding={0} />
         </HStack>
       </Card>
-    </Clickable>
+    </>
   );
 };
 

@@ -4,8 +4,8 @@ import {navigate} from '@/utils/navigationHelper';
 import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
-export const BASE_URL = 'http://192.168.30.225:3000/v1';
-export const IMAGE_URL = 'http://192.168.30.225:3000/uploads';
+export const BASE_URL = 'http://192.168.148.114:3000/v1';
+export const IMAGE_URL = 'http://192.168.148.114:3000/uploads';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
@@ -109,6 +109,13 @@ export const apiSlice = createApi({
         },
       }),
     }),
+    likeAService: builder.mutation<void, { serviceId: string }>({
+      query: ({ serviceId }) => ({
+          url: `/services/${serviceId}/like`,
+          method: 'PATCH',
+      }),
+  }),
+
     getPosts: builder.query<any[], void>({
       query: () => 'posts?sortBy=-createdAt&page=1&limit=10',
     }),
@@ -194,8 +201,6 @@ export const apiSlice = createApi({
       providesTags: ['Messages'],
     }),
 
-
-
   }),
 });
 
@@ -222,4 +227,5 @@ export const {
   useGetChatsQuery,
   useSendMessageMutation,
   useGetAllMessagesFromAChatQuery,
+  useLikeAServiceMutation,
 } = apiSlice;
