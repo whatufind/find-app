@@ -12,19 +12,17 @@ import {
   Text,
   VStack,
 } from '@/components';
-import {socket} from '@/config/socketConfig';
-import {getImageUrl} from '@/helper/image';
+import { socket } from '@/config/socketConfig';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
-import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
-import {useSendMessageMutation} from '@/store/apiSlice';
-import {RootState} from '@/store/store';
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator} from 'react-native';
-import {s} from 'react-native-size-matters';
-import {useSelector} from 'react-redux';
-import Messages from './Messages';
-import theme from '@/theme';
+import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
+import { useSendMessageMutation } from '@/store/apiSlice';
+import { RootState } from '@/store/store';
+import React, { useEffect, useState } from 'react';
+import { s } from 'react-native-size-matters';
+import { useSelector } from 'react-redux';
 import { toast } from 'sonner-native';
+import Messages from './Messages';
 
 export const ChatScreen = ({route}) => {
   // eslint-disable-next-line react/no-unstable-nested-components

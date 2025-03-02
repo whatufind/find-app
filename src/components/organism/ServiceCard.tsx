@@ -1,8 +1,17 @@
 import {getImageUrl} from '@/helper/image';
+import {useCreateChatMutation, useLikeAServiceMutation} from '@/store/apiSlice';
+import {RootState} from '@/store/store';
 import theme from '@/theme';
+import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {useNavigation} from '@react-navigation/native';
-import React, {FC, useEffect, useState} from 'react';
+import getDistance from 'geolib/es/getDistance';
+import React, {FC, useEffect, useRef, useState} from 'react';
+import {Linking} from 'react-native';
+import Geocoder from 'react-native-geocoding';
+import Share from 'react-native-share';
 import {s} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
+import {toast} from 'sonner-native';
 import Clickable from '../ui/forms/Clickable';
 import {Box} from '../ui/layout/Box';
 import Card from '../ui/layout/Card';
@@ -10,24 +19,31 @@ import Divider from '../ui/layout/Divider';
 import HStack from '../ui/layout/HStack';
 import VStack from '../ui/layout/VStack';
 import {FastImage} from '../ui/media-icons/FastImage';
+import Icon from '../ui/media-icons/Icon';
 import IconButton from '../ui/media-icons/IconButton';
 import {Text} from '../ui/typography/Text';
-import {useSelector} from 'react-redux';
-import {RootState} from '@/store/store';
-import getDistance from 'geolib/es/getDistance';
-import Icon from '../ui/media-icons/Icon';
-import Geocoder from 'react-native-geocoding';
-import {useLikeAServiceMutation} from '@/store/apiSlice';
-import Center from '../ui/layout/Center';
 
 Geocoder.init('e3193649-0706-47d9-93f6-459236b83ed4');
 
-export const ServiceCard: FC<any> = ({service,refetch}) => {
+export const ServiceCard: FC<any> = ({service, refetch}) => {
   const {userId} = useSelector((state: RootState) => state.user);
   const userLocation = useSelector((state: RootState) => state.location);
   const serviceLocation = service?.location ? service?.location : userLocation;
   const [location, setLocation] = useState<string>('');
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const [likeAService, {isLoading}] = useLikeAServiceMutation();
+  const [snapIndex, setSnapIndex] = useState<number>(-1);
+  const [createChat, {isLoading: isChatLoading}] = useCreateChatMutation();
+
+  const openBottomSheet = () => {
+    // Open bottom sheet
+    setSnapIndex(0);
+  };
+
+  const closeBottomSheet = () => {
+    // Close bottom sheet
+    setSnapIndex(-1);
+  };
 
   const distance = getDistance(
     {
@@ -60,9 +76,32 @@ export const ServiceCard: FC<any> = ({service,refetch}) => {
   const handleLikeService = async () => {
     try {
       const data = await likeAService({serviceId: service.id}).unwrap();
-refetch();
+      refetch();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleShare = async () => {
+    const shareOptions = {
+      message: service?.title,
+      url: heroImage,
+    };
+
+    try {
+      const shareResponse = await Share.open(shareOptions);
+      console.log('Share Response:', JSON.stringify(shareResponse));
+    } catch (error) {
+      console.log('Share Error:', error);
+    }
+  };
+
+  const handleRedirectToChat = async () => {
+    try {
+      const data = await createChat({userId: service.user.id}).unwrap();
+      navigation.navigate('Chat', {user: service?.user?.id, chatId: data?._id});
+    } catch (error) {
+      toast.error('Failed to create chat message');
     }
   };
 
@@ -84,6 +123,7 @@ refetch();
     fetchLocation();
   }, [userLocation]);
 
+  const isLiked = service?.likedBy?.findIndex(liker => liker === userId) !== -1;
   return (
     <>
       <Card variant="outlined" paddingBottom={5}>
@@ -110,17 +150,19 @@ refetch();
           <HStack flex={1} justifyContent="space-between">
             <VStack>
               <Text variant="b2medium">{service?.user?.name}</Text>
-              <Text variant="b5regular">Technician</Text>
-            </VStack>
-            {distance ? (
               <HStack>
-                <Icon icon="location" type="evil" variant="vector" />
-                <Text>
-                  {(distance * 0.000621)?.toFixed(2)}
-                  Miles
-                </Text>
+                <Text>Engineer</Text>
+                {distance ? (
+                  <HStack>
+                    <Icon icon="location" type="evil" variant="vector" />
+                    <Text>
+                      {(distance * 0.000621)?.toFixed(2)}
+                      Miles
+                    </Text>
+                  </HStack>
+                ) : null}
               </HStack>
-            ) : null}
+            </VStack>
           </HStack>
         </Clickable>
         <Divider borderWidth={0.5} />
@@ -129,11 +171,27 @@ refetch();
           height={50}
           position="absolute"
           zIndex={10}
-          right={-20}
-          top={-30}
+          right={-5}
+          top={-5}
+          alignItems="center"
+          justifyContent="center"
           borderRadius="rounded-full"
-          bg="primary"
-        />
+          bg="primary">
+          {service?.averageRating > 0 && (
+            <>
+              <Icon
+                icon="star"
+                color="warning200"
+                size={7}
+                type="ant"
+                variant="vector"
+              />
+              <Text color="white" textAlign="center">
+                {service?.averageRating}
+              </Text>
+            </>
+          )}
+        </Box>
         <Clickable
           onPress={() =>
             navigation.navigate('ServiceDetails', {id: service?.id})
@@ -165,29 +223,76 @@ refetch();
         <HStack justifyContent="space-between" px={5} pt={5}>
           <HStack alignItems="center" justifyContent="center" mt={2}>
             <Icon icon="heart" size={6} color="danger" />
-            <Icon icon="like1" color="primary" type="ant" size={6} variant="vector" />
+            <Icon
+              icon="like1"
+              color="primary"
+              type="ant"
+              size={6}
+              variant="vector"
+            />
             <Text ml={3}>{service?.likes ?? 0}</Text>
           </HStack>
         </HStack>
         <Divider borderWidth={0.5} />
         <HStack justifyContent="space-between" px={5} pt={5}>
           <IconButton
-            icon="like2"
+            icon={isLiked ? 'like1' : 'like2'}
             variant="vector"
             type="ant"
+            color={isLiked ? 'primary' : 'black'}
             padding={0}
-            onPress={() => handleLikeService()}
+            onPress={handleLikeService}
           />
           <IconButton
-            icon="comment"
+            icon="telephone"
             variant="vector"
             size={9}
-            type="evil"
+            type="foundation"
+            onPress={openBottomSheet}
             padding={0}
           />
-          <IconButton icon="share" variant="vector" type="fa" padding={0} />
+          <IconButton
+            onPress={handleShare}
+            icon="share"
+            variant="vector"
+            type="fa"
+            padding={0}
+          />
         </HStack>
       </Card>
+
+      <BottomSheet
+        enablePanDownToClose
+        ref={bottomSheetRef}
+        index={snapIndex}
+        snapPoints={['25%', '50%', '90%']} // Adjust snap points
+        onClose={closeBottomSheet}>
+        <BottomSheetView>
+          <HStack alignItems="center" justifyContent="space-between" mx={5}>
+            <IconButton
+              onPress={() => handleRedirectToChat()}
+              type="ant"
+              variant="vector"
+              icon="message1"
+              color="primary"
+            />
+            <IconButton
+              type="feather"
+              variant="vector"
+              icon="phone"
+              onPress={() => Linking.openURL(`tel:${service?.user?.phone}`)}
+              color="black"
+            />
+            <IconButton
+              onPress={() => Linking.openURL('whatsapp://app')}
+              type="fa"
+              variant="vector"
+              icon="whatsapp"
+              color="success"
+            />
+          </HStack>
+        </BottomSheetView>
+      </BottomSheet>
     </>
   );
 };
