@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import LoginScreen from '@/screens/unauthenticated/login/LoginScreen';
 import AccountInfoScreen from '@/screens/authenticated/account/AccountInfoScreen';
 import ManageAccountScreen from '@/screens/authenticated/account/ManageAccountScreen';
+import ChangePasswordScreen from '@/screens/authenticated/account/ChangePasswordScreen';
 
 const Stack = createNativeStackNavigator<AccountStackParamList>();
 
@@ -47,6 +48,13 @@ export const AccountStack: FC<BottomTabNavigatorScreenProps<'AccountStack'>> = (
             <Stack.Screen
                 name="Manage Account"
                 component={ManageAccountScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="Change Password"
+                component={ChangePasswordScreen}
                 options={{
                     headerShown: false,
                 }}

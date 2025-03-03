@@ -24,6 +24,7 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {MultipleSelectList} from 'react-native-dropdown-select-list';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
 import {toast} from 'sonner-native';
 import * as Yup from 'yup';
@@ -33,6 +34,7 @@ const editSchema = Yup.object({
   phone: Yup.string()
     .required('Mobile Number is required')
     .matches(/^(01[3-9]\d{8})$/, 'Please enter a valid phone number'),
+  profilePicture: Yup.mixed(),
   about: Yup.string()
     .trim()
     .test('wordCount', 'About cannot be more than 100 words', value => {
@@ -58,10 +60,11 @@ export const ManageAccountScreen = () => {
 
   const {userId} = useSelector((state: RootState) => state.user);
   useHeader(AccountHeader);
-  const {data: user,refetch} = useGeUserQuery({userId});
+  const {data: user, refetch} = useGeUserQuery({userId});
   const {data: skillsData} = useGetSkillsQuery({});
   const {data: professionData} = useGetProfessionsQuery({});
   const [updateUser, {isLoading}] = useUpdateUserMutation();
+  const [profilePicture, setprofilePicture] = useState('');
 
   const [professionIds, setProfessionIds] = useState([]);
   const [skillIds, setSkillIds] = useState([]);
@@ -77,8 +80,12 @@ export const ManageAccountScreen = () => {
       name: user?.name || '',
       phone: user?.phone || '',
       about: user?.about || '',
-      professions: Array.isArray(user?.professions) ? user.professions.map((item) => item.id) : [],
-      skills: Array.isArray(user?.skills) ? user.skills.map((item) => item.id) : [],
+      professions: Array.isArray(user?.professions)
+        ? user.professions.map(item => item.id)
+        : [],
+      skills: Array.isArray(user?.skills)
+        ? user.skills.map(item => item.id)
+        : [],
     },
   });
 
@@ -87,8 +94,16 @@ export const ManageAccountScreen = () => {
       setValue('name', user.name || '');
       setValue('phone', user.phone || '');
       setValue('about', user.about || '');
-      setValue('professions', Array.isArray(user?.professions) ? user.professions.map((item) => item.id) : []);
-      setValue('skills', Array.isArray(user?.skills) ? user.skills.map((item) => item.id) : []);
+      setValue(
+        'professions',
+        Array.isArray(user?.professions)
+          ? user.professions.map(item => item.id)
+          : [],
+      );
+      setValue(
+        'skills',
+        Array.isArray(user?.skills) ? user.skills.map(item => item.id) : [],
+      );
     }
   }, [user, setValue]);
 
@@ -107,21 +122,43 @@ export const ManageAccountScreen = () => {
     updateData.append('name', formData.name);
     updateData.append('phone', formData.phone);
     updateData.append('about', formData.about);
-    console.log(formData.professions);
     formData.professions.forEach((prof: string) =>
       updateData.append('professions', prof),
     );
+    if (profilePicture) {
+      updateData.append('profilePicture',profilePicture);
+    }
     formData.skills.forEach((skill: string) =>
       updateData.append('skills', skill),
     );
 
     try {
       const res = await updateUser({id: userId, userData: updateData}).unwrap();
-      toast.success('Information updated successfully',{duration:2000});
+      toast.success('Information updated successfully', {duration: 2000});
       refetch();
     } catch (error) {
+      console.log(error);
       toast.error('Failed to update');
     }
+  };
+
+  const handleChooseMedia = () => {
+    const options = {
+      mediaType: 'photo',
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.errorCode) {
+        return;
+      } else {
+        const files = response.assets?.map(asset => ({
+          uri: asset.uri,
+          type: asset.type,
+          name: asset.fileName,
+        }));
+        setprofilePicture(files?.[0]);
+      }
+    });
   };
 
   return (
@@ -133,20 +170,8 @@ export const ManageAccountScreen = () => {
         borderBottomLeftRadius="rounded-lg"
         borderBottomRightRadius="rounded-lg">
         <Center>
-          <Box alignItems="center" width={70} height={70}>
-            <IconButton
-              zIndex={10}
-              iconStyle="contained"
-              position="absolute"
-              top={-10}
-              right={-10}
-              size={5}
-              icon="edit"
-              type="material"
-              variant="vector"
-              color="primary"
-            />
-            <FastImage
+          <Box alignItems="center" width={70} height={70} mb={5}>
+          <FastImage
               borderWidth={2}
               borderColor="white"
               borderRadius="rounded-full"
@@ -154,6 +179,20 @@ export const ManageAccountScreen = () => {
               height={70}
               source={{uri: getImageUrl(user?.profilePicture)}}
             />
+           <IconButton
+              zIndex={10}
+              iconStyle="contained"
+              position="absolute"
+              bottom={-10}
+              right={-30}
+              size={5}
+              icon="edit"
+              onPress={handleChooseMedia}
+              type="material"
+              variant="vector"
+              color="primary"
+            />
+
           </Box>
           <Text variant="heading3" color="white">
             {user?.name}
@@ -220,8 +259,7 @@ export const ManageAccountScreen = () => {
         <VStack>
           <Text>Your Professions</Text>
           <MultipleSelectList
-            setSelected={val =>{
-
+            setSelected={val => {
               setProfessionIds(val);
             }}
             data={professions}

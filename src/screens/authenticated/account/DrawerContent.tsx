@@ -6,10 +6,12 @@ import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {DrawerContentComponentProps} from '@react-navigation/drawer';
 import {Box, ContentSafeAreaView, Divider, FastImage, HStack, Text, VStack} from '@/components';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '@/store/store';
-import {useGeUserQuery} from '@/store/apiSlice';
+import {useGeUserQuery, useLogoutMutation} from '@/store/apiSlice';
 import { getImageUrl } from '@/helper/image';
+import { toast } from 'sonner-native';
+import { signOut } from '@/store/slice/userSlice';
 
 type DrawerItemProps = {
   icon: string;
@@ -20,6 +22,7 @@ type DrawerItemProps = {
 const DrawerList: DrawerItemProps[] = [
   {icon: 'account', label: 'Account Details', navigateTo: 'Account Info'},
   {icon: 'account-group', label: 'Manage Account', navigateTo: 'Manage Account'},
+  {icon: 'account-key', label: 'Change Password', navigateTo: 'Change Password'},
 ];
 
 const DrawerLayout: React.FC<DrawerItemProps> = ({icon, label, navigateTo}) => {
@@ -53,8 +56,23 @@ const DrawerItems: React.FC = () => {
 
 
 const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
-  const {userId} = useSelector((state: RootState) => state.user);
+  const {userId,refreshToken} = useSelector((state: RootState) => state.user);
   const {data: user, isLoading: isUserLoading} = useGeUserQuery({userId});
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+const [logout,{isLoading}] = useLogoutMutation();
+
+  const handleSignOut = async ()=>{
+    try {
+      const res = await logout({refreshToken}).unwrap();
+      toast.success('Logout successfull!',{duration:2000});
+      dispatch(signOut());
+      navigation.navigate('Login');
+
+    } catch (error) {
+      toast.error(error || 'Failed to logout',{duration:2000});
+    }
+  };
   return (
     <Box flex={1}>
       <DrawerContentScrollView {...props}>
@@ -79,6 +97,8 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = props => {
         <DrawerItems />
       </DrawerContentScrollView>
       <DrawerItem
+      onPress={handleSignOut}
+      inactiveTintColor="red"
         icon={({color, size}) => (
           <Icon name="exit-to-app" color={color} size={size} />
         )}

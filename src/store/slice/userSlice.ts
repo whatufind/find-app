@@ -22,7 +22,7 @@ const userSlice = createSlice({
             state.accessToken = accessToken;
             state.refreshToken = refreshToken;
         },
-        logout: (state) => {
+        signOut: (state) => {
             state.userId = null;
             state.userName = null;
             state.accessToken = null;
@@ -32,7 +32,7 @@ const userSlice = createSlice({
 });
 
 // Actions
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, signOut } = userSlice.actions;
 
 // Reducer
 export default userSlice.reducer;

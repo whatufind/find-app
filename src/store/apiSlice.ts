@@ -61,6 +61,23 @@ export const apiSlice = createApi({
       }),
     }),
 
+    // User logout
+    logout: builder.mutation<any, {refreshToken:string}>({
+      query: credentials => ({
+        url: '/auth/logout',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+
+    changePassword: builder.mutation({
+      query: ({ password, token }) => ({
+          url: `/auth//reset-password?token=${token}`,
+          method: 'POST',
+          body: { password },
+      }),
+  }),
+
     // Register a new user
     register: builder.mutation<
       any,
@@ -228,4 +245,6 @@ export const {
   useSendMessageMutation,
   useGetAllMessagesFromAChatQuery,
   useLikeAServiceMutation,
+  useLogoutMutation,
+  useChangePasswordMutation,
 } = apiSlice;
