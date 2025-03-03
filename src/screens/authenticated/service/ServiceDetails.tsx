@@ -215,35 +215,46 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
             </Box>
           </Card>
         </Box>
-        <Text variant="heading2" my={5}>Reviews </Text>
+        <Text variant="heading2" my={5}>
+          Reviews{' '}
+        </Text>
         <FlashList
           data={reviews?.results}
-          ItemSeparatorComponent={()=><Box height={vs(10)}/> }
+          ItemSeparatorComponent={() => <Box height={vs(10)} />}
           keyExtractor={item => item?.id}
           renderItem={({item}) => (
             <Card variant="outlined" padding={5}>
-               <Box py={2} flexDirection="row" g={3} alignItems="center">
-              <Box
-                borderColor="primary"
-                borderWidth={2}
-                p={2}
-                borderRadius="rounded-full">
-                <FastImage
-                  style={{borderRadius: theme.borderRadii['rounded-full']}}
-                  width={s(25)}
-                  height={s(25)}
-                  source={{uri: item?.user?.profilePicture}}
-                />
+              <Box py={2} flexDirection="row" g={3} alignItems="center">
+                <Box
+                  borderColor="primary"
+                  borderWidth={2}
+                  p={2}
+                  borderRadius="rounded-full">
+                  <FastImage
+                    style={{borderRadius: theme.borderRadii['rounded-full']}}
+                    width={s(25)}
+                    height={s(25)}
+                    source={{uri: item?.user?.profilePicture}}
+                  />
+                </Box>
+                <VStack>
+                  <Text variant="b2medium">{item?.user?.name}</Text>
+                  <HStack g={2}>
+                    {Array(Math.ceil(item?.rating))
+                      ?.fill(null)
+                      .map((_, index) => (
+                        <Icon
+                          key={index}
+                          icon="star"
+                          color="warning"
+                          size={6}
+                          type="ant"
+                          variant="vector"
+                        />
+                      ))}
+                  </HStack>
+                </VStack>
               </Box>
-              <VStack>
-                <Text variant="b2medium">{item?.user?.name}</Text>
-               <HStack  g={2}>
-               {Array(item?.rating).fill(null).map((_, index) => (
-    <Icon key={index} icon="star" color="warning" size={6} type="ant" variant="vector" />
-  ))}
-               </HStack>
-              </VStack>
-            </Box>
               <Text variant="b3regular">{item?.comment}</Text>
             </Card>
           )}

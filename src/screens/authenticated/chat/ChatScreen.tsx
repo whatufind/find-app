@@ -1,6 +1,7 @@
 import {
   Animation,
   Box,
+  Clickable,
   ContentSafeAreaView,
   FastImage,
   Header,
@@ -12,17 +13,18 @@ import {
   Text,
   VStack,
 } from '@/components';
-import { socket } from '@/config/socketConfig';
-import { getImageUrl } from '@/helper/image';
+import {socket} from '@/config/socketConfig';
+import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
-import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
-import { useSendMessageMutation } from '@/store/apiSlice';
-import { RootState } from '@/store/store';
-import React, { useEffect, useState } from 'react';
-import { s } from 'react-native-size-matters';
-import { useSelector } from 'react-redux';
-import { toast } from 'sonner-native';
+import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
+import {useSendMessageMutation} from '@/store/apiSlice';
+import {RootState} from '@/store/store';
+import React, {useEffect, useState} from 'react';
+import {s} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
+import {toast} from 'sonner-native';
 import Messages from './Messages';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 export const ChatScreen = ({route}) => {
   // eslint-disable-next-line react/no-unstable-nested-components
@@ -56,6 +58,11 @@ export const ChatScreen = ({route}) => {
   const [typing, setTyping] = useState(false);
   const [newMessage, setNewMessage] = useState('');
 
+    const [media, setMedia] = useState<
+      {uri: string; type: string; name: string}[]
+    >([]);
+
+
   const [sendMessage] = useSendMessageMutation();
 
   useEffect(() => {
@@ -67,19 +74,26 @@ export const ChatScreen = ({route}) => {
   }, []);
 
   const handleSendMessage = async () => {
-    if (chatId && newMessage.trim() !== '') {
+    if (chatId && newMessage.trim() !== '' || media.length > 0) {
       socket.emit('stop typing', chatId);
 
       const formData = new FormData();
       formData.append('chatId', chatId);
       formData.append('content', newMessage);
 
+      media.forEach((file) => {
+        formData.append('media', file);
+    });
+
+
+
       // Clear the message input after sending
       setNewMessage('');
+      setMedia([]);
       try {
         const data = await sendMessage(formData).unwrap();
       } catch (error) {
-       toast.error('Failed to send message');
+        toast.error('Failed to send message');
       }
     }
   };
@@ -107,6 +121,31 @@ export const ChatScreen = ({route}) => {
     }, timerLength);
   };
 
+
+    const handleChooseMedia = () => {
+      const options = {
+        mediaType: 'photo', // 'photo', 'video', or 'mixed'
+        selectionLimit: 0, // 0 for unlimited selection
+      };
+
+      launchImageLibrary(options, response => {
+        if (response.errorCode) {
+          console.error('ImagePicker Error:', response.errorMessage);
+        } else {
+          const files = response.assets?.map(asset => ({
+            uri: asset.uri,
+            type: asset.type,
+            name: asset.fileName,
+          }));
+
+          if (files) {
+            setMedia(prevMedia => [...prevMedia, ...files]);
+          }
+        }
+      });
+    };
+
+
   const safeAreaInset = useSafeAreaInsetsStyle(['bottom']);
   return (
     <Screen>
@@ -115,11 +154,12 @@ export const ChatScreen = ({route}) => {
         {isTyping && <Animation animation={'loader'} />}
       </ContentSafeAreaView>
       <Box
-        g={3}
+        g={4}
         px={5}
         bg="white"
         flexDirection="row"
         pt={5}
+        mb={5}
         alignItems="center">
         <Input
           placeholder="Type message"
@@ -127,6 +167,9 @@ export const ChatScreen = ({route}) => {
           value={newMessage}
           onChangeText={e => handleTyping(e)}
         />
+        <Clickable onPress={handleChooseMedia}>
+          <Icon icon="image" color="primary" />
+        </Clickable>
         <IconButton
           color="primary"
           onPress={handleSendMessage}

@@ -13,6 +13,7 @@ import {FlashList} from '@shopify/flash-list';
 import {socket} from '../../../config/socketConfig';
 import {RootState} from '../../../store/store';
 import {ActivityIndicator} from 'react-native';
+import theme from '@/theme';
 
 type MessagesProps = {
   chatId: string;
@@ -80,6 +81,17 @@ const Messages: FC<MessagesProps> = ({chatId}) => {
           marginLeft: isSameSenderMargin(messages, m, index, userId),
           maxWidth: '75%',
         }}>
+        {m?.media?.map((item,index) => {
+          return (
+            <FastImage
+              width={theme.sizes.safeWidth / 2}
+              height={theme.sizes.safeWidth / 2}
+              borderRadius="rounded-sm"
+              key={index}
+              source={{uri: getImageUrl(item)}}
+            />
+          );
+        })}
         <Box
           borderRadius="rounded-sm"
           p={2}

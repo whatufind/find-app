@@ -79,9 +79,8 @@ const StatsCard = ({ value, label }) => (
 export const AccountScreen = () => {
   const { userId } = useSelector((state: RootState) => state.user);
   const { data: user, isLoading: isUserLoading } = useGeUserQuery({ userId });
-  const { data: services, isLoading: isServicesLoading } = useGetServicesQuery({ user: userId, sortBy: '-createdAt' });
+  const { data: services, isLoading: isServicesLoading,error } = useGetServicesQuery({ user: userId, sortBy: '-createdAt' });
   const { data: requests, isLoading: isRequestsLoading } = useGetServiceRequestersQuery({ owner: userId });
-
   useHeader(() => <AccountHeader user={user} />);
 
   if (isUserLoading || isServicesLoading || isRequestsLoading) {

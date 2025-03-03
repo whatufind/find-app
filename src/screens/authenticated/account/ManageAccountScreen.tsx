@@ -58,7 +58,7 @@ export const ManageAccountScreen = () => {
 
   const {userId} = useSelector((state: RootState) => state.user);
   useHeader(AccountHeader);
-  const {data: user} = useGeUserQuery({userId});
+  const {data: user,refetch} = useGeUserQuery({userId});
   const {data: skillsData} = useGetSkillsQuery({});
   const {data: professionData} = useGetProfessionsQuery({});
   const [updateUser, {isLoading}] = useUpdateUserMutation();
@@ -77,8 +77,8 @@ export const ManageAccountScreen = () => {
       name: user?.name || '',
       phone: user?.phone || '',
       about: user?.about || '',
-      professions: user?.professions || [],
-      skills: user?.skills || [],
+      professions: Array.isArray(user?.professions) ? user.professions.map((item) => item.id) : [],
+      skills: Array.isArray(user?.skills) ? user.skills.map((item) => item.id) : [],
     },
   });
 
@@ -87,8 +87,8 @@ export const ManageAccountScreen = () => {
       setValue('name', user.name || '');
       setValue('phone', user.phone || '');
       setValue('about', user.about || '');
-      setValue('professions', user.professions || []);
-      setValue('skills', user.skills || []);
+      setValue('professions', Array.isArray(user?.professions) ? user.professions.map((item) => item.id) : []);
+      setValue('skills', Array.isArray(user?.skills) ? user.skills.map((item) => item.id) : []);
     }
   }, [user, setValue]);
 
@@ -107,6 +107,7 @@ export const ManageAccountScreen = () => {
     updateData.append('name', formData.name);
     updateData.append('phone', formData.phone);
     updateData.append('about', formData.about);
+    console.log(formData.professions);
     formData.professions.forEach((prof: string) =>
       updateData.append('professions', prof),
     );
@@ -116,8 +117,10 @@ export const ManageAccountScreen = () => {
 
     try {
       const res = await updateUser({id: userId, userData: updateData}).unwrap();
+      toast.success('Information updated successfully',{duration:2000});
+      refetch();
     } catch (error) {
-      toast.error('Failed to update user');
+      toast.error('Failed to update');
     }
   };
 
@@ -186,8 +189,9 @@ export const ManageAccountScreen = () => {
             render={({field: {onChange, value}}) => (
               <Input
                 placeholder="Your Bio"
-                height={100}
                 multiline
+                size="hu"
+                numberOfLines={4}
                 value={value}
                 onChangeText={onChange}
               />
@@ -216,9 +220,12 @@ export const ManageAccountScreen = () => {
         <VStack>
           <Text>Your Professions</Text>
           <MultipleSelectList
-            setSelected={val => setProfessionIds(val)}
+            setSelected={val =>{
+
+              setProfessionIds(val);
+            }}
             data={professions}
-            save="value"
+            save="key"
             onSelect={() => setValue('professions', professionIds)}
             label="Professions"
           />
@@ -228,11 +235,11 @@ export const ManageAccountScreen = () => {
         </VStack>
 
         <VStack>
-          <Text>Add Your Skills</Text>
+          <Text>Your Skills</Text>
           <MultipleSelectList
             setSelected={val => setSkillIds(val)}
             data={skills}
-            save="value"
+            save="key"
             onSelect={() => setValue('skills', skillIds)}
             label="Skills"
           />
