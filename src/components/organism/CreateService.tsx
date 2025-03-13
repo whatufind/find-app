@@ -180,7 +180,7 @@ const CreateService = () => {
       <Input
         placeholder="Your Service Description"
         size="hu"
-        height={200}
+        height={100}
         multiline
         textAlignVertical="top"
         value={description}

@@ -5,7 +5,6 @@ import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
 export const BASE_URL = 'http://173.249.59.88/v1';
-export const IMAGE_URL = 'http://192.168.148.114:3000/uploads';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({

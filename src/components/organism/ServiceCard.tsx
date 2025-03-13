@@ -1,5 +1,5 @@
 import {getImageUrl} from '@/helper/image';
-import {useCreateChatMutation, useLikeAServiceMutation} from '@/store/apiSlice';
+import {useCreateChatMutation, useGeUserQuery, useLikeAServiceMutation} from '@/store/apiSlice';
 import {RootState} from '@/store/store';
 import theme from '@/theme';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
@@ -23,7 +23,7 @@ import Icon from '../ui/media-icons/Icon';
 import IconButton from '../ui/media-icons/IconButton';
 import {Text} from '../ui/typography/Text';
 
-Geocoder.init('e3193649-0706-47d9-93f6-459236b83ed4');
+Geocoder.init('AIzaSyBYjtw327hGVGtIEEGiRKUBwgZBQC8zejk');
 
 export const ServiceCard: FC<any> = ({service, refetch}) => {
   const {userId} = useSelector((state: RootState) => state.user);
@@ -35,10 +35,14 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
   const [snapIndex, setSnapIndex] = useState<number>(-1);
   const [createChat, {isLoading: isChatLoading}] = useCreateChatMutation();
 
+
+  const { data: userData, error: userError } = useGeUserQuery({userId:service?.user?.id});
+
   const openBottomSheet = () => {
     // Open bottom sheet
     setSnapIndex(0);
   };
+
 
   const closeBottomSheet = () => {
     // Close bottom sheet
@@ -76,6 +80,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
   const handleLikeService = async () => {
     try {
       const data = await likeAService({serviceId: service.id}).unwrap();
+      console.log(data);
       refetch();
     } catch (error) {
       console.log(error);
@@ -124,6 +129,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
   }, [userLocation]);
 
   const isLiked = service?.likedBy?.findIndex(liker => liker === userId) !== -1;
+
   return (
     <>
       <Card variant="outlined" paddingBottom={5}>
@@ -151,7 +157,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
             <VStack>
               <Text variant="b2medium">{service?.user?.name}</Text>
               <HStack>
-                <Text>Engineer</Text>
+                <Text>{userData?.professions?.[0]?.name}</Text>
                 {distance ? (
                   <HStack>
                     <Icon icon="location" type="evil" variant="vector" />
@@ -194,7 +200,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
         </Box>
         <Clickable
           onPress={() =>
-            navigation.navigate('ServiceDetails', {id: service?.id})
+            navigation.navigate('ServiceDetails', {id: service?.id,location:location})
           }>
           {service?.media?.[0] && (
             <FastImage

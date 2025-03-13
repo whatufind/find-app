@@ -13,9 +13,9 @@ import {
   VStack,
 } from '@/components';
 import Carousel from '@/components/ui/data-display/Carousel';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
-  IMAGE_URL,
   useGetServiceByIdQuery,
   useGetServieReviewsQuery,
   useRequestAServiceMutation,
@@ -81,7 +81,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   }
 
   const images = data?.media?.map(
-    item => `${IMAGE_URL}/${item.substring(item.lastIndexOf('/') + 1)}`,
+    item => getImageUrl(item),
   );
 
   const openBottomSheet = () => {
@@ -126,6 +126,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
       }
     }
   };
+
+
 
   return (
     <Screen safeAreaEdges={['top']} preset="auto">
@@ -211,15 +213,17 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
               <VStack>
                 <Text variant="b2medium">{data?.user?.name}</Text>
                 <Text variant="b5regular">Technician</Text>
+                <Text variant="b5regular">{route?.params?.location}</Text>
               </VStack>
             </Box>
           </Card>
         </Box>
         <Text variant="heading2" my={5}>
-          Reviews{' '}
+          Reviews
         </Text>
         <FlashList
           data={reviews?.results}
+          ListEmptyComponent={()=><Text>No reviews yet</Text>}
           ItemSeparatorComponent={() => <Box height={vs(10)} />}
           keyExtractor={item => item?.id}
           renderItem={({item}) => (
@@ -276,12 +280,9 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
             paddingHorizontal={4}
             flex={1}
             variant="primary">
-            <Button.Text title="Order Now" />
+            <Button.Text title="Get this service" />
           </Button>
         )}
-        <Button paddingHorizontal={4} flex={1} variant="success">
-          <Button.Text title="Contact" />
-        </Button>
       </Box>
       <BottomSheet
         index={-1}
@@ -292,24 +293,26 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
         <BottomSheetView style={{flex: 1}}>
           <ContentSafeAreaView
             flex={1}
-            justifyContent="space-between"
             pb={5}
+            justifyContent="space-between"
             g={3}>
-            <Text variant="heading2">Describe what you need?</Text>
-            <Input
-              placeholder="Your Service Description"
-              height={100}
+          <Box>
+          <Input
+              placeholder="Let the provider know what you need"
               multiline
+              height={110}
+              size="hu"
               textAlignVertical="top"
               value={requestDetails}
               onChangeText={setRequestDetails}
             />
+          </Box>
             <Button
               loading={isReqLoading}
               onPress={handleSubmit}
               marginHorizontal={2}
               variant="success">
-              <Button.Text title="Submit" />
+              <Button.Text title="Send your request" />
             </Button>
           </ContentSafeAreaView>
         </BottomSheetView>

@@ -1,20 +1,17 @@
-import {IMAGE_URL} from '@/store/apiSlice';
+import { getImageUrl } from '@/helper/image';
 import theme from '@/theme';
-import React, {FC} from 'react';
-import {s} from 'react-native-size-matters';
-import {Box} from '../ui/layout/Box';
+import { useNavigation } from '@react-navigation/native';
+import React, { FC } from 'react';
+import Clickable from '../ui/forms/Clickable';
+import { Box } from '../ui/layout/Box';
 import Card from '../ui/layout/Card';
+import Center from '../ui/layout/Center';
 import Divider from '../ui/layout/Divider';
 import HStack from '../ui/layout/HStack';
 import VStack from '../ui/layout/VStack';
-import {FastImage} from '../ui/media-icons/FastImage';
-import {Text} from '../ui/typography/Text';
-import {useNavigation} from '@react-navigation/native';
-import Clickable from '../ui/forms/Clickable';
+import { FastImage } from '../ui/media-icons/FastImage';
 import IconButton from '../ui/media-icons/IconButton';
-import Center from '../ui/layout/Center';
-import {Button} from '../ui/forms/Button';
-import Icon from '../ui/media-icons/Icon';
+import { Text } from '../ui/typography/Text';
 
 export const PersonalServiceCard: FC<any> = ({service}) => {
   // navigation.navigate('ServiceDetails', { id: service?.id });
@@ -37,12 +34,8 @@ export const PersonalServiceCard: FC<any> = ({service}) => {
           <FastImage
             resizeMode="cover"
             source={{
-              uri:
-                IMAGE_URL +
-                '/' +
-                service?.media[0]?.substring(
-                  service.media[0]?.lastIndexOf('/') + 1,
-                ),
+              uri: getImageUrl(service?.media[0]),
+
             }}
             width={theme.sizes.safeWidth}
             height={theme.sizes.safeWidth}

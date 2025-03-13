@@ -20,9 +20,11 @@ import {
   useUpdateUserMutation,
 } from '@/store/apiSlice';
 import {RootState} from '@/store/store';
+import theme from '@/theme';
 import {yupResolver} from '@hookform/resolvers/yup';
 import React, {useEffect, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
+import {Image, ImageBackground} from 'react-native';
 import {MultipleSelectList} from 'react-native-dropdown-select-list';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
@@ -35,6 +37,7 @@ const editSchema = Yup.object({
     .required('Mobile Number is required')
     .matches(/^(01[3-9]\d{8})$/, 'Please enter a valid phone number'),
   profilePicture: Yup.mixed(),
+  coverPhoto: Yup.mixed(),
   about: Yup.string()
     .trim()
     .test('wordCount', 'About cannot be more than 100 words', value => {
@@ -65,6 +68,7 @@ export const ManageAccountScreen = () => {
   const {data: professionData} = useGetProfessionsQuery({});
   const [updateUser, {isLoading}] = useUpdateUserMutation();
   const [profilePicture, setprofilePicture] = useState('');
+  const [cover, setCover] = useState('');
 
   const [professionIds, setProfessionIds] = useState([]);
   const [skillIds, setSkillIds] = useState([]);
@@ -126,7 +130,10 @@ export const ManageAccountScreen = () => {
       updateData.append('professions', prof),
     );
     if (profilePicture) {
-      updateData.append('profilePicture',profilePicture);
+      updateData.append('profilePicture', profilePicture);
+    }
+    if (cover) {
+      updateData.append('coverPhoto', cover);
     }
     formData.skills.forEach((skill: string) =>
       updateData.append('skills', skill),
@@ -142,10 +149,11 @@ export const ManageAccountScreen = () => {
     }
   };
 
-  const handleChooseMedia = () => {
-    const options = {
-      mediaType: 'photo',
-    };
+  const options = {
+    mediaType: 'photo',
+  };
+  const handleChooseProfilePicture = () => {
+
 
     launchImageLibrary(options, response => {
       if (response.errorCode) {
@@ -160,18 +168,55 @@ export const ManageAccountScreen = () => {
       }
     });
   };
+  const handleChooseCover = () => {
+    launchImageLibrary(options, response => {
+      if (response.errorCode) {
+        return;
+      } else {
+        const files = response.assets?.map(asset => ({
+          uri: asset.uri,
+          type: asset.type,
+          name: asset.fileName,
+        }));
+        setCover(files?.[0]);
+      }
+    });
+  };
 
   return (
     <Screen preset="auto">
       <Box
         width="100%"
         bg="primary"
+        overflow="hidden"
         paddingVertical={10}
         borderBottomLeftRadius="rounded-lg"
         borderBottomRightRadius="rounded-lg">
+
+        <Image
+          source={{uri: getImageUrl(user?.coverPhoto)}}
+          style={{width: theme.sizes.width, height: theme.sizes.width / 2,position:'absolute'}}
+          defaultSource={{
+            uri: 'https://bclung.ca/wp-content/themes/bclung/assets/images/video-cover-placeholder.jpg',
+          }}
+        />
+        <IconButton
+              zIndex={10}
+              iconStyle="contained"
+              position="absolute"
+              size={8}
+              right={5}
+              top={5}
+onPress={handleChooseCover}
+              icon="edit"
+              type="material"
+              variant="vector"
+              backgroundColor="white"
+              color="primary"
+            />
         <Center>
           <Box alignItems="center" width={70} height={70} mb={5}>
-          <FastImage
+            <FastImage
               borderWidth={2}
               borderColor="white"
               borderRadius="rounded-full"
@@ -179,20 +224,20 @@ export const ManageAccountScreen = () => {
               height={70}
               source={{uri: getImageUrl(user?.profilePicture)}}
             />
-           <IconButton
+            <IconButton
               zIndex={10}
               iconStyle="contained"
               position="absolute"
               bottom={-10}
               right={-30}
+              backgroundColor="white"
               size={5}
               icon="edit"
-              onPress={handleChooseMedia}
+              onPress={handleChooseProfilePicture}
               type="material"
               variant="vector"
               color="primary"
             />
-
           </Box>
           <Text variant="heading3" color="white">
             {user?.name}

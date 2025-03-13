@@ -127,11 +127,16 @@ export const HomeScreen = () => {
 
   useEffect(() => {
     if (data) {
-      setServices(prev => [...prev, ...data.results]);
+      if (page === 1) {
+        setServices(data.results); // Reset services when new data comes in
+      } else {
+        setServices(prev => [...prev, ...data.results]);
+      }
       setHasMore(data.page < data.totalPages);
       setIsFetchingMore(false);
     }
-  }, [data]);
+  }, [data, page]);
+
 
   const fetchMoreData = () => {
     if (hasMore && !isFetchingMore) {
@@ -230,7 +235,7 @@ export const HomeScreen = () => {
           type="material"
         />
       </Box>
-      <Box flexDirection="row" bg="primary" px={5} pt={5} py={3}>
+      <Box flexDirection="row" g={2} bg="primary" px={5} pt={5} py={3}>
         <Input
           placeholder="Find What You Need"
           value={search}
@@ -247,16 +252,7 @@ export const HomeScreen = () => {
             />
           )}
         />
-        <HStack g={2}>
-          <Badge content="0" placement="topRight" variant="danger">
-            <IconButton
-              variant="vector"
-              icon="notifications"
-              color="white"
-              size={10}
-              type="ionicon"
-            />
-          </Badge>
+        <HStack >
           <IconButton
             onPress={() => openBottomSheet('filter')}
             icon="filter-variant"

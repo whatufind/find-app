@@ -149,15 +149,6 @@ const ChangePasswordScreen = () => {
                         <Button.Text title={isLoading ? 'Saving...' : 'Save'} />
                     </Button>
 
-                    {/* Footer */}
-                    <VStack mt={5}>
-                        <HStack g={2}>
-                            <Text>Forgot your Password?</Text>
-                            <Clickable onPress={() => navigation.navigate('Register')}>
-                                <Text color="primary" fontWeight="700">Press here</Text>
-                            </Clickable>
-                        </HStack>
-                    </VStack>
                 </Box>
             </Box>
         </Screen>
