@@ -39,10 +39,6 @@ import {useDispatch} from 'react-redux';
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [userLocation, setUserLocation] = useState<any>({
-    longitude: 0,
-    latitude: 0,
-  });
 
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(

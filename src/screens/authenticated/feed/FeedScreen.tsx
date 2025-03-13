@@ -32,7 +32,7 @@ const HomeHeader = () => (
         size={10}
         type="feather"
       />
-      <Badge content="0" placement="topRight" variant="danger">
+      {/* <Badge content="0" placement="topRight" variant="danger">
         <IconButton
           variant="vector"
           icon="notifications"
@@ -40,7 +40,7 @@ const HomeHeader = () => (
           size={10}
           type="ionicon"
         />
-      </Badge>
+      </Badge> */}
     </HStack>
   </Header>
 );

@@ -32,9 +32,9 @@ const AccountHeader = ({ user }) => {
     return ( <Header>
         <Header.Content title="WF" />
         <HStack>
-          <Badge content="0" placement="topRight" variant="danger">
+          {/* <Badge content="0" placement="topRight" variant="danger">
             <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
-        </Badge>
+        </Badge> */}
           <IconButton variant="vector"
           onPress={()=>navigation.dispatch(DrawerActions.openDrawer())}
           icon="setting" color="white" size={10} type="ant" />
