@@ -105,12 +105,16 @@ export const HomeScreen = () => {
   const bottomSheetModalRef = useRef<BottomSheet>(null);
   const [search, setSearch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [services, setServices] = useState<any[]>([]);
   const [bottomSheetFor, setBottomSheetFor] = useState<bottomSheetType>('');
   const [selectedCategory, setselectedCategory] = useState('');
-
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const {data, isLoading, error,refetch} = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
+    page:page,
     ...(selectedCategory && {category: selectedCategory}),
   });
 
@@ -119,6 +123,22 @@ export const HomeScreen = () => {
     isLoading: categoriesLoading,
     error: categoriesErr,
   } = useGetServiceCategoriesQuery({});
+
+
+  useEffect(() => {
+    if (data) {
+      setServices(prev => [...prev, ...data.results]);
+      setHasMore(data.page < data.totalPages);
+      setIsFetchingMore(false);
+    }
+  }, [data]);
+
+  const fetchMoreData = () => {
+    if (hasMore && !isFetchingMore) {
+      setIsFetchingMore(true);
+      setPage(prevPage => prevPage + 1);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -185,6 +205,7 @@ export const HomeScreen = () => {
       )}
     </BottomSheetView>
   );
+
 
   return (
     <Screen preset="fixed">
@@ -257,11 +278,20 @@ export const HomeScreen = () => {
           contentContainerStyle={{paddingTop: 10}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          data={data?.results}
+          data={services}
           ItemSeparatorComponent={() => <Box mb={5} />}
           renderItem={({item}: {item: any}) => <ServiceCard refetch={refetch} service={item} />}
           keyExtractor={item => item._id ?? item.id}
           estimatedItemSize={200}
+          onEndReached={fetchMoreData}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <Box justifyContent="center" alignItems="center" py={3}>
+                <ActivityIndicator size="large" />
+              </Box>
+            ) : null
+          }
         />
       </ContentSafeAreaView>
 
