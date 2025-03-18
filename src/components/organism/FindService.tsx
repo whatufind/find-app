@@ -47,7 +47,7 @@ const FindService = () => {
 
     return (
         <ContentSafeAreaView gap={5}>
-            <Text variant="heading2" mb={2} mt={5} textAlign="center">
+            <Text variant="heading3" mb={2} mt={5} textAlign="center">
                 Find a Service Provider
             </Text>
             <Input placeholder="What u Need?" value={title} onChangeText={setTitle} />

@@ -52,7 +52,7 @@ const ChatItem = ({item}: {item: any}) => {
   const navigation = useNavigation();
 
   return (
-    <Box g={3} py={4}>
+    <Box g={3} py={4} backgroundColor="white" elevation={1} shadowOpacity={0.05}>
       <Clickable
         onPress={() =>
           navigation.navigate('Chat', {user: target, chatId: item?._id})
@@ -74,7 +74,6 @@ const ChatItem = ({item}: {item: any}) => {
           </Box>
         </HStack>
       </Clickable>
-      <Divider borderColor="neutral100" borderWidth={0.7} />
     </Box>
   );
 };
@@ -95,11 +94,14 @@ export const FeedScreen = () => {
 
   return (
     <Screen>
-      <FlatList
+     <Box flex={1} mt={5}>
+     <FlatList
         data={chats}
+        ItemSeparatorComponent={()=><Divider/>}
         keyExtractor={item => item._id.toString()}
         renderItem={({item}) => <ChatItem item={item} />}
       />
+     </Box>
     </Screen>
   );
 };

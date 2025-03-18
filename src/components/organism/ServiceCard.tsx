@@ -1,5 +1,9 @@
 import {getImageUrl} from '@/helper/image';
-import {useCreateChatMutation, useGeUserQuery, useLikeAServiceMutation} from '@/store/apiSlice';
+import {
+  useCreateChatMutation,
+  useGeUserQuery,
+  useLikeAServiceMutation,
+} from '@/store/apiSlice';
 import {RootState} from '@/store/store';
 import theme from '@/theme';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
@@ -35,14 +39,17 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
   const [snapIndex, setSnapIndex] = useState<number>(-1);
   const [createChat, {isLoading: isChatLoading}] = useCreateChatMutation();
 
+  const [isLikedState, setIsLikedState] = useState(isLiked);
+  const [likesCount, setLikesCount] = useState(service?.likes ?? 0);
 
-  const { data: userData, error: userError } = useGeUserQuery({userId:service?.user?.id});
+  const {data: userData, error: userError} = useGeUserQuery({
+    userId: service?.user?.id,
+  });
 
   const openBottomSheet = () => {
     // Open bottom sheet
     setSnapIndex(0);
   };
-
 
   const closeBottomSheet = () => {
     // Close bottom sheet
@@ -79,11 +86,15 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
 
   const handleLikeService = async () => {
     try {
-      const data = await likeAService({serviceId: service.id}).unwrap();
-      console.log(data);
-      refetch();
+      setIsLikedState(!isLikedState); // Toggle the local state
+      setLikesCount(prev => (isLikedState ? prev - 1 : prev + 1)); // Adjust count optimistically
+
+      await likeAService({serviceId: service.id}).unwrap();
+      refetch(); // Ensure actual data is refetched
     } catch (error) {
-      console.log(error);
+      // Rollback on failure
+      setIsLikedState(isLiked);
+      setLikesCount(service?.likes ?? 0);
     }
   };
 
@@ -129,6 +140,8 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
   }, [userLocation]);
 
   const isLiked = service?.likedBy?.findIndex(liker => liker === userId) !== -1;
+
+  console.log(isLiked);
 
   return (
     <>
@@ -200,7 +213,10 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
         </Box>
         <Clickable
           onPress={() =>
-            navigation.navigate('ServiceDetails', {id: service?.id,location:location})
+            navigation.navigate('ServiceDetails', {
+              id: service?.id,
+              location: location,
+            })
           }>
           {service?.media?.[0] && (
             <FastImage
@@ -236,16 +252,16 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
               size={6}
               variant="vector"
             />
-            <Text ml={3}>{service?.likes ?? 0}</Text>
+            <Text ml={3}>{likesCount}</Text>
           </HStack>
         </HStack>
         <Divider borderWidth={0.5} />
         <HStack justifyContent="space-between" px={5} pt={5}>
           <IconButton
-            icon={isLiked ? 'like1' : 'like2'}
+            icon={isLikedState ? 'like1' : 'like2'}
             variant="vector"
             type="ant"
-            color={isLiked ? 'primary' : 'black'}
+            color={isLikedState ? 'primary' : 'black'}
             padding={0}
             onPress={handleLikeService}
           />

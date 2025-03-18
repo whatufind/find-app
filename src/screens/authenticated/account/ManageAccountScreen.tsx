@@ -153,8 +153,6 @@ export const ManageAccountScreen = () => {
     mediaType: 'photo',
   };
   const handleChooseProfilePicture = () => {
-
-
     launchImageLibrary(options, response => {
       if (response.errorCode) {
         return;
@@ -192,36 +190,37 @@ export const ManageAccountScreen = () => {
         paddingVertical={10}
         borderBottomLeftRadius="rounded-lg"
         borderBottomRightRadius="rounded-lg">
-
         <Image
           source={{uri: getImageUrl(user?.coverPhoto)}}
-          style={{width: theme.sizes.width, height: theme.sizes.width / 2,position:'absolute'}}
+          style={{
+            width: theme.sizes.width,
+            height: theme.sizes.width / 1.8,
+            position: 'absolute',
+          }}
           defaultSource={{
             uri: 'https://bclung.ca/wp-content/themes/bclung/assets/images/video-cover-placeholder.jpg',
           }}
         />
         <IconButton
-              zIndex={10}
-              iconStyle="contained"
-              position="absolute"
-              size={8}
-              right={5}
-              top={5}
-onPress={handleChooseCover}
-              icon="edit"
-              type="material"
-              variant="vector"
-              backgroundColor="white"
-              color="primary"
-            />
-        <Center>
-          <Box alignItems="center" width={70} height={70} mb={5}>
+          zIndex={10}
+          iconStyle="contained"
+          position="absolute"
+          size={8}
+          right={5}
+          onPress={handleChooseCover}
+          icon="edit"
+          type="material"
+          variant="vector"
+          backgroundColor="white"
+          color="primary"
+        />
+          <Box alignItems="center" >
             <FastImage
               borderWidth={2}
               borderColor="white"
               borderRadius="rounded-full"
-              width={70}
-              height={70}
+              width={100}
+              height={100}
               source={{uri: getImageUrl(user?.profilePicture)}}
             />
             <IconButton
@@ -239,13 +238,12 @@ onPress={handleChooseCover}
               color="primary"
             />
           </Box>
-          <Text variant="heading3" color="white">
+          <Text mt={5} variant="heading3" color="white" textAlign="center">
             {user?.name}
           </Text>
-          <Text variant="heading3" color="white">
+          <Text variant="heading3" color="white" textAlign="center">
             {user?.professions?.[0]?.name}
           </Text>
-        </Center>
       </Box>
 
       <ContentSafeAreaView g={4} mt={5}>

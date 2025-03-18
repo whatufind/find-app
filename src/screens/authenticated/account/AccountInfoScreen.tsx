@@ -40,8 +40,8 @@ export const AccountInfoScreen = () => {
         borderRadius="rounded-full"
         borderColor="primary"
         borderWidth={2}
-          width={50}
-          height={50}
+          width={100}
+          height={100}
           source={{uri: getImageUrl(user?.profilePicture)}}
         />
     </Center>
