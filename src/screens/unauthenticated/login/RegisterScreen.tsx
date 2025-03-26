@@ -41,6 +41,7 @@ const RegisterScreen = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: { name: '', email: '', password: '', confirmPassword: '' }, // Prevents extra renders
@@ -52,6 +53,7 @@ const RegisterScreen = () => {
       const response = await register(rest).unwrap();
       if (response) {
         toast.success('Successfully registered');
+        reset();
         navigation.navigate('Login');
       }
     } catch (err) {

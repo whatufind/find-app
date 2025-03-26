@@ -1,26 +1,26 @@
-import {Box, FastImage, HStack, Text} from '@/components';
+import { Box, FastImage, HStack, Text } from '@/components';
 import {
   isLastMessage,
   isSameSender,
   isSameSenderMargin,
   isSameUser,
 } from '@/config/chatConfig';
-import {getImageUrl} from '@/helper/image';
-import {useGetAllMessagesFromAChatQuery} from '@/store/apiSlice';
-import React, {FC, useEffect, useRef} from 'react';
-import {useSelector} from 'react-redux';
-import {FlashList} from '@shopify/flash-list';
-import {socket} from '../../../config/socketConfig';
-import {RootState} from '../../../store/store';
-import {ActivityIndicator} from 'react-native';
+import { getImageUrl } from '@/helper/image';
+import { useGetAllMessagesFromAChatQuery } from '@/store/apiSlice';
+import React, { FC, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { FlashList } from '@shopify/flash-list';
+import { socket } from '../../../config/socketConfig';
+import { RootState } from '../../../store/store';
+import { ActivityIndicator } from 'react-native';
 import theme from '@/theme';
 
 type MessagesProps = {
   chatId: string;
 };
 
-const Messages: FC<MessagesProps> = ({chatId}) => {
-  const {userId} = useSelector((state: RootState) => state.user);
+const Messages: FC<MessagesProps> = ({ chatId }) => {
+  const { userId } = useSelector((state: RootState) => state.user);
   const {
     data: messages = [],
     refetch,
@@ -61,47 +61,53 @@ const Messages: FC<MessagesProps> = ({chatId}) => {
     );
   }
 
-  const renderItem = ({item: m, index}: {item: any; index: number}) => (
+  const renderItem = ({ item: m, index }: { item: any; index: number }) => (
     <HStack alignItems="flex-end" g={4} key={m._id}>
       {(isSameSender(messages, m, index, userId) ||
         isLastMessage(messages, index, userId)) && (
-        <FastImage
-          width={30}
-          height={30}
-          borderWidth={1}
-          borderColor="primary300"
-          borderRadius="rounded-full"
-          source={{uri: getImageUrl(m?.sender?.profilePicture)}}
-        />
-      )}
+          <FastImage
+            width={30}
+            height={30}
+            borderWidth={1}
+            borderColor="primary300"
+            borderRadius="rounded-full"
+            source={{ uri: getImageUrl(m?.sender?.profilePicture) }}
+          />
+        )}
       <Box
+        g={2}
         overflow="hidden"
         mt={isSameUser(messages, m, index) ? 5 : 7}
         style={{
           marginLeft: isSameSenderMargin(messages, m, index, userId),
           maxWidth: '75%',
         }}>
-        {m?.media?.map((item,index) => {
+        {m?.media?.map((item, index) => {
           return (
             <FastImage
               width={theme.sizes.safeWidth / 2}
               height={theme.sizes.safeWidth / 2}
               borderRadius="rounded-sm"
               key={index}
-              source={{uri: getImageUrl(item)}}
+              source={{ uri: getImageUrl(item) }}
             />
           );
         })}
-        <Box
-          borderRadius="rounded-sm"
-          p={2}
-          bg={m.sender.id === userId ? 'white' : 'primary'}>
-          <Text
-            color={m.sender.id === userId ? 'black' : 'white'}
-            variant="base">
-            {m.content}
-          </Text>
-        </Box>
+        {m?.content ?
+          <Box
+            flex={0}
+            borderRadius="rounded-sm"
+            p={2}
+            alignSelf={m?.sender?.id === userId ? 'flex-end' : 'flex-start'}
+            bg={m.sender.id === userId ? 'white' : 'primary'}
+          >
+            <Text
+              color={m.sender.id === userId ? 'black' : 'white'}
+              variant="base">
+              {m.content}
+            </Text>
+          </Box>
+          : null}
       </Box>
     </HStack>
   );
@@ -117,7 +123,7 @@ const Messages: FC<MessagesProps> = ({chatId}) => {
       ref={listRef}
       onContentSizeChange={async () => {
         await SomeMilliSecondsTimeout();
-        listRef.current?.scrollToEnd({animated: true});
+        listRef.current?.scrollToEnd({ animated: true });
       }}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}

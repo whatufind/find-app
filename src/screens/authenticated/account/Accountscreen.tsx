@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Badge,
   Box,
   Card,
   Center,
@@ -14,20 +13,20 @@ import {
   VStack,
 } from '@/components';
 import PersonalServiceCard from '@/components/organism/PersonalServiceCard';
-import {getImageUrl} from '@/helper/image';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetServiceRequestersQuery,
   useGetServicesQuery,
   useGeUserQuery,
 } from '@/store/apiSlice';
-import {RootState} from '@/store/store';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
-import {FlashList} from '@shopify/flash-list';
+import { RootState } from '@/store/store';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
 import React from 'react';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const AccountHeader = ({user}) => {
+const AccountHeader = ({ user }) => {
   const navigation = useNavigation();
   return (
     <Header>
@@ -49,7 +48,7 @@ const AccountHeader = ({user}) => {
   );
 };
 
-const ProfileSection = ({user}) => (
+const ProfileSection = ({ user }) => (
   <Box
     width="100%"
     bg="primary"
@@ -68,7 +67,7 @@ const ProfileSection = ({user}) => (
         <FastImage
           width={100}
           height={100}
-          source={{uri: getImageUrl(user?.profilePicture)}}
+          source={{ uri: getImageUrl(user?.profilePicture) }}
         />
       </Box>
       <Text variant="heading3" color="white">
@@ -81,7 +80,7 @@ const ProfileSection = ({user}) => (
   </Box>
 );
 
-const StatsCard = ({value, label}) => (
+const StatsCard = ({ value, label }) => (
   <Card
     variant="outlined"
     borderRadius="rounded-full"
@@ -101,15 +100,15 @@ const StatsCard = ({value, label}) => (
 );
 
 export const AccountScreen = () => {
-  const {userId} = useSelector((state: RootState) => state.user);
-  const {data: user, isLoading: isUserLoading} = useGeUserQuery({userId});
+  const { userId } = useSelector((state: RootState) => state.user);
+  const { data: user, isLoading: isUserLoading } = useGeUserQuery({ userId });
   const {
     data: services,
     isLoading: isServicesLoading,
     error,
-  } = useGetServicesQuery({user: userId, sortBy: '-createdAt'});
-  const {data: requests, isLoading: isRequestsLoading} =
-    useGetServiceRequestersQuery({owner: userId});
+  } = useGetServicesQuery({ user: userId, sortBy: '-createdAt' });
+  const { data: requests, isLoading: isRequestsLoading } =
+    useGetServiceRequestersQuery({ owner: userId });
   useHeader(() => <AccountHeader user={user} />);
 
   if (isUserLoading || isServicesLoading || isRequestsLoading) {
@@ -139,12 +138,12 @@ export const AccountScreen = () => {
                 No Service Found
               </Text>
             )}
-            contentContainerStyle={{paddingTop: 10}}
+            contentContainerStyle={{ paddingTop: 10 }}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             data={services?.results}
             ItemSeparatorComponent={() => <Box mb={5} />}
-            renderItem={({item}) => <PersonalServiceCard service={item} />}
+            renderItem={({ item }) => <PersonalServiceCard service={item} />}
             keyExtractor={item => item._id ?? item.id}
             estimatedItemSize={200}
           />

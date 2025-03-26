@@ -15,26 +15,26 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
+import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
 } from '@/store/apiSlice';
-import {setLocation} from '@/store/slice/locationSlice';
-import {AppDispatch} from '@/store/store';
+import { setLocation } from '@/store/slice/locationSlice';
+import { AppDispatch } from '@/store/store';
 import theme from '@/theme';
-import {colors} from '@/theme/colors';
+import { colors } from '@/theme/colors';
 import BottomSheet, {
   BottomSheetFlashList,
   BottomSheetScrollView,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
-import {FlashList} from '@shopify/flash-list';
-import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
-import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
-import {useDispatch} from 'react-redux';
+import { FlashList } from '@shopify/flash-list';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
+import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
+import { useDispatch } from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
@@ -43,11 +43,11 @@ export const HomeScreen = () => {
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
       position => {
-        const {latitude, longitude} = position.coords;
-        dispatch(setLocation({latitude, longitude}));
+        const { latitude, longitude } = position.coords;
+        dispatch(setLocation({ latitude, longitude }));
       },
       error => console.log(error),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   };
 
@@ -107,11 +107,11 @@ export const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const {data, isLoading, error,refetch} = useGetServicesQuery({
+  const { data, isLoading, error, refetch } = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
-    page:page,
-    ...(selectedCategory && {category: selectedCategory}),
+    page: page,
+    ...(selectedCategory && { category: selectedCategory }),
   });
 
   const {
@@ -155,7 +155,7 @@ export const HomeScreen = () => {
   };
 
   const renderBottomSheetContent = () => (
-    <BottomSheetView style={{paddingBottom: 20, flex: 1}}>
+    <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
       {bottomSheetFor === 'filter' ? (
         <Radio
           value={selectedCategory}
@@ -167,7 +167,7 @@ export const HomeScreen = () => {
           <BottomSheetFlashList
             data={categories?.results}
             keyExtractor={item => item?.id}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <HStack>
                 <Radio.RadioButton value={item?.id} />
                 <Text variant="b3regular">{item?.name}</Text>
@@ -222,7 +222,7 @@ export const HomeScreen = () => {
         right={10}>
         <IconButton
           onPress={() => openBottomSheet('service')}
-          icon="create"
+          icon="add"
           color="primary"
           backgroundColor="white"
           iconStyle="contained"
@@ -267,12 +267,12 @@ export const HomeScreen = () => {
               No Service Found
             </Text>
           )}
-          contentContainerStyle={{paddingTop: 10}}
+          contentContainerStyle={{ paddingTop: 10 }}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           data={services}
           ItemSeparatorComponent={() => <Box mb={5} />}
-          renderItem={({item}: {item: any}) => <ServiceCard refetch={refetch} service={item} />}
+          renderItem={({ item }: { item: any }) => <ServiceCard refetch={refetch} service={item} />}
           keyExtractor={item => item._id ?? item.id}
           estimatedItemSize={200}
           onEndReached={fetchMoreData}
@@ -290,7 +290,7 @@ export const HomeScreen = () => {
       <BottomSheet
         enableOverDrag={false}
         enableDynamicSizing={false}
-        handleIndicatorStyle={{backgroundColor: colors.primary}}
+        handleIndicatorStyle={{ backgroundColor: colors.primary }}
         ref={bottomSheetModalRef}
         index={-1}
         enablePanDownToClose
