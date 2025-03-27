@@ -7,7 +7,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {SelectList} from 'react-native-dropdown-select-list';
 import FastImage from 'react-native-fast-image';
@@ -26,7 +26,11 @@ import {detectDevice} from '@/utils';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/store/store';
 
-const CreateService = () => {
+
+type CreateServiceProps  = {
+  onPress:()=>void
+}
+const CreateService:FC<CreateServiceProps> = ({onPress}) => {
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -138,8 +142,8 @@ const CreateService = () => {
     formData.append('category', category);
     formData.append('pricing', price);
     formData.append('type', 'create');
-    formData.append('location[latitude]',location.latitude );
-    formData.append('location[longitude]',location.longitude );
+    formData.append('location[latitude]', location.latitude);
+    formData.append('location[longitude]', location.longitude);
 
     if (checked) {
       setAvailabilityEntries([]);
@@ -160,12 +164,21 @@ const CreateService = () => {
       await createService(formData).unwrap();
       toast.success('Service created successfully');
       refetch();
+      setTitle('');
+      setDescription('');
+      setCategory('');
+      setPrice('');
+      setMedia([]);
+      setAvailabilityEntries([]);
+      setChecked(false);
+      setCurrentDay(new Date());
+      setCurrentTimeRange('');
+      onPress();
     } catch (error: any) {
       if (error?.data?.code === 401) {
         navigation.navigate('Login');
         return;
       }
-      console.log(error?.data?.message);
       toast.error(error?.data?.message || "Couldn't create service");
     }
   };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {FlatList, ActivityIndicator} from 'react-native';
 import {
   Badge,
@@ -16,7 +16,7 @@ import useHeader from '@/hooks/useHeader';
 import {useGetChatsQuery} from '@/store/apiSlice';
 import {getImageUrl} from '@/helper/image';
 import {s} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '@/store/store';
 
@@ -82,7 +82,13 @@ const ChatItem = ({item}: {item: any}) => {
 export const FeedScreen = () => {
   useHeader(HomeHeader);
 
-  const {data: chats = [], isLoading} = useGetChatsQuery();
+  const {data: chats = [], isLoading,refetch} = useGetChatsQuery();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (

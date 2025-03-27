@@ -13,25 +13,28 @@ import {
   VStack,
 } from '@/components';
 import Carousel from '@/components/ui/data-display/Carousel';
-import { getImageUrl } from '@/helper/image';
+import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetServiceByIdQuery,
   useGetServieReviewsQuery,
   useRequestAServiceMutation,
 } from '@/store/apiSlice';
-import { RootState } from '@/store/store';
+import {RootState} from '@/store/store';
 import theme from '@/theme';
-import { colors } from '@/theme/colors';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useNavigation } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
+import {colors} from '@/theme/colors';
+import BottomSheet, {
+  BottomSheetScrollView,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
 import moment from 'moment';
-import React, { useRef, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { s, vs } from 'react-native-size-matters';
-import { useSelector } from 'react-redux';
-import { toast } from 'sonner-native';
+import React, {useRef, useState} from 'react';
+import {ActivityIndicator} from 'react-native';
+import {s, vs} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
+import {toast} from 'sonner-native';
 
 interface ServiceDetailsProps {
   route: {
@@ -41,15 +44,15 @@ interface ServiceDetailsProps {
   };
 }
 
-const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
+const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   const navigation = useNavigation();
-  const { id } = route.params;
+  const {id} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [requestDetails, setRequestDetails] = useState(''); // State for capturing request details
-  const { accessToken } = useSelector((state: RootState) => state.user);
-  const { data: reviews } = useGetServieReviewsQuery({ serviceId: id });
+  const {accessToken} = useSelector((state: RootState) => state.user);
+  const {data: reviews} = useGetServieReviewsQuery({serviceId: id});
 
-  const [requestAService, { isLoading: isReqLoading }] =
+  const [requestAService, {isLoading: isReqLoading}] =
     useRequestAServiceMutation();
   const sheetRef = useRef<BottomSheet>(null);
 
@@ -70,7 +73,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
   useHeader(HomeHeader);
 
   // Fetching service details using the provided ID
-  const { data, isLoading, refetch } = useGetServiceByIdQuery(id);
+  const {data, isLoading, refetch} = useGetServiceByIdQuery(id);
 
   if (isLoading) {
     return (
@@ -80,54 +83,34 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
     );
   }
 
-  const images = data?.media?.map(
-    item => getImageUrl(item),
-  );
+  const images = data?.media?.map(item => getImageUrl(item));
 
   const openBottomSheet = () => {
     sheetRef.current?.expand();
-  };
-
-  // Validate the request details input
-  const validateRequestDetails = (details: string) => {
-    if (!details.trim()) {
-      toast.error('Please provide a description for your request.');
-      return false;
-    }
-    if (details.length < 10) {
-      toast.error('Request details should be at least 10 characters long.');
-      return false;
-    }
-    return true;
   };
 
   const handleSubmit = async () => {
     if (!accessToken) {
       navigation.navigate('Login');
     } else {
-      if (!validateRequestDetails(requestDetails)) {
-        return;
-      }
-
       const payload = {
         requestDetails,
         serviceId: id,
       };
 
       try {
-        const response = await requestAService({ id, data: payload }).unwrap();
+        await requestAService({ data: payload}).unwrap();
         toast.success('Request submitted successfully');
         refetch();
         setModalVisible(!modalVisible);
-        setRequestDetails(''); // Clear input after submission
+        setRequestDetails('');
       } catch (err) {
         const errors = err?.message || err?.data?.message;
+        console.log(errors);
         toast.error(errors);
       }
     }
   };
-
-
 
   return (
     <Screen safeAreaEdges={['top']} preset="auto">
@@ -204,10 +187,10 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
                 p={2}
                 borderRadius="rounded-full">
                 <FastImage
-                  style={{ borderRadius: theme.borderRadii['rounded-full'] }}
+                  style={{borderRadius: theme.borderRadii['rounded-full']}}
                   width={s(25)}
                   height={s(25)}
-                  source={{ uri: data?.user?.profilePicture }}
+                  source={{uri: data?.user?.profilePicture}}
                 />
               </Box>
               <VStack>
@@ -226,7 +209,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
           ListEmptyComponent={() => <Text>No reviews yet</Text>}
           ItemSeparatorComponent={() => <Box height={vs(10)} />}
           keyExtractor={item => item?.id}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <Card variant="outlined" padding={5}>
               <Box py={2} flexDirection="row" g={3} alignItems="center">
                 <Box
@@ -235,10 +218,10 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
                   p={2}
                   borderRadius="rounded-full">
                   <FastImage
-                    style={{ borderRadius: theme.borderRadii['rounded-full'] }}
+                    style={{borderRadius: theme.borderRadii['rounded-full']}}
                     width={s(25)}
                     height={s(25)}
-                    source={{ uri: item?.user?.profilePicture }}
+                    source={{uri: item?.user?.profilePicture}}
                   />
                 </Box>
                 <VStack>
@@ -287,34 +270,32 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
       <BottomSheet
         index={-1}
         ref={sheetRef}
-        handleIndicatorStyle={{ backgroundColor: colors.primary }}
+        handleIndicatorStyle={{backgroundColor: colors.primary}}
         enablePanDownToClose
         snapPoints={['40%']}>
-        <BottomSheetView style={{ flex: 1 }}>
-          <ContentSafeAreaView
-            flex={1}
-            pb={5}
-            justifyContent="space-between"
-            g={3}>
-            <Box>
-              <Input
-                placeholder="Let the provider know what you need"
-                multiline
-                height={110}
-                size="hu"
-                textAlignVertical="top"
-                value={requestDetails}
-                onChangeText={setRequestDetails}
-              />
-            </Box>
-            <Button
-              loading={isReqLoading}
-              onPress={handleSubmit}
-              marginHorizontal={2}
-              variant="success">
-              <Button.Text title="Send your request" />
-            </Button>
-          </ContentSafeAreaView>
+        <BottomSheetView style={{flex: 1}}>
+          <BottomSheetScrollView>
+            <ContentSafeAreaView flex={1} pb={5} g={3}>
+              <Box>
+                <Input
+                  placeholder="Let the provider know what you need"
+                  multiline
+                  height={120}
+                  size="hu"
+                  textAlignVertical="top"
+                  value={requestDetails}
+                  onChangeText={setRequestDetails}
+                />
+              </Box>
+              <Button
+                loading={isReqLoading}
+                onPress={handleSubmit}
+                marginHorizontal={2}
+                variant="success">
+                <Button.Text title="Send your request" />
+              </Button>
+            </ContentSafeAreaView>
+          </BottomSheetScrollView>
         </BottomSheetView>
       </BottomSheet>
     </Screen>

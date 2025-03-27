@@ -1,4 +1,5 @@
 export const loader = require('../animations/loader.lottie');
+export const success = require('../animations/success.lottie');
 
 export const animations = {
 loader,

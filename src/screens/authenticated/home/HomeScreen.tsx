@@ -15,40 +15,83 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
+import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
+  useUpdateUserMutation,
 } from '@/store/apiSlice';
-import { setLocation } from '@/store/slice/locationSlice';
-import { AppDispatch } from '@/store/store';
+import {setLocation} from '@/store/slice/locationSlice';
+import {AppDispatch, RootState} from '@/store/store';
 import theme from '@/theme';
-import { colors } from '@/theme/colors';
+import messaging from '@react-native-firebase/messaging';
+import {colors} from '@/theme/colors';
 import BottomSheet, {
   BottomSheetFlashList,
   BottomSheetScrollView,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
-import { FlashList } from '@shopify/flash-list';
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
-import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
-import { useDispatch } from 'react-redux';
+import {FlashList} from '@shopify/flash-list';
+import React, {useEffect, useRef, useState} from 'react';
+import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
+import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
+import {useDispatch, useSelector} from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const {accessToken, userId} = useSelector((state: RootState) => state.user);
+  const [updateUser] = useUpdateUserMutation();
 
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
       position => {
-        const { latitude, longitude } = position.coords;
-        dispatch(setLocation({ latitude, longitude }));
+        const {latitude, longitude} = position.coords;
+        dispatch(setLocation({latitude, longitude}));
       },
       error => console.log(error),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
+  };
+
+  const getToken = async (): Promise<string> => {
+    return await messaging().getToken();
+  };
+
+  const requestNotificationPermissionAndroid = async (): Promise<void> => {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Notification permission granted');
+          const token = await getToken();
+          console.log(token);
+          if (accessToken && token) {
+            //set the fcm token
+            try {
+              await updateUser({
+                id: userId,
+                userData: {fcmToken: token},
+              }).unwrap();
+            } catch (error) {
+              console.log('failed to update user fcm token', updateUser);
+            }
+          }
+        } else {
+          console.log('Notification permission denied');
+        }
+      } catch (error) {
+        console.error('Failed to request notification permission:', error);
+      }
+    } else {
+      console.log(
+        'Notification permission is not required for this Android version',
+      );
+    }
   };
 
   const requestLocationPermission = async () => {
@@ -92,9 +135,9 @@ export const HomeScreen = () => {
   };
 
   useEffect(() => {
+    requestNotificationPermissionAndroid();
     enableLocationIfNeeded();
   }, []);
-
 
   const safeAreaInset = useSafeAreaInsetsStyle(['top']);
   const [selectedAction, setSelectedAction] = useState<string>('service');
@@ -107,11 +150,11 @@ export const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const { data, isLoading, error, refetch } = useGetServicesQuery({
+  const {data, isLoading, error, refetch, isFetching} = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
     page: page,
-    ...(selectedCategory && { category: selectedCategory }),
+    ...(selectedCategory && {category: selectedCategory}),
   });
 
   const {
@@ -119,7 +162,6 @@ export const HomeScreen = () => {
     isLoading: categoriesLoading,
     error: categoriesErr,
   } = useGetServiceCategoriesQuery({});
-
 
   useEffect(() => {
     if (data) {
@@ -133,7 +175,6 @@ export const HomeScreen = () => {
     }
   }, [data, page]);
 
-
   const fetchMoreData = () => {
     if (hasMore && !isFetchingMore) {
       setIsFetchingMore(true);
@@ -141,7 +182,7 @@ export const HomeScreen = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
       <Box justifyContent="center" alignItems="center" flex={1}>
         <ActivityIndicator size="large" />
@@ -155,7 +196,7 @@ export const HomeScreen = () => {
   };
 
   const renderBottomSheetContent = () => (
-    <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
+    <BottomSheetView style={{paddingBottom: 20, flex: 1}}>
       {bottomSheetFor === 'filter' ? (
         <Radio
           value={selectedCategory}
@@ -167,7 +208,7 @@ export const HomeScreen = () => {
           <BottomSheetFlashList
             data={categories?.results}
             keyExtractor={item => item?.id}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <HStack>
                 <Radio.RadioButton value={item?.id} />
                 <Text variant="b3regular">{item?.name}</Text>
@@ -199,14 +240,20 @@ export const HomeScreen = () => {
           </ContentSafeAreaView>
           <Divider mt={4} borderWidth={0.5} />
           <BottomSheetScrollView>
-            {selectedAction === 'service' && <CreateService />}
+            {selectedAction === 'service' && (
+              <CreateService
+                onPress={() => {
+                  bottomSheetModalRef.current?.close();
+                  refetch();
+                }}
+              />
+            )}
             {selectedAction === 'find' && <FindService />}
           </BottomSheetScrollView>
         </>
       )}
     </BottomSheetView>
   );
-
 
   return (
     <Screen preset="fixed">
@@ -248,7 +295,7 @@ export const HomeScreen = () => {
             />
           )}
         />
-        <HStack >
+        <HStack>
           <IconButton
             onPress={() => openBottomSheet('filter')}
             icon="filter-variant"
@@ -267,12 +314,14 @@ export const HomeScreen = () => {
               No Service Found
             </Text>
           )}
-          contentContainerStyle={{ paddingTop: 10 }}
+          contentContainerStyle={{paddingTop: 10}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           data={services}
           ItemSeparatorComponent={() => <Box mb={5} />}
-          renderItem={({ item }: { item: any }) => <ServiceCard refetch={refetch} service={item} />}
+          renderItem={({item}: {item: any}) => (
+            <ServiceCard refetch={refetch} service={item} />
+          )}
           keyExtractor={item => item._id ?? item.id}
           estimatedItemSize={200}
           onEndReached={fetchMoreData}
@@ -290,7 +339,7 @@ export const HomeScreen = () => {
       <BottomSheet
         enableOverDrag={false}
         enableDynamicSizing={false}
-        handleIndicatorStyle={{ backgroundColor: colors.primary }}
+        handleIndicatorStyle={{backgroundColor: colors.primary}}
         ref={bottomSheetModalRef}
         index={-1}
         enablePanDownToClose

@@ -39,7 +39,7 @@ export const RequestersScreen = ({route}: any) => {
     return (
       <Header>
         <Header.BackAction />
-        <Header.Content title="Service Requesters List" />
+        <Header.Content title="My Orders" />
         <Box flex={1} />
       </Header>
     );
@@ -84,7 +84,7 @@ export const RequestersScreen = ({route}: any) => {
             <Text variant="b5regular">Technician</Text>
           </VStack>
         </Box>
-        <Text>{item?.requestDetails}</Text>
+      {item?.requestDetails ?  <Text>{item?.requestDetails}</Text> : null}
         <Divider borderWidth={0.5} my={4} />
         <HStack g={5} mt={3}>
           <Center>

@@ -4,8 +4,8 @@ import {navigate} from '@/utils/navigationHelper';
 import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
-export const BASE_URL = 'http://173.249.59.88/v1';
-// export const BASE_URL = 'http://192.168.148.114:3000/v1';
+// export const BASE_URL = 'http://173.249.59.88/v1';
+export const BASE_URL = 'http://192.168.148.114:3000/v1';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
@@ -91,9 +91,9 @@ export const apiSlice = createApi({
     }),
 
     // Request a service (e.g., booking)
-    requestAService: builder.mutation<any, {id: string; data: any}>({
-      query: ({id, data}) => ({
-        url: `/services/requests/${id}`,
+    requestAService: builder.mutation<any, { data: any}>({
+      query: ({ data}) => ({
+        url: '/services/requests',
         method: 'POST',
         body: data,
       }),
@@ -167,7 +167,7 @@ export const apiSlice = createApi({
         },
       }),
     }),
-    updateUser: builder.mutation<void, {id: string; userData: FormData}>({
+    updateUser: builder.mutation<void, {id: string; userData: FormData | any}>({
         query: ({id, userData}) => {
           return {
             url: `users/${id}`,
