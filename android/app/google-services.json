@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1068037196183",
+    "project_id": "whatufind-354f4",
+    "storage_bucket": "whatufind-354f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068037196183:android:eb0172eaee03bc92ce9cd2",
+        "android_client_info": {
+          "package_name": "com.whatufind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM27zPMVwNeXdUvX23w27DdDPT92euTS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
