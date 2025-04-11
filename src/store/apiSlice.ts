@@ -1,18 +1,18 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {RootState} from '../store/store'; // Import RootState type for type safety
-import {navigate} from '@/utils/navigationHelper';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { RootState } from '../store/store'; // Import RootState type for type safety
+import { navigate } from '@/utils/navigationHelper';
 import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
 // export const BASE_URL = 'http://173.249.59.88/v1';
-export const BASE_URL = 'http://192.168.148.114:3000/v1';
+export const BASE_URL = 'http://192.168.1.3:3000/v1';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
   reducerPath: 'apiSlice', // Unique key for the API slice reducer
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL, // Set the base URL for all requests
-    prepareHeaders: (headers, {getState}) => {
+    prepareHeaders: (headers, { getState }) => {
       const state = getState() as RootState;
       const token = state.user?.accessToken; // Access token from Redux store
 
@@ -39,7 +39,7 @@ export const apiSlice = createApi({
     getServices: builder.query<any[], any>({
       query: dynamicQuery => ({
         url: 'services',
-        params: {...dynamicQuery},
+        params: { ...dynamicQuery },
       }),
     }),
 
@@ -53,7 +53,7 @@ export const apiSlice = createApi({
     }),
 
     // User login
-    login: builder.mutation<any, {email: string; password: string}>({
+    login: builder.mutation<any, { email: string; password: string }>({
       query: credentials => ({
         url: '/auth/login',
         method: 'POST',
@@ -62,7 +62,7 @@ export const apiSlice = createApi({
     }),
 
     // User logout
-    logout: builder.mutation<any, {refreshToken:string}>({
+    logout: builder.mutation<any, { refreshToken: string }>({
       query: credentials => ({
         url: '/auth/logout',
         method: 'POST',
@@ -72,16 +72,16 @@ export const apiSlice = createApi({
 
     changePassword: builder.mutation({
       query: ({ password, token }) => ({
-          url: `/auth//reset-password?token=${token}`,
-          method: 'POST',
-          body: { password },
+        url: `/auth//reset-password?token=${token}`,
+        method: 'POST',
+        body: { password },
       }),
-  }),
+    }),
 
     // Register a new user
     register: builder.mutation<
       any,
-      {email: string; name: string; password: string}
+      { email: string; name: string; password: string }
     >({
       query: userData => ({
         url: '/auth/register',
@@ -91,8 +91,8 @@ export const apiSlice = createApi({
     }),
 
     // Request a service (e.g., booking)
-    requestAService: builder.mutation<any, { data: any}>({
-      query: ({ data}) => ({
+    requestAService: builder.mutation<any, { data: any }>({
+      query: ({ data }) => ({
         url: '/services/requests',
         method: 'POST',
         body: data,
@@ -116,6 +116,18 @@ export const apiSlice = createApi({
       query: id => `/users/${id}`,
     }),
 
+    getFollowers: builder.query<any, string>({
+      query: id => `/users/${id}/followers`,
+    }),
+
+    followUser: builder.mutation<any, { id: number }>({
+      query: ({ id }) => ({
+        url: `/users/follow/${id}`,
+        method: 'POST',
+      }),
+    }),
+
+
     createPost: builder.mutation<any, FormData>({
       query: formData => ({
         url: '/posts',
@@ -128,10 +140,10 @@ export const apiSlice = createApi({
     }),
     likeAService: builder.mutation<void, { serviceId: string }>({
       query: ({ serviceId }) => ({
-          url: `/services/${serviceId}/like`,
-          method: 'PATCH',
+        url: `/services/${serviceId}/like`,
+        method: 'PATCH',
       }),
-  }),
+    }),
 
     getPosts: builder.query<any[], void>({
       query: () => 'posts?sortBy=-createdAt&page=1&limit=10',
@@ -139,23 +151,23 @@ export const apiSlice = createApi({
     getServieReviews: builder.query<any[], any>({
       query: dynamicQuery => ({
         url: 'services/reviews/all',
-        params: {...dynamicQuery},
+        params: { ...dynamicQuery },
       }),
     }),
-    geUser: builder.query<any[], {userId: any}>({
+    geUser: builder.query<any[], { userId: any }>({
       query: dynamicQuery => ({
         url: `/users/${dynamicQuery.userId}`,
-        params: {...dynamicQuery},
+        params: { ...dynamicQuery },
       }),
     }),
     getServiceRequesters: builder.query<any[], any>({
       query: dynamicQuery => ({
         url: 'services/requests/all',
-        params: {...dynamicQuery},
+        params: { ...dynamicQuery },
       }),
     }),
     updateServiceRequest: builder.mutation<any, any>({
-      query: ({id, status}) => ({
+      query: ({ id, status }) => ({
         url: `services/requests/${id}`, // Use dynamic ID
         method: 'PATCH',
         body: {
@@ -167,15 +179,15 @@ export const apiSlice = createApi({
         },
       }),
     }),
-    updateUser: builder.mutation<void, {id: string; userData: FormData | any}>({
-        query: ({id, userData}) => {
-          return {
-            url: `users/${id}`,
-            method: 'PATCH',
-            body: userData,
-          };
-        },
-      }),
+    updateUser: builder.mutation<void, { id: string; userData: FormData | any }>({
+      query: ({ id, userData }) => {
+        return {
+          url: `users/${id}`,
+          method: 'PATCH',
+          body: userData,
+        };
+      },
+    }),
 
 
     getSkills: builder.query<any[], void>({
@@ -186,7 +198,7 @@ export const apiSlice = createApi({
       query: () => 'professions',
     }),
 
-    createChat: builder.mutation<any, {userId:string}>({
+    createChat: builder.mutation<any, { userId: string }>({
       query: formData => ({
         url: '/chats',
         method: 'POST',
@@ -247,4 +259,6 @@ export const {
   useLikeAServiceMutation,
   useLogoutMutation,
   useChangePasswordMutation,
+  useFollowUserMutation,
+  useGetFollowersQuery,
 } = apiSlice;

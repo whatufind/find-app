@@ -8,6 +8,7 @@ const initialState = {
     userName: null,
     accessToken: null,
     refreshToken: null,
+    profilePiture: null,
 };
 
 // Create slice
@@ -16,11 +17,12 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action) => {
-            const { userId, userName, accessToken, refreshToken } = action.payload;
+            const { userId, userName, accessToken, refreshToken, profilePicture } = action.payload;
             state.userId = userId;
             state.userName = userName;
             state.accessToken = accessToken;
             state.refreshToken = refreshToken;
+            state.profilePiture = profilePicture;
         },
         signOut: (state) => {
             state.userId = null;

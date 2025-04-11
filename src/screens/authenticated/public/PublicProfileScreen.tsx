@@ -11,37 +11,58 @@ import {
   VStack,
 } from '@/components';
 import PersonalServiceCard from '@/components/organism/PersonalServiceCard';
-import {getImageUrl} from '@/helper/image';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useCreateChatMutation,
+  useFollowUserMutation,
+  useGetFollowersQuery,
   useGetServicesQuery,
   useGeUserQuery,
 } from '@/store/apiSlice';
-import {RootState} from '@/store/store';
+import { RootState } from '@/store/store';
 import theme from '@/theme';
-import {useNavigation} from '@react-navigation/native';
-import {FlashList} from '@shopify/flash-list';
-import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
-import {s, vs} from 'react-native-size-matters';
-import {useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
+import React, { useEffect, useState } from 'react';
+import { Linking, ScrollView } from 'react-native';
+import { s, vs } from 'react-native-size-matters';
+import { useSelector } from 'react-redux';
 
 const PublicProfileScreenHeader = () => <Box />;
 
-const ProfileHeader = ({user}) => {
-  const [createChat, {isLoading}] = useCreateChatMutation();
+const ProfileHeader = ({ user }) => {
+  const [createChat, { isLoading }] = useCreateChatMutation();
   const navigation = useNavigation();
-
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followUser, { isLoading: isFollowLoading }] = useFollowUserMutation();
+  const { data: followers, refetch: refetchFollowers } = useGetFollowersQuery(user?.id);
+  const { userId } = useSelector((state: RootState) => state.user);
   const handleCreateChat = async () => {
     try {
-      const data = await createChat({userId: user.id}).unwrap();
+      const data = await createChat({ userId: user.id }).unwrap();
       const target = data?.users.find(tUser => tUser.id === user?.id);
-      navigation.navigate('Chat', {user: target, chatId: data?._id});
+      navigation.navigate('Chat', { user: target, chatId: data?._id });
     } catch (error) {
       console.error('Error creating chat:', error);
     }
   };
+
+  const handleFollow = async () => {
+    try {
+      const data = await followUser({ id: user?.id }).unwrap();
+      if (data) {
+        refetchFollowers();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    setIsFollowing(followers?.followers?.find((f) => f?.id === userId) ? true : false);
+  }, [followers]);
+
   return (
     <Box height={theme.sizes.safeWidth / 1.5}>
       <Box position="absolute" zIndex={20} top={40} left={20}>
@@ -54,7 +75,7 @@ const ProfileHeader = ({user}) => {
         />
       </Box>
       <FastImage
-        source={{uri: getImageUrl(user?.coverPhoto)}}
+        source={{ uri: getImageUrl(user?.coverPhoto) }}
         width={theme.sizes.width}
         height={theme.sizes.safeWidth / 2}
       />
@@ -66,7 +87,7 @@ const ProfileHeader = ({user}) => {
             borderColor="white"
             width={s(70)}
             height={s(70)}
-            source={{uri: getImageUrl(user?.profilePicture)}}
+            source={{ uri: getImageUrl(user?.profilePicture) }}
           />
           <HStack justifyContent="space-between" flex={1} mt={8}>
             <VStack>
@@ -75,8 +96,10 @@ const ProfileHeader = ({user}) => {
               <Text variant="b4regular">Dhaka, Bangladesh</Text>
             </VStack>
             <HStack>
-              <Button size="sm" height={s(20)} px={5}>
-                <Button.Text title="Follow" />
+              <Button size="sm" height={s(20)} px={5}
+                onPress={handleFollow}
+              >
+                <Button.Text title={isFollowing ? 'Following' : 'Follow'} />
               </Button>
               <IconButton
                 onPress={() => handleCreateChat()}
@@ -84,7 +107,10 @@ const ProfileHeader = ({user}) => {
                 type="ionicon"
                 variant="vector"
               />
-              <IconButton icon="phone" type="ant" variant="vector" />
+              <IconButton
+                onPress={() => Linking.openURL(`tel:${user?.phone}`)}
+
+                icon="phone" type="ant" variant="vector" />
             </HStack>
           </HStack>
         </HStack>
@@ -93,7 +119,7 @@ const ProfileHeader = ({user}) => {
   );
 };
 
-const ProfileTabs = ({tabs, activeTab, setActiveTab}) => (
+const ProfileTabs = ({ tabs, activeTab, setActiveTab }) => (
   <HStack g={5} mt={3}>
     {tabs.map(tab => (
       <Button
@@ -109,14 +135,14 @@ const ProfileTabs = ({tabs, activeTab, setActiveTab}) => (
   </HStack>
 );
 
-const ProfileDetails = ({user}) => (
+const ProfileDetails = ({ user }) => (
   <Box g={3} backgroundColor="white" borderRadius="rounded-sm" mt={5} p={5}>
     {[
-      {label: 'Nationality:', value: 'Bangladeshi'},
-      {label: 'Location:', value: 'Dhaka, Bangladesh'},
-      {label: 'Contact Number:', value: user?.phone},
-      {label: 'Primary Profession:', value: user?.professions?.[0]?.name},
-    ].map(({label, value}) => (
+      { label: 'Nationality:', value: 'Bangladeshi' },
+      { label: 'Location:', value: 'Dhaka, Bangladesh' },
+      { label: 'Contact Number:', value: user?.phone },
+      { label: 'Primary Profession:', value: user?.professions?.[0]?.name },
+    ].map(({ label, value }) => (
       <HStack g={3} key={label}>
         <Text color="black" variant="b3bold">
           {label}
@@ -127,8 +153,8 @@ const ProfileDetails = ({user}) => (
   </Box>
 );
 
-const Services = ({user}) => {
-  const {data: services, isLoading: isServicesLoading} = useGetServicesQuery({
+const Services = ({ user }) => {
+  const { data: services, isLoading: isServicesLoading } = useGetServicesQuery({
     user: user?.id,
     sortBy: '-createdAt',
   });
@@ -140,12 +166,12 @@ const Services = ({user}) => {
             No Service Found
           </Text>
         )}
-        contentContainerStyle={{paddingTop: 10}}
+        contentContainerStyle={{ paddingTop: 10 }}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         data={services?.results}
         ItemSeparatorComponent={() => <Box mb={5} />}
-        renderItem={({item}) => <PersonalServiceCard service={item} />}
+        renderItem={({ item }) => <PersonalServiceCard service={item} />}
         keyExtractor={item => item._id ?? item.id}
         estimatedItemSize={200}
       />
@@ -159,8 +185,8 @@ const Reviews = () => (
   </Box>
 );
 
-export const PublicProfileScreen = ({route}) => {
-  const {data: user} = useGeUserQuery({userId: route?.params?.id});
+export const PublicProfileScreen = ({ route }) => {
+  const { data: user } = useGeUserQuery({ userId: route?.params?.id });
   const tabs = ['About', 'Top services', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
@@ -178,7 +204,7 @@ export const PublicProfileScreen = ({route}) => {
       </ContentSafeAreaView>
       <Divider borderColor="neutral100" my={5} />
       <ContentSafeAreaView flex={1}>
-        <ScrollView style={{flexGrow: 0}}>
+        <ScrollView style={{ flexGrow: 0 }}>
           <ProfileTabs
             tabs={tabs}
             activeTab={activeTab}

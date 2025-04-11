@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Badge,
   Box,
   Button,
+  Clickable,
   ContentSafeAreaView,
   Divider,
+  FastImage,
   HStack,
   IconButton,
   Input,
@@ -15,43 +16,42 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
+import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
   useUpdateUserMutation,
 } from '@/store/apiSlice';
-import {setLocation} from '@/store/slice/locationSlice';
-import {AppDispatch, RootState} from '@/store/store';
+import { setLocation } from '@/store/slice/locationSlice';
+import { AppDispatch, RootState } from '@/store/store';
 import theme from '@/theme';
-import messaging from '@react-native-firebase/messaging';
-import {colors} from '@/theme/colors';
+import { colors } from '@/theme/colors';
 import BottomSheet, {
   BottomSheetFlashList,
   BottomSheetScrollView,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
-import {FlashList} from '@shopify/flash-list';
-import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
-import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
-import {useDispatch, useSelector} from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
+import { FlashList } from '@shopify/flash-list';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
+import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
+import { useDispatch, useSelector } from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {accessToken, userId} = useSelector((state: RootState) => state.user);
+  const { accessToken, userId, profilePiture } = useSelector((state: RootState) => state.user);
   const [updateUser] = useUpdateUserMutation();
-
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
       position => {
-        const {latitude, longitude} = position.coords;
-        dispatch(setLocation({latitude, longitude}));
+        const { latitude, longitude } = position.coords;
+        dispatch(setLocation({ latitude, longitude }));
       },
       error => console.log(error),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   };
 
@@ -75,7 +75,7 @@ export const HomeScreen = () => {
             try {
               await updateUser({
                 id: userId,
-                userData: {fcmToken: token},
+                userData: { fcmToken: token },
               }).unwrap();
             } catch (error) {
               console.log('failed to update user fcm token', updateUser);
@@ -150,11 +150,11 @@ export const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const {data, isLoading, error, refetch, isFetching} = useGetServicesQuery({
+  const { data, isLoading, error, refetch, isFetching } = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
     page: page,
-    ...(selectedCategory && {category: selectedCategory}),
+    ...(selectedCategory && { category: selectedCategory }),
   });
 
   const {
@@ -196,7 +196,7 @@ export const HomeScreen = () => {
   };
 
   const renderBottomSheetContent = () => (
-    <BottomSheetView style={{paddingBottom: 20, flex: 1}}>
+    <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
       {bottomSheetFor === 'filter' ? (
         <Radio
           value={selectedCategory}
@@ -208,7 +208,7 @@ export const HomeScreen = () => {
           <BottomSheetFlashList
             data={categories?.results}
             keyExtractor={item => item?.id}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <HStack>
                 <Radio.RadioButton value={item?.id} />
                 <Text variant="b3regular">{item?.name}</Text>
@@ -278,12 +278,15 @@ export const HomeScreen = () => {
           type="material"
         />
       </Box>
-      <Box flexDirection="row" g={2} bg="primary" px={5} pt={5} py={3}>
+      <Box flexDirection="row" g={4} bg="primary" px={5} pt={5} py={3}>
+        {accessToken ? <Clickable borderWidth={3} borderColor="white" borderRadius="rounded-full" overflow="hidden">
+          <FastImage source={{ uri: profilePiture }} resizeMode="cover" width={40} height={40} />
+        </Clickable> : null}
         <Input
           placeholder="Find What You Need"
           value={search}
           onChangeText={text => setSearch(text)}
-          right={() => (
+          left={() => (
             <IconButton
               padding={0}
               variant="vector"
@@ -314,12 +317,12 @@ export const HomeScreen = () => {
               No Service Found
             </Text>
           )}
-          contentContainerStyle={{paddingTop: 10}}
+          contentContainerStyle={{ paddingTop: 10 }}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           data={services}
           ItemSeparatorComponent={() => <Box mb={5} />}
-          renderItem={({item}: {item: any}) => (
+          renderItem={({ item }: { item: any }) => (
             <ServiceCard refetch={refetch} service={item} />
           )}
           keyExtractor={item => item._id ?? item.id}
@@ -339,7 +342,7 @@ export const HomeScreen = () => {
       <BottomSheet
         enableOverDrag={false}
         enableDynamicSizing={false}
-        handleIndicatorStyle={{backgroundColor: colors.primary}}
+        handleIndicatorStyle={{ backgroundColor: colors.primary }}
         ref={bottomSheetModalRef}
         index={-1}
         enablePanDownToClose

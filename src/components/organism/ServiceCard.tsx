@@ -1,48 +1,48 @@
-import {getImageUrl} from '@/helper/image';
+import { getImageUrl } from '@/helper/image';
 import {
   useCreateChatMutation,
   useGeUserQuery,
   useLikeAServiceMutation,
 } from '@/store/apiSlice';
-import {RootState} from '@/store/store';
+import { RootState } from '@/store/store';
 import theme from '@/theme';
-import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import {useNavigation} from '@react-navigation/native';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { useNavigation } from '@react-navigation/native';
 import getDistance from 'geolib/es/getDistance';
-import React, {FC, useEffect, useRef, useState} from 'react';
-import {Linking} from 'react-native';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { Linking } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import Share from 'react-native-share';
-import {s} from 'react-native-size-matters';
-import {useSelector} from 'react-redux';
-import {toast} from 'sonner-native';
+import { s } from 'react-native-size-matters';
+import { useSelector } from 'react-redux';
+import { toast } from 'sonner-native';
 import Clickable from '../ui/forms/Clickable';
-import {Box} from '../ui/layout/Box';
+import { Box } from '../ui/layout/Box';
 import Card from '../ui/layout/Card';
 import Divider from '../ui/layout/Divider';
 import HStack from '../ui/layout/HStack';
 import VStack from '../ui/layout/VStack';
-import {FastImage} from '../ui/media-icons/FastImage';
+import { FastImage } from '../ui/media-icons/FastImage';
 import Icon from '../ui/media-icons/Icon';
 import IconButton from '../ui/media-icons/IconButton';
-import {Text} from '../ui/typography/Text';
+import { Text } from '../ui/typography/Text';
 
 Geocoder.init('AIzaSyBYjtw327hGVGtIEEGiRKUBwgZBQC8zejk');
 
-export const ServiceCard: FC<any> = ({service, refetch}) => {
-  const {userId} = useSelector((state: RootState) => state.user);
+export const ServiceCard: FC<any> = ({ service, refetch }) => {
+  const { userId } = useSelector((state: RootState) => state.user);
   const userLocation = useSelector((state: RootState) => state.location);
   const serviceLocation = service?.location ? service?.location : userLocation;
   const [location, setLocation] = useState<string>('');
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const [likeAService, {isLoading}] = useLikeAServiceMutation();
+  const [likeAService, { isLoading }] = useLikeAServiceMutation();
   const [snapIndex, setSnapIndex] = useState<number>(-1);
-  const [createChat, {isLoading: isChatLoading}] = useCreateChatMutation();
+  const [createChat, { isLoading: isChatLoading }] = useCreateChatMutation();
 
   const [isLikedState, setIsLikedState] = useState(isLiked);
   const [likesCount, setLikesCount] = useState(service?.likes ?? 0);
 
-  const {data: userData, error: userError} = useGeUserQuery({
+  const { data: userData, error: userError } = useGeUserQuery({
     userId: service?.user?.id,
   });
 
@@ -77,7 +77,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
     } else {
       navigation.navigate('AuthenticatedStack', {
         screen: 'Public Profile',
-        params: {id: service?.user?.id},
+        params: { id: service?.user?.id },
       });
     }
   };
@@ -89,7 +89,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
       setIsLikedState(!isLikedState); // Toggle the local state
       setLikesCount(prev => (isLikedState ? prev - 1 : prev + 1)); // Adjust count optimistically
 
-      await likeAService({serviceId: service.id}).unwrap();
+      await likeAService({ serviceId: service.id }).unwrap();
       refetch(); // Ensure actual data is refetched
     } catch (error) {
       // Rollback on failure
@@ -114,8 +114,8 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
 
   const handleRedirectToChat = async () => {
     try {
-      const data = await createChat({userId: service.user.id}).unwrap();
-      navigation.navigate('Chat', {user: service?.user?.id, chatId: data?._id});
+      const data = await createChat({ userId: service.user.id }).unwrap();
+      navigation.navigate('Chat', { user: service?.user?.id, chatId: data?._id });
     } catch (error) {
       toast.error('Failed to create chat message');
     }
@@ -160,15 +160,31 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
             p={2}
             borderRadius="rounded-full">
             <FastImage
-              style={{borderRadius: theme.borderRadii['rounded-full']}}
+              style={{ borderRadius: theme.borderRadii['rounded-full'] }}
               width={s(25)}
               height={s(25)}
-              source={{uri: heroImage}}
+              source={{ uri: heroImage }}
             />
           </Box>
           <HStack flex={1} justifyContent="space-between">
             <VStack>
-              <Text variant="b2medium">{service?.user?.name}</Text>
+              <HStack g={3}>
+                <Text variant="b2medium">{service?.user?.name}</Text>
+                {service?.averageRating > 0 && (
+                  <>
+                    <Icon
+                      icon="star"
+                      color="warning200"
+                      size={6}
+                      type="ant"
+                      variant="vector"
+                    />
+                    <Text color="black" textAlign="center">
+                      {service?.averageRating}
+                    </Text>
+                  </>
+                )}
+              </HStack>
               <HStack>
                 <Text>{userData?.professions?.[0]?.name}</Text>
                 {distance ? (
@@ -185,32 +201,6 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
           </HStack>
         </Clickable>
         <Divider borderWidth={0.5} />
-        <Box
-          width={50}
-          height={50}
-          position="absolute"
-          zIndex={10}
-          right={-5}
-          top={-5}
-          alignItems="center"
-          justifyContent="center"
-          borderRadius="rounded-full"
-          bg="primary">
-          {service?.averageRating > 0 && (
-            <>
-              <Icon
-                icon="star"
-                color="warning200"
-                size={7}
-                type="ant"
-                variant="vector"
-              />
-              <Text color="white" textAlign="center">
-                {service?.averageRating}
-              </Text>
-            </>
-          )}
-        </Box>
         <Clickable
           onPress={() =>
             navigation.navigate('ServiceDetails', {
@@ -275,9 +265,9 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
           />
           <IconButton
             onPress={handleShare}
-            icon="share"
+            icon="send"
             variant="vector"
-            type="fa"
+            type="feather"
             padding={0}
           />
         </HStack>

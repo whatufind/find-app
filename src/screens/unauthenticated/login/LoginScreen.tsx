@@ -62,6 +62,7 @@ const LoginScreen = () => {
             userName: user.name,
             accessToken: tokens.access.token,
             refreshToken: tokens.refresh.token,
+            profilePicture: user?.profilePicture,
           })
         );
         toast.success('Successfully logged in');
