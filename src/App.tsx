@@ -1,15 +1,15 @@
-import {ThemeProvider} from '@shopify/restyle';
-import React, {useEffect, type ReactElement} from 'react';
+import { ThemeProvider } from '@shopify/restyle';
+import React, { useEffect, type ReactElement } from 'react';
 
 import theme from '@/theme';
 import 'react-native-gesture-handler';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {Provider} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
-import {Toaster} from 'sonner-native';
-import {Navigator} from './navigators';
-import {persistor, store} from './store/store';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Toaster } from 'sonner-native';
+import { Navigator } from './navigators';
+import { persistor, store } from './store/store';
 import messaging from '@react-native-firebase/messaging';
 
 import notifee from '@notifee/react-native';
@@ -19,10 +19,8 @@ const onDisplayNotification = async (remoteMessage): Promise<void> => {
     id: 'default',
     name: 'Default Channel',
   });
-console.log(remoteMessage);
   await notifee.displayNotification({
     title: remoteMessage?.notification?.title,
-    body: 'Main body content of the notification',
     android: {
       channelId,
       pressAction: {
@@ -37,7 +35,7 @@ export const App = (): ReactElement => {
   useEffect(() => {
     // Handle foreground notifications
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-    await onDisplayNotification(remoteMessage);
+      await onDisplayNotification(remoteMessage);
     });
 
     return unsubscribe;

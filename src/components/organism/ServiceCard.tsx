@@ -200,6 +200,11 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
             </VStack>
           </HStack>
         </Clickable>
+        <Box flex={1} px={5}>
+          <Text variant="b2medium" color="black" numberOfLines={2}>
+            {service.title}
+          </Text>
+        </Box>
         <Divider borderWidth={0.5} />
         <Clickable
           onPress={() =>
@@ -218,28 +223,15 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
               height={theme.sizes.safeWidth}
             />
           )}
-
-          <VStack px={5} py={2}>
-            <HStack flex={1} justifyContent="space-between">
-              <Box flex={1}>
-                <Text variant="b1medium" color="black" numberOfLines={2}>
-                  {service.title}
-                </Text>
-              </Box>
-            </HStack>
-            <Text mb={3} color="black400" numberOfLines={10}>
-              {service.description}
-            </Text>
-          </VStack>
         </Clickable>
-        <HStack justifyContent="space-between" px={5} pt={5}>
+        <HStack justifyContent="space-between" px={5} >
           <HStack alignItems="center" justifyContent="center" mt={2}>
             <Icon icon="heart" size={6} color="danger" />
             <Icon
               icon="like1"
               color="primary"
               type="ant"
-              size={6}
+              size={5}
               variant="vector"
             />
             <Text ml={3}>{likesCount}</Text>
@@ -251,6 +243,7 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
             icon={isLikedState ? 'like1' : 'like2'}
             variant="vector"
             type="ant"
+            size={6}
             color={isLikedState ? 'primary' : 'black'}
             padding={0}
             onPress={handleLikeService}
@@ -258,7 +251,7 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
           <IconButton
             icon="telephone"
             variant="vector"
-            size={9}
+            size={7}
             type="foundation"
             onPress={openBottomSheet}
             padding={0}
@@ -269,6 +262,7 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
             variant="vector"
             type="feather"
             padding={0}
+            size={6}
           />
         </HStack>
       </Card>

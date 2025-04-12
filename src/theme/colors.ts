@@ -1,6 +1,6 @@
 const palette = {
   // bg color hex
-  color1: '#F9FAFB',
+  color1: '#DADDE1',
   color2: '#FFFFFF',
 
   // primary colors hex (cool blue tones)

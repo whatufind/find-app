@@ -5,53 +5,53 @@ import {
   useGetServicesQuery,
 } from '@/store/apiSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import React, {FC, useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
-import {SelectList} from 'react-native-dropdown-select-list';
+import React, { FC, useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list';
 import FastImage from 'react-native-fast-image';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {toast} from 'sonner-native';
-import {Button} from '../ui/forms/Button';
-import Checkbox, {CheckboxStatus} from '../ui/forms/CheckBox';
-import {Input} from '../ui/forms/Input';
-import {Box} from '../ui/layout/Box';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { toast } from 'sonner-native';
+import { Button } from '../ui/forms/Button';
+import Checkbox, { CheckboxStatus } from '../ui/forms/CheckBox';
+import { Input } from '../ui/forms/Input';
+import { Box } from '../ui/layout/Box';
 import ContentSafeAreaView from '../ui/layout/ContentSafeAreaView';
 import HStack from '../ui/layout/HStack';
 import VStack from '../ui/layout/VStack';
 import IconButton from '../ui/media-icons/IconButton';
-import {Text} from '../ui/typography/Text';
-import {detectDevice} from '@/utils';
-import {useSelector} from 'react-redux';
-import {RootState} from '@/store/store';
+import { Text } from '../ui/typography/Text';
+import { detectDevice } from '@/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 
-type CreateServiceProps  = {
-  onPress:()=>void
+type CreateServiceProps = {
+  onPress: () => void
 }
-const CreateService:FC<CreateServiceProps> = ({onPress}) => {
+const CreateService: FC<CreateServiceProps> = ({ onPress }) => {
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
   const [media, setMedia] = useState<
-    {uri: string; type: string; name: string}[]
+    { uri: string; type: string; name: string }[]
   >([]);
   const [availabilityEntries, setAvailabilityEntries] = useState<
-    {day: string; timeRange: string}[]
+    { day: string; timeRange: string }[]
   >([]);
   const [currentDay, setCurrentDay] = useState(new Date());
   const [currentTimeRange, setCurrentTimeRange] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [createService, {isLoading}] = useCreateServiceMutation();
+  const [createService, { isLoading }] = useCreateServiceMutation();
   const [categories, setCategories] = useState([]);
-  const {data, error} = useGetServiceCategoriesQuery({});
+  const { data, error } = useGetServiceCategoriesQuery({});
   const [checked, setChecked] = useState(false);
   const location = useSelector((state: RootState) => state.location);
-  const {refetch} = useGetServicesQuery({});
+  const { refetch } = useGetServicesQuery({});
 
   useEffect(() => {
     if (data) {
@@ -199,8 +199,11 @@ const CreateService:FC<CreateServiceProps> = ({onPress}) => {
         value={description}
         onChangeText={setDescription}
       />
-      <Box borderWidth={1} borderColor="secondary100" borderRadius="rounded-sm">
-        <SelectList setSelected={val => setCategory(val)} data={categories} />
+      <Box g={4}>
+        <Text>Choose Category</Text>
+        <SelectList
+          setSelected={val => setCategory(val)}
+          data={categories} />
       </Box>
       <Input
         placeholder="৳ Price of your service"
@@ -257,9 +260,8 @@ const CreateService:FC<CreateServiceProps> = ({onPress}) => {
           justifyContent="space-between"
           alignItems="center"
           mt={2}>
-          <Text>{`${moment(entry?.day).format('MMMM Do YYYY, h:mm:ss a')} - ${
-            entry.timeRange
-          }`}</Text>
+          <Text>{`${moment(entry?.day).format('MMMM Do YYYY, h:mm:ss a')} - ${entry.timeRange
+            }`}</Text>
           <IconButton
             onPress={() => removeAvailabilityEntry(index)}
             type="ant"
@@ -304,7 +306,7 @@ const CreateService:FC<CreateServiceProps> = ({onPress}) => {
               variant="vector"
             />
             <FastImage
-              source={{uri: file.uri}}
+              source={{ uri: file.uri }}
               style={styles.mediaPreview}
               resizeMode={FastImage.resizeMode.cover}
             />

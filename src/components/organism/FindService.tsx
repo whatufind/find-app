@@ -1,14 +1,21 @@
 import { useCreateServiceMutation, useGetServiceCategoriesQuery } from '@/store/apiSlice';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import { toast } from 'sonner-native';
 import { Button } from '../ui/forms/Button';
 import { Input } from '../ui/forms/Input';
 import ContentSafeAreaView from '../ui/layout/ContentSafeAreaView';
 import { Text } from '../ui/typography/Text';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
-const FindService = () => {
+type FindServiceProps = {
+    onPress: () => void
+}
+
+
+const FindService: FC<FindServiceProps> = ({ onPress }) => {
     const navigation = useNavigation();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -16,6 +23,7 @@ const FindService = () => {
     const [createService, { isLoading }] = useCreateServiceMutation();
     const [categories, setCategories] = useState([]);
     const { data } = useGetServiceCategoriesQuery({});
+    const location = useSelector((state: RootState) => state.location);
 
     useEffect(() => {
         if (data) {
@@ -32,10 +40,17 @@ const FindService = () => {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('category', category);
+        formData.append('location[latitude]', location.latitude);
+        formData.append('location[longitude]', location.longitude);
+
         formData.append('type', 'find');
         try {
             await createService(formData).unwrap();
-            toast.success('Your request submitted');
+            toast.success('Service created successfully!');
+            setTitle('');
+            setDescription('');
+            setCategory('');
+            onPress();
         } catch (error) {
             if (error?.data?.code === 401) {
                 navigation.navigate('Login');
@@ -58,7 +73,7 @@ const FindService = () => {
                 items={categories}
             />
             <Button mt={5} mb={5} paddingHorizontal={5} onPress={handleSubmit} disabled={isLoading}>
-                <Button.Text title={ 'Get Service'} />
+                <Button.Text title={'Get Service'} />
             </Button>
         </ContentSafeAreaView>
     );

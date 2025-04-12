@@ -21,9 +21,9 @@ import {
   useGeUserQuery,
 } from '@/store/apiSlice';
 import { RootState } from '@/store/store';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { DrawerActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 const AccountHeader = ({ user }) => {
@@ -106,10 +106,18 @@ export const AccountScreen = () => {
     data: services,
     isLoading: isServicesLoading,
     error,
+    refetch,
   } = useGetServicesQuery({ user: userId, sortBy: '-createdAt' });
   const { data: requests, isLoading: isRequestsLoading } =
     useGetServiceRequestersQuery({ owner: userId });
   useHeader(() => <AccountHeader user={user} />);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
+
 
   if (isUserLoading || isServicesLoading || isRequestsLoading) {
     return (

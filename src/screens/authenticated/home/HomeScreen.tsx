@@ -248,7 +248,12 @@ export const HomeScreen = () => {
                 }}
               />
             )}
-            {selectedAction === 'find' && <FindService />}
+            {selectedAction === 'find' && <FindService
+              onPress={() => {
+                bottomSheetModalRef.current?.close();
+                refetch();
+              }}
+            />}
           </BottomSheetScrollView>
         </>
       )}
@@ -256,7 +261,7 @@ export const HomeScreen = () => {
   );
 
   return (
-    <Screen preset="fixed">
+    <Screen preset="fixed" >
       <Box style={safeAreaInset} bg="primary" />
       <Box
         elevation={5}
@@ -278,15 +283,16 @@ export const HomeScreen = () => {
           type="material"
         />
       </Box>
-      <Box flexDirection="row" g={4} bg="primary" px={5} pt={5} py={3}>
+      <Box flexDirection="row" g={4} bg="white" elevation={5} px={5} pt={5} py={3}>
         {accessToken ? <Clickable borderWidth={3} borderColor="white" borderRadius="rounded-full" overflow="hidden">
           <FastImage source={{ uri: profilePiture }} resizeMode="cover" width={40} height={40} />
         </Clickable> : null}
         <Input
           placeholder="Find What You Need"
           value={search}
+          size="sm"
           onChangeText={text => setSearch(text)}
-          left={() => (
+          right={() => (
             <IconButton
               padding={0}
               variant="vector"
@@ -301,12 +307,11 @@ export const HomeScreen = () => {
         <HStack>
           <IconButton
             onPress={() => openBottomSheet('filter')}
-            icon="filter-variant"
-            type="materialCommunity"
-            variant="vector"
+            icon="filter"
+            variant="svg"
             size={10}
             padding={0}
-            color="white"
+            color="primary"
           />
         </HStack>
       </Box>
