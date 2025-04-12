@@ -247,17 +247,15 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
           )}
           estimatedItemSize={43.3}
         />
-      </ContentSafeAreaView>
 
+      </ContentSafeAreaView>
       <Box
         flexDirection="row"
         alignItems="center"
         px={5}
-        bg="white"
         py={5}
         justifyContent="center"
         g={5}>
-        {data?.type !== 'find' && (
           <Button
             onPress={() => openBottomSheet()}
             paddingHorizontal={4}
@@ -265,7 +263,6 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
             variant="primary">
             <Button.Text title="Get this service" />
           </Button>
-        )}
       </Box>
       <BottomSheet
         index={-1}
