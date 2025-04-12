@@ -1,7 +1,7 @@
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
   Button,
-  Center,
   ContentSafeAreaView,
   FastImage,
   Header,
@@ -11,7 +11,7 @@ import {
   Text,
   VStack,
 } from '@/components';
-import {getImageUrl} from '@/helper/image';
+import { getImageUrl } from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetProfessionsQuery,
@@ -19,16 +19,16 @@ import {
   useGeUserQuery,
   useUpdateUserMutation,
 } from '@/store/apiSlice';
-import {RootState} from '@/store/store';
+import { RootState } from '@/store/store';
 import theme from '@/theme';
-import {yupResolver} from '@hookform/resolvers/yup';
-import React, {useEffect, useState} from 'react';
-import {Controller, useForm} from 'react-hook-form';
-import {Image, ImageBackground} from 'react-native';
-import {MultipleSelectList} from 'react-native-dropdown-select-list';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {useSelector} from 'react-redux';
-import {toast} from 'sonner-native';
+import { yupResolver } from '@hookform/resolvers/yup';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Image } from 'react-native';
+import { MultipleSelectList } from 'react-native-dropdown-select-list';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useSelector } from 'react-redux';
+import { toast } from 'sonner-native';
 import * as Yup from 'yup';
 
 const editSchema = Yup.object({
@@ -191,7 +191,7 @@ export const ManageAccountScreen = () => {
         borderBottomLeftRadius="rounded-lg"
         borderBottomRightRadius="rounded-lg">
         <Image
-          source={{uri: getImageUrl(user?.coverPhoto)}}
+        source={{uri: cover?.uri ?? getImageUrl(user?.coverPhoto)}}
           style={{
             width: theme.sizes.width,
             height: theme.sizes.width / 1.8,
@@ -221,7 +221,7 @@ export const ManageAccountScreen = () => {
               borderRadius="rounded-full"
               width={100}
               height={100}
-              source={{uri: getImageUrl(user?.profilePicture)}}
+              source={{uri: profilePicture?.uri ?? getImageUrl(user?.profilePicture)}}
             />
             <IconButton
               zIndex={10}

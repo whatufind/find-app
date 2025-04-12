@@ -34,7 +34,7 @@ export const AccountInfoScreen = () => {
 
 
   const ProfileSection = () => (
-    <Center>
+    <Center mt={5}>
 
         <FastImage
         borderRadius="rounded-full"
