@@ -28,6 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { Linking, ScrollView } from 'react-native';
 import { s, vs } from 'react-native-size-matters';
 import { useSelector } from 'react-redux';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const PublicProfileScreenHeader = () => <Box />;
 
@@ -38,6 +39,7 @@ const ProfileHeader = ({ user }) => {
   const [followUser, { isLoading: isFollowLoading }] = useFollowUserMutation();
   const { data: followers, refetch: refetchFollowers } = useGetFollowersQuery(user?.id);
   const { userId } = useSelector((state: RootState) => state.user);
+
   const handleCreateChat = async () => {
     try {
       const data = await createChat({ userId: user.id }).unwrap();
@@ -114,6 +116,8 @@ const ProfileHeader = ({ user }) => {
             </HStack>
           </HStack>
         </HStack>
+
+
       </ContentSafeAreaView>
     </Box>
   );
@@ -189,11 +193,12 @@ export const PublicProfileScreen = ({ route }) => {
   const { data: user } = useGeUserQuery({ userId: route?.params?.id });
   const tabs = ['About', 'Top services', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
+  const { latitude, longitude } = useSelector((state: RootState) => state.location);
 
   useHeader(PublicProfileScreenHeader);
-
+  console.log(latitude, longitude);
   return (
-    <Screen>
+    <Screen preset="scroll">
       <ProfileHeader user={user} />
       <ContentSafeAreaView>
         {user?.about && (
@@ -214,6 +219,35 @@ export const PublicProfileScreen = ({ route }) => {
         {activeTab === 'About' && <ProfileDetails user={user} />}
         {activeTab === 'Top services' && <Services user={user} />}
         {activeTab === 'Reviews' && <Reviews />}
+
+        {(latitude && activeTab === 'About') ? (
+          <MapView
+            style={{
+              width: theme.sizes.safeWidth,
+              height: theme.sizes.safeWidth,
+              marginVertical: 5,
+              borderRadius: theme.borderRadii['rounded-md'],
+              overflow: 'hidden',
+            }}
+            region={{
+              latitude: latitude ?? 23.804091666666668,
+              longitude: longitude ?? 90.41523666666667,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: latitude,
+                longitude: longitude,
+
+              }}
+              title="Your Location"
+              description="This is your current position"
+            />
+          </MapView>
+        ) : null}
+
       </ContentSafeAreaView>
     </Screen>
   );
