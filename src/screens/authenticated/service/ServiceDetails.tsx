@@ -256,13 +256,13 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
         py={5}
         justifyContent="center"
         g={5}>
-          <Button
-            onPress={() => openBottomSheet()}
-            paddingHorizontal={4}
-            flex={1}
-            variant="primary">
-            <Button.Text title="Get this service" />
-          </Button>
+        <Button
+          onPress={() => openBottomSheet()}
+          paddingHorizontal={4}
+          flex={1}
+          variant="primary">
+          <Button.Text title="Get this service" />
+        </Button>
       </Box>
       <BottomSheet
         index={-1}

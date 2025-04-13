@@ -4,8 +4,8 @@ import { navigate } from '@/utils/navigationHelper';
 import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
-// export const BASE_URL = 'http://173.249.59.88/v1';
-export const BASE_URL = 'http://192.168.148.114:3000/v1';
+export const BASE_URL = 'http://173.249.59.88/v1';
+// export const BASE_URL = 'http://192.168.1.3:3000/v1';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({

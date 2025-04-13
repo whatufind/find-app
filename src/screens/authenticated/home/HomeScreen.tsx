@@ -33,6 +33,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
 import messaging from '@react-native-firebase/messaging';
+import { useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
@@ -41,6 +42,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const { accessToken, userId, profilePiture } = useSelector((state: RootState) => state.user);
   const [updateUser] = useUpdateUserMutation();
@@ -285,7 +287,11 @@ export const HomeScreen = () => {
       </Box>
       <Box flexDirection="row" g={4} bg="white" elevation={5} px={5} pt={5} py={3}>
         {accessToken ? <Clickable borderWidth={3} borderColor="white" borderRadius="rounded-full" overflow="hidden">
-          <FastImage source={{ uri: profilePiture }} resizeMode="cover" width={40} height={40} />
+          <Clickable
+            onPress={() => navigation.navigate('Public Profile', { id: userId },)}
+          >
+            <FastImage source={{ uri: profilePiture }} resizeMode="cover" width={40} height={40} />
+          </Clickable>
         </Clickable> : null}
         <Input
           placeholder="Find What You Need"
@@ -354,7 +360,7 @@ export const HomeScreen = () => {
         snapPoints={[theme.sizes.height / 1.5]}>
         {renderBottomSheetContent()}
       </BottomSheet>
-    </Screen>
+    </Screen >
   );
 };
 
