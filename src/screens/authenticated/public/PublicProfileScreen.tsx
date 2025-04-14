@@ -66,8 +66,9 @@ const ProfileHeader = ({ user }) => {
   }, [followers]);
 
   return (
-    <Box height={theme.sizes.safeWidth / 1.5}>
-      <Box position="absolute" zIndex={20} top={40} left={20}>
+    <Box height={theme.sizes.safeWidth / 2} >
+      <Box position="absolute" zIndex={10} top={20} left={10}
+      >
         <IconButton
           onPress={() => navigation.goBack()}
           icon="chevron-left"
@@ -81,44 +82,46 @@ const ProfileHeader = ({ user }) => {
         width={theme.sizes.width}
         height={theme.sizes.safeWidth / 2}
       />
-      <ContentSafeAreaView position="absolute" bottom={0}>
-        <HStack g={5} alignItems="center">
-          <FastImage
-            borderRadius="rounded-full"
-            borderWidth={3}
-            borderColor="white"
-            width={s(70)}
-            height={s(70)}
-            source={{ uri: getImageUrl(user?.profilePicture) }}
-          />
-          <HStack justifyContent="space-between" flex={1} mt={8}>
-            <VStack>
-              <Text variant="b1bold">{user?.name}</Text>
-              <Text variant="b3semiBold">{user?.professions?.[0]?.name}</Text>
-              <Text variant="b4regular">Dhaka, Bangladesh</Text>
-            </VStack>
-            <HStack>
-              <Button size="sm" height={s(20)} px={5}
-                onPress={handleFollow}
-              >
-                <Button.Text title={isFollowing ? 'Following' : 'Follow'} />
-              </Button>
-              <IconButton
-                onPress={() => handleCreateChat()}
-                icon="chatbubble-ellipses-outline"
-                type="ionicon"
-                variant="vector"
-              />
-              <IconButton
-                onPress={() => Linking.openURL(`tel:${user?.phone}`)}
+      <FastImage
+        borderRadius="rounded-full"
+        borderWidth={3}
+        borderColor="white"
+        width={s(70)}
+        height={s(70)}
+        source={{ uri: getImageUrl(user?.profilePicture) }}
+      />
+      <HStack g={5} alignItems="center">
 
-                icon="phone" type="ant" variant="vector" />
-            </HStack>
+        <HStack justifyContent="space-between" flex={1} >
+          <VStack>
+            <Text variant="b1bold">{user?.name}</Text>
+            <Text variant="b3semiBold">{user?.professions?.[0]?.name}</Text>
+          </VStack>
+          <HStack>
+            <Button size="sm" height={s(20)} px={5}
+              onPress={handleFollow}
+            >
+              <Button.Text title={isFollowing ? 'Following' : 'Follow'} />
+            </Button>
+            <IconButton
+              onPress={() => handleCreateChat()}
+              icon="chatbubble-ellipses-outline"
+              type="ionicon"
+              variant="vector"
+            />
+            <IconButton
+              onPress={() => Linking.openURL(`tel:${user?.phone}`)}
+
+              icon="phone" type="ant" variant="vector" />
           </HStack>
         </HStack>
+      </HStack>
+      {user?.about && (
+        <Text textAlign="center" variant="b5regular" mt={4}>
+          Bio: {user.about}
+        </Text>
+      )}
 
-
-      </ContentSafeAreaView>
     </Box>
   );
 };
@@ -137,24 +140,6 @@ const ProfileTabs = ({ tabs, activeTab, setActiveTab }) => (
       </Button>
     ))}
   </HStack>
-);
-
-const ProfileDetails = ({ user }) => (
-  <Box g={3} backgroundColor="white" borderRadius="rounded-sm" mt={5} p={5}>
-    {[
-      { label: 'Nationality:', value: 'Bangladeshi' },
-      { label: 'Location:', value: 'Dhaka, Bangladesh' },
-      { label: 'Contact Number:', value: user?.phone },
-      { label: 'Primary Profession:', value: user?.professions?.[0]?.name },
-    ].map(({ label, value }) => (
-      <HStack g={3} key={label}>
-        <Text color="black" variant="b3bold">
-          {label}
-        </Text>
-        <Text>{value}</Text>
-      </HStack>
-    ))}
-  </Box>
 );
 
 const Services = ({ user }) => {
@@ -191,55 +176,46 @@ const Reviews = () => (
 
 export const PublicProfileScreen = ({ route }) => {
   const { data: user } = useGeUserQuery({ userId: route?.params?.id });
-  const tabs = ['About', 'Top services', 'Reviews'];
+  const tabs = ['Location', 'Top services', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const { latitude, longitude } = useSelector((state: RootState) => state.location);
 
+
   useHeader(PublicProfileScreenHeader);
-  console.log(latitude, longitude);
   return (
-    <Screen preset="scroll">
+    <Screen >
       <ProfileHeader user={user} />
-      <ContentSafeAreaView>
-        {user?.about && (
-          <Text textAlign="center" variant="b5regular" mt={4}>
-            Bio: {user.about}
-          </Text>
-        )}
-      </ContentSafeAreaView>
-      <Divider borderColor="neutral100" my={5} />
       <ContentSafeAreaView flex={1}>
-        <ScrollView style={{ flexGrow: 0 }}>
+        <ScrollView >
           <ProfileTabs
             tabs={tabs}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
           />
         </ScrollView>
-        {activeTab === 'About' && <ProfileDetails user={user} />}
         {activeTab === 'Top services' && <Services user={user} />}
         {activeTab === 'Reviews' && <Reviews />}
 
-        {(latitude && activeTab === 'About') ? (
+        {(user?.location && activeTab === 'Location') ? (
           <MapView
             style={{
               width: theme.sizes.safeWidth,
-              height: theme.sizes.safeWidth,
+              height: theme.sizes.safeWidth / 2,
               marginVertical: 5,
               borderRadius: theme.borderRadii['rounded-md'],
               overflow: 'hidden',
             }}
             region={{
-              latitude: latitude ?? 23.804091666666668,
-              longitude: longitude ?? 90.41523666666667,
+              latitude: user?.location?.latitude ?? 37.78825,
+              longitude: user?.location?.longitude ?? -122.4324,
               latitudeDelta: 0.005,
               longitudeDelta: 0.005,
             }}
           >
             <Marker
               coordinate={{
-                latitude: latitude,
-                longitude: longitude,
+                latitude: user?.location?.latitude,
+                longitude: user?.location?.longitude,
 
               }}
               title="Your Location"

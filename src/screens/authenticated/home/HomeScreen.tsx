@@ -48,9 +48,19 @@ export const HomeScreen = () => {
   const [updateUser] = useUpdateUserMutation();
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
-      position => {
+      async position => {
         const { latitude, longitude } = position.coords;
         dispatch(setLocation({ latitude, longitude }));
+        try {
+          const res = await updateUser({
+            id: userId,
+            userData: { location: { latitude, longitude } },
+          }).unwrap();
+
+          console.log(res, 'what is res');
+        } catch (e) {
+          console.log(e, 'what is err');
+        }
       },
       error => console.log(error),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },

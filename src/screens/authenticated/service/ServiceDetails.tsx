@@ -115,6 +115,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
   return (
     <Screen safeAreaEdges={['top']} preset="auto">
       <ContentSafeAreaView
+        mt={5}
         flex={1}
         justifyContent="space-between"
         paddingBottom={5}>

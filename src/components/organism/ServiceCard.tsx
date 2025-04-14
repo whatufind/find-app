@@ -26,13 +26,15 @@ import { FastImage } from '../ui/media-icons/FastImage';
 import Icon from '../ui/media-icons/Icon';
 import IconButton from '../ui/media-icons/IconButton';
 import { Text } from '../ui/typography/Text';
+import { backgroundColor } from '@shopify/restyle';
 
 Geocoder.init('AIzaSyBYjtw327hGVGtIEEGiRKUBwgZBQC8zejk');
 
 export const ServiceCard: FC<any> = ({ service, refetch }) => {
   const { userId } = useSelector((state: RootState) => state.user);
   const userLocation = useSelector((state: RootState) => state.location);
-  const serviceLocation = service?.location ? service?.location : userLocation;
+
+  const serviceLocation = service?.location;
   const [location, setLocation] = useState<string>('');
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [likeAService, { isLoading }] = useLikeAServiceMutation();
@@ -121,28 +123,24 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
     }
   };
 
+
   useEffect(() => {
     const fetchLocation = async () => {
       try {
         const result = await Geocoder.from(
-          userLocation.latitude,
-          userLocation.longitude,
+          serviceLocation
         );
         const address = result.results[0].formatted_address;
         setLocation(address);
       } catch (error) {
         // console.error('Error fetching location:', error);
-        setLocation('Error fetching location');
       }
     };
 
     fetchLocation();
-  }, [userLocation]);
+  }, [serviceLocation]);
 
   const isLiked = service?.likedBy?.findIndex(liker => liker === userId) !== -1;
-
-  console.log(isLiked);
-
   return (
     <>
       <Card variant="outlined" paddingBottom={5}>
@@ -167,9 +165,10 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
             />
           </Box>
           <HStack flex={1} justifyContent="space-between">
-            <VStack>
+            <VStack flex={1}>
               <HStack g={3}>
                 <Text variant="b2medium">{service?.user?.name}</Text>
+                {userData?.professions?.[0]?.name ? <Text>({userData?.professions?.[0]?.name})</Text> : null}
                 {service?.averageRating > 0 && (
                   <>
                     <Icon
@@ -185,18 +184,17 @@ export const ServiceCard: FC<any> = ({ service, refetch }) => {
                   </>
                 )}
               </HStack>
-              <HStack>
-                <Text>{userData?.professions?.[0]?.name}</Text>
-                {distance ? (
-                  <HStack>
-                    <Icon icon="location" type="evil" variant="vector" />
-                    <Text>
-                      {(distance * 0.000621)?.toFixed(2)}
-                      Miles
+              {distance ? (
+                <HStack flex={1} alignItems="flex-start">
+                  <Icon icon="location" size={6} color="primary" type="evil" variant="vector" />
+                  <Box flex={1} >
+                    <Text variant="b5regular">
+                      {location}
+                      <Text color="danger"> ({(distance * 0.000621)?.toFixed(2)} miles away)</Text>
                     </Text>
-                  </HStack>
-                ) : null}
-              </HStack>
+                  </Box>
+                </HStack>
+              ) : null}
             </VStack>
           </HStack>
         </Clickable>
