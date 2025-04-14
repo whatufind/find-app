@@ -1,4 +1,4 @@
-import {vs} from 'react-native-size-matters';
+import { vs } from 'react-native-size-matters';
 
 export const inputVariants = {
   defaults: {
@@ -34,8 +34,8 @@ export const inputSizeVariants = {
   lg: {
     height: vs(40),
   },
-  hu:{
-    height:vs(80),
+  hu: {
+    height: vs(80),
   },
   sm: {
     height: vs(32),

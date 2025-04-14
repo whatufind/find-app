@@ -13,28 +13,31 @@ import {
   VStack,
 } from '@/components';
 import PersonalServiceCard from '@/components/organism/PersonalServiceCard';
-import { getImageUrl } from '@/helper/image';
+import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetServiceRequestersQuery,
   useGetServicesQuery,
   useGeUserQuery,
 } from '@/store/apiSlice';
-import { RootState } from '@/store/store';
-import { DrawerActions, useFocusEffect, useNavigation } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import {RootState} from '@/store/store';
+import theme from '@/theme';
+import {
+  DrawerActions,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
+import React, {useCallback} from 'react';
+import {ImageBackground, StyleSheet} from 'react-native';
+import {useSelector} from 'react-redux';
 
-const AccountHeader = ({ user }) => {
+const AccountHeader = ({user}) => {
   const navigation = useNavigation();
   return (
     <Header>
       <Header.Content title="WF" />
       <HStack>
-        {/* <Badge content="0" placement="topRight" variant="danger">
-            <IconButton variant="vector" icon="notifications" color="white" size={10} type="ionicon" />
-        </Badge> */}
         <IconButton
           variant="vector"
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
@@ -48,39 +51,40 @@ const AccountHeader = ({ user }) => {
   );
 };
 
-const ProfileSection = ({ user }) => (
-  <Box
-    width="100%"
-    bg="primary"
-    paddingVertical={10}
-    borderBottomLeftRadius="rounded-lg"
-    borderBottomRightRadius="rounded-lg">
-    <Center>
-      <Box
-        alignItems="center"
-        overflow="hidden"
-        width={100}
-        height={100}
-        borderRadius="rounded-full"
-        justifyContent="center"
-        backgroundColor="white">
+const ProfileSection = ({user}) => {
+  const navigation = useNavigation();
+  return (
+    <ImageBackground
+      source={{uri: getImageUrl(user?.coverPhoto)}}
+      style={styles.imageBanner}>
+      <Center>
+        <Box position="absolute" zIndex={10} top={0} right={-10}>
+          <IconButton
+            onPress={() => navigation.navigate('Manage Account')}
+            size={10}
+            icon="pencil-circle"
+            variant="vector"
+            type="materialCommunity"
+          />
+        </Box>
         <FastImage
+          borderRadius="rounded-full"
           width={100}
           height={100}
-          source={{ uri: getImageUrl(user?.profilePicture) }}
+          source={{uri: getImageUrl(user?.profilePicture)}}
         />
-      </Box>
-      <Text variant="heading3" color="white">
-        {user?.name}
-      </Text>
-      <Text variant="b4regular" color="white">
-        {user?.professions?.[0]?.name}
-      </Text>
-    </Center>
-  </Box>
-);
+        <Text variant="heading3" color="primary">
+          {user?.name}
+        </Text>
+        <Text variant="b4regular" color="primary">
+          {user?.professions?.[0]?.name}
+        </Text>
+      </Center>
+    </ImageBackground>
+  );
+};
 
-const StatsCard = ({ value, label }) => (
+const StatsCard = ({value, label}) => (
   <Card
     variant="outlined"
     borderRadius="rounded-full"
@@ -100,24 +104,23 @@ const StatsCard = ({ value, label }) => (
 );
 
 export const AccountScreen = () => {
-  const { userId } = useSelector((state: RootState) => state.user);
-  const { data: user, isLoading: isUserLoading } = useGeUserQuery({ userId });
+  const {userId} = useSelector((state: RootState) => state.user);
+  const {data: user, isLoading: isUserLoading} = useGeUserQuery({userId});
   const {
     data: services,
     isLoading: isServicesLoading,
     error,
     refetch,
-  } = useGetServicesQuery({ user: userId, sortBy: '-createdAt' });
-  const { data: requests, isLoading: isRequestsLoading } =
-    useGetServiceRequestersQuery({ owner: userId });
+  } = useGetServicesQuery({user: userId, sortBy: '-createdAt'});
+  const {data: requests, isLoading: isRequestsLoading} =
+    useGetServiceRequestersQuery({owner: userId});
   useHeader(() => <AccountHeader user={user} />);
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [])
+    }, []),
   );
-
 
   if (isUserLoading || isServicesLoading || isRequestsLoading) {
     return (
@@ -133,10 +136,7 @@ export const AccountScreen = () => {
       <ContentSafeAreaView flex={1}>
         <HStack g={5} mt={5} justifyContent="center" px={5}>
           <StatsCard value={services?.results?.length || 0} label="Services" />
-          <StatsCard
-            value={requests?.results?.length || 0}
-            label="Requests"
-          />
+          <StatsCard value={requests?.results?.length || 0} label="Requests" />
           <StatsCard value={5} label="Completed" />
         </HStack>
         <VStack mt={5} flex={1}>
@@ -146,12 +146,12 @@ export const AccountScreen = () => {
                 No Service Found
               </Text>
             )}
-            contentContainerStyle={{ paddingTop: 10 }}
+            contentContainerStyle={{paddingTop: 10}}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             data={services?.results}
             ItemSeparatorComponent={() => <Box mb={5} />}
-            renderItem={({ item }) => <PersonalServiceCard service={item} />}
+            renderItem={({item}) => <PersonalServiceCard service={item} />}
             keyExtractor={item => item._id ?? item.id}
             estimatedItemSize={200}
           />
@@ -162,3 +162,12 @@ export const AccountScreen = () => {
 };
 
 export default AccountScreen;
+
+const styles = StyleSheet.create({
+  imageBanner: {
+    width: theme.sizes.width,
+    height: theme.sizes.width / 2.2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
