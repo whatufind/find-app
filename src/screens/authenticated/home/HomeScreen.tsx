@@ -16,16 +16,16 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
+import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
   useUpdateUserMutation,
 } from '@/store/apiSlice';
-import { setLocation } from '@/store/slice/locationSlice';
-import { AppDispatch, RootState } from '@/store/store';
+import {setLocation} from '@/store/slice/locationSlice';
+import {AppDispatch, RootState} from '@/store/store';
 import theme from '@/theme';
-import { colors } from '@/theme/colors';
+import {colors} from '@/theme/colors';
 import BottomSheet, {
   BottomSheetFlashList,
   BottomSheetScrollView,
@@ -33,28 +33,30 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
 import messaging from '@react-native-firebase/messaging';
-import { useNavigation } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
-import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
-import { useDispatch, useSelector } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
+import React, {useEffect, useRef, useState} from 'react';
+import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
+import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
+import {useDispatch, useSelector} from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const { accessToken, userId, profilePiture } = useSelector((state: RootState) => state.user);
+  const {accessToken, userId, profilePiture} = useSelector(
+    (state: RootState) => state.user,
+  );
   const [updateUser] = useUpdateUserMutation();
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
       async position => {
-        const { latitude, longitude } = position.coords;
-        dispatch(setLocation({ latitude, longitude }));
+        const {latitude, longitude} = position.coords;
+        dispatch(setLocation({latitude, longitude}));
         try {
           const res = await updateUser({
             id: userId,
-            userData: { location: { latitude, longitude } },
+            userData: {location: {latitude, longitude}},
           }).unwrap();
 
           console.log(res, 'what is res');
@@ -63,7 +65,7 @@ export const HomeScreen = () => {
         }
       },
       error => console.log(error),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
   };
 
@@ -87,7 +89,7 @@ export const HomeScreen = () => {
             try {
               await updateUser({
                 id: userId,
-                userData: { fcmToken: token },
+                userData: {fcmToken: token},
               }).unwrap();
             } catch (error) {
               console.log('failed to update user fcm token', updateUser);
@@ -162,11 +164,11 @@ export const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const { data, isLoading, error, refetch, isFetching } = useGetServicesQuery({
+  const {data, isLoading, error, refetch, isFetching} = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
     page: page,
-    ...(selectedCategory && { category: selectedCategory }),
+    ...(selectedCategory && {category: selectedCategory}),
   });
 
   const {
@@ -208,7 +210,7 @@ export const HomeScreen = () => {
   };
 
   const renderBottomSheetContent = () => (
-    <BottomSheetView style={{ paddingBottom: 20, flex: 1 }}>
+    <BottomSheetView style={{paddingBottom: 20, flex: 1}}>
       {bottomSheetFor === 'filter' ? (
         <Radio
           value={selectedCategory}
@@ -220,7 +222,7 @@ export const HomeScreen = () => {
           <BottomSheetFlashList
             data={categories?.results}
             keyExtractor={item => item?.id}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <HStack>
                 <Radio.RadioButton value={item?.id} />
                 <Text variant="b3regular">{item?.name}</Text>
@@ -240,14 +242,14 @@ export const HomeScreen = () => {
               flex={1}
               type={selectedAction === 'service' ? 'contained' : 'outlined'}
               onPress={() => setSelectedAction('service')}>
-              <Button.Text title="Provide a Service" />
+              <Button.Text title="Create a Service" />
             </Button>
             <Button
               size="sm"
               flex={1}
               onPress={() => setSelectedAction('find')}
               type={selectedAction === 'find' ? 'contained' : 'outlined'}>
-              <Button.Text title="Take a service" />
+              <Button.Text title="Request a service" />
             </Button>
           </ContentSafeAreaView>
           <Divider mt={4} borderWidth={0.5} />
@@ -260,12 +262,14 @@ export const HomeScreen = () => {
                 }}
               />
             )}
-            {selectedAction === 'find' && <FindService
-              onPress={() => {
-                bottomSheetModalRef.current?.close();
-                refetch();
-              }}
-            />}
+            {selectedAction === 'find' && (
+              <FindService
+                onPress={() => {
+                  bottomSheetModalRef.current?.close();
+                  refetch();
+                }}
+              />
+            )}
           </BottomSheetScrollView>
         </>
       )}
@@ -273,7 +277,7 @@ export const HomeScreen = () => {
   );
 
   return (
-    <Screen preset="fixed" >
+    <Screen preset="fixed">
       <Box style={safeAreaInset} bg="primary" />
       <Box
         elevation={5}
@@ -285,24 +289,50 @@ export const HomeScreen = () => {
         bottom={theme.sizes.height / 40}
         right={10}>
         <IconButton
-          onPress={() => openBottomSheet('service')}
-          icon="add"
-          color="primary"
+          onPress={
+            bottomSheetFor
+              ? () => {
+                  bottomSheetModalRef?.current?.close();
+                  setBottomSheetFor('');
+                }
+              : () => openBottomSheet('service')
+          }
+          icon={bottomSheetFor ? 'cancel' : 'add'}
+          color={bottomSheetFor?"danger":"primary"}
           backgroundColor="white"
-          iconStyle="contained"
+          iconStyle="outlined"
           variant="vector"
           size={12}
           type="material"
         />
       </Box>
-      <Box flexDirection="row" g={4} bg="white" elevation={5} px={5} pt={5} py={3}>
-        {accessToken ? <Clickable borderWidth={3} borderColor="white" borderRadius="rounded-full" overflow="hidden">
+      <Box
+        flexDirection="row"
+        g={4}
+        bg="white"
+        elevation={5}
+        px={5}
+        pt={5}
+        py={3}>
+        {accessToken ? (
           <Clickable
-            onPress={() => navigation.navigate('Public Profile', { id: userId },)}
-          >
-            <FastImage source={{ uri: profilePiture }} resizeMode="cover" width={40} height={40} />
+            borderWidth={3}
+            borderColor="white"
+            borderRadius="rounded-full"
+            overflow="hidden">
+            <Clickable
+              onPress={() =>
+                navigation.navigate('Public Profile', {id: userId})
+              }>
+              <FastImage
+                source={{uri: profilePiture}}
+                resizeMode="cover"
+                width={40}
+                height={40}
+              />
+            </Clickable>
           </Clickable>
-        </Clickable> : null}
+        ) : null}
         <Input
           placeholder="Find What You Need"
           value={search}
@@ -338,12 +368,12 @@ export const HomeScreen = () => {
               No Service Found
             </Text>
           )}
-          contentContainerStyle={{ paddingTop: 10 }}
+          contentContainerStyle={{paddingTop: 10}}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           data={services}
           ItemSeparatorComponent={() => <Box mb={5} />}
-          renderItem={({ item }: { item: any }) => (
+          renderItem={({item}: {item: any}) => (
             <ServiceCard refetch={refetch} service={item} />
           )}
           keyExtractor={item => item._id ?? item.id}
@@ -363,14 +393,14 @@ export const HomeScreen = () => {
       <BottomSheet
         enableOverDrag={false}
         enableDynamicSizing={false}
-        handleIndicatorStyle={{ backgroundColor: colors.primary }}
+        handleIndicatorStyle={{backgroundColor: colors.primary}}
         ref={bottomSheetModalRef}
         index={-1}
         enablePanDownToClose
-        snapPoints={[theme.sizes.height / 1.5]}>
+        snapPoints={['100%']}>
         {renderBottomSheetContent()}
       </BottomSheet>
-    </Screen >
+    </Screen>
   );
 };
 

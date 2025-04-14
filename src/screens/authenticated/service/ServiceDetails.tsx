@@ -49,7 +49,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
   const { id } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [requestDetails, setRequestDetails] = useState(''); // State for capturing request details
-  const { accessToken } = useSelector((state: RootState) => state.user);
+  const { accessToken,userId } = useSelector((state: RootState) => state.user);
   const { data: reviews } = useGetServieReviewsQuery({ serviceId: id });
 
   const [requestAService, { isLoading: isReqLoading }] =
@@ -250,6 +250,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
         />
 
       </ContentSafeAreaView>
+      {userId !== data?.user?.id ? 
       <Box
         flexDirection="row"
         alignItems="center"
@@ -257,14 +258,15 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ route }) => {
         py={5}
         justifyContent="center"
         g={5}>
-        <Button
+          <Button
           onPress={() => openBottomSheet()}
           paddingHorizontal={4}
           flex={1}
           variant="primary">
           <Button.Text title="Get this service" />
-        </Button>
+        </Button> 
       </Box>
+      : null}
       <BottomSheet
         index={-1}
         ref={sheetRef}

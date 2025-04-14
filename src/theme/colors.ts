@@ -9,7 +9,7 @@ const palette = {
   color5: '#AACDF6',
   color6: '#82B7F0',
   color7: '#589FEB',
-  color8: '#181818',
+  color8: '#3B3B3B',
   color9: '#376EC5',
   color10: '#2B579F',
   color11: '#1F4278',

@@ -135,7 +135,7 @@ export const AccountScreen = () => {
           <StatsCard value={services?.results?.length || 0} label="Services" />
           <StatsCard
             value={requests?.results?.length || 0}
-            label="Requesters"
+            label="Requests"
           />
           <StatsCard value={5} label="Completed" />
         </HStack>

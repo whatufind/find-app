@@ -11,7 +11,7 @@ import {
   Text,
   VStack,
 } from '@/components';
-import { getImageUrl } from '@/helper/image';
+import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
   useGetProfessionsQuery,
@@ -19,16 +19,16 @@ import {
   useGeUserQuery,
   useUpdateUserMutation,
 } from '@/store/apiSlice';
-import { RootState } from '@/store/store';
+import {RootState} from '@/store/store';
 import theme from '@/theme';
-import { yupResolver } from '@hookform/resolvers/yup';
-import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { Image } from 'react-native';
-import { MultipleSelectList } from 'react-native-dropdown-select-list';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { useSelector } from 'react-redux';
-import { toast } from 'sonner-native';
+import {yupResolver} from '@hookform/resolvers/yup';
+import React, {useEffect, useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {Image} from 'react-native';
+import {MultipleSelectList} from 'react-native-dropdown-select-list';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {useSelector} from 'react-redux';
+import {toast} from 'sonner-native';
 import * as Yup from 'yup';
 
 const editSchema = Yup.object({
@@ -38,14 +38,7 @@ const editSchema = Yup.object({
     .matches(/^(01[3-9]\d{8})$/, 'Please enter a valid phone number'),
   profilePicture: Yup.mixed(),
   coverPhoto: Yup.mixed(),
-  about: Yup.string()
-    .trim()
-    .test('wordCount', 'About cannot be more than 100 words', value => {
-      if (!value) {
-        return true;
-      }
-      return value.split(/\s+/).filter(word => word).length <= 100;
-    }),
+  about: Yup.string().trim().max(50, 'About cannot be more than 50 characters'),
   professions: Yup.array()
     .of(Yup.string())
     .max(3, 'You can select up to 3 professions'),
@@ -191,7 +184,7 @@ export const ManageAccountScreen = () => {
         borderBottomLeftRadius="rounded-lg"
         borderBottomRightRadius="rounded-lg">
         <Image
-        source={{uri: cover?.uri ?? getImageUrl(user?.coverPhoto)}}
+          source={{uri: cover?.uri ?? getImageUrl(user?.coverPhoto)}}
           style={{
             width: theme.sizes.width,
             height: theme.sizes.width / 1.8,
@@ -214,36 +207,38 @@ export const ManageAccountScreen = () => {
           backgroundColor="white"
           color="primary"
         />
-          <Box alignItems="center" >
-            <FastImage
-              borderWidth={2}
-              borderColor="white"
-              borderRadius="rounded-full"
-              width={100}
-              height={100}
-              source={{uri: profilePicture?.uri ?? getImageUrl(user?.profilePicture)}}
-            />
-            <IconButton
-              zIndex={10}
-              iconStyle="contained"
-              position="absolute"
-              bottom={-10}
-              right={-30}
-              backgroundColor="white"
-              size={5}
-              icon="edit"
-              onPress={handleChooseProfilePicture}
-              type="material"
-              variant="vector"
-              color="primary"
-            />
-          </Box>
-          <Text mt={5} variant="heading3" color="white" textAlign="center">
-            {user?.name}
-          </Text>
-          <Text variant="heading3" color="white" textAlign="center">
-            {user?.professions?.[0]?.name}
-          </Text>
+        <Box alignItems="center">
+          <FastImage
+            borderWidth={2}
+            borderColor="white"
+            borderRadius="rounded-full"
+            width={100}
+            height={100}
+            source={{
+              uri: profilePicture?.uri ?? getImageUrl(user?.profilePicture),
+            }}
+          />
+          <IconButton
+            zIndex={10}
+            iconStyle="contained"
+            position="absolute"
+            bottom={-10}
+            right={-30}
+            backgroundColor="white"
+            size={5}
+            icon="edit"
+            onPress={handleChooseProfilePicture}
+            type="material"
+            variant="vector"
+            color="primary"
+          />
+        </Box>
+        <Text mt={5} variant="heading3" color="white" textAlign="center">
+          {user?.name}
+        </Text>
+        <Text variant="heading3" color="white" textAlign="center">
+          {user?.professions?.[0]?.name}
+        </Text>
       </Box>
 
       <ContentSafeAreaView g={4} mt={5}>

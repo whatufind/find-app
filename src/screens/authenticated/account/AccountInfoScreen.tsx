@@ -10,12 +10,12 @@ import {
   Text,
   VStack,
 } from '@/components';
-import { getImageUrl } from '@/helper/image';
+import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
-import { useGeUserQuery } from '@/store/apiSlice';
-import { RootState } from '@/store/store';
+import {useGeUserQuery} from '@/store/apiSlice';
+import {RootState} from '@/store/store';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 export const AccountInfoScreen = () => {
   const AccountHeader = () => {
@@ -32,20 +32,20 @@ export const AccountInfoScreen = () => {
 
   useHeader(AccountHeader);
 
-
   const ProfileSection = () => (
     <Center mt={5}>
-
-        <FastImage
+      <FastImage
         borderRadius="rounded-full"
         borderColor="primary"
         borderWidth={2}
-          width={100}
-          height={100}
-          source={{uri: getImageUrl(user?.profilePicture)}}
-        />
+        width={100}
+        height={100}
+        source={{uri: getImageUrl(user?.profilePicture)}}
+      />
     </Center>
   );
+
+  console.log(getImageUrl(user?.profilePicture), '+++++');
   return (
     <Screen>
       <ProfileSection />
@@ -60,7 +60,7 @@ export const AccountInfoScreen = () => {
         </VStack>
         <VStack g={3}>
           <Text>Your Phone</Text>
-          <Input editable={false}  value={user?.phone} />
+          <Input editable={false} value={user?.phone} />
         </VStack>
         <VStack g={3}>
           <Text>Your Primary Profession</Text>
