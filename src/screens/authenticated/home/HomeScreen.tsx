@@ -58,8 +58,6 @@ export const HomeScreen = () => {
             id: userId,
             userData: {location: {latitude, longitude}},
           }).unwrap();
-
-          console.log(res, 'what is res');
         } catch (e) {
           console.log(e, 'what is err');
         }
@@ -298,7 +296,7 @@ export const HomeScreen = () => {
               : () => openBottomSheet('service')
           }
           icon={bottomSheetFor ? 'cancel' : 'add'}
-          color={bottomSheetFor?"danger":"primary"}
+          color={bottomSheetFor ? 'danger' : 'primary'}
           backgroundColor="white"
           iconStyle="outlined"
           variant="vector"

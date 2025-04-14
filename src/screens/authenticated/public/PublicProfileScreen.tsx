@@ -4,9 +4,9 @@ import {
   Button,
   Center,
   ContentSafeAreaView,
-  Divider,
   FastImage,
   HStack,
+  Icon,
   IconButton,
   Screen,
   Text,
@@ -21,6 +21,7 @@ import {
   useGetFollowersQuery,
   useGetServicesQuery,
   useGeUserQuery,
+  useUnFollowUserMutation,
 } from '@/store/apiSlice';
 import {RootState} from '@/store/store';
 import theme from '@/theme';
@@ -28,9 +29,9 @@ import {useNavigation} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import React, {useEffect, useState} from 'react';
 import {Linking, ScrollView} from 'react-native';
+import MapView, {Marker} from 'react-native-maps';
 import {s, vs} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 const PublicProfileScreenHeader = () => <Box />;
 
@@ -84,7 +85,7 @@ const Reviews = () => (
 
 export const PublicProfileScreen = ({route}) => {
   const {data: user} = useGeUserQuery({userId: route?.params?.id});
-  const tabs = ['Location', 'Top services', 'Reviews'];
+  const tabs = ['Top services', 'Location', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const {latitude, longitude} = useSelector(
     (state: RootState) => state.location,
@@ -93,6 +94,8 @@ export const PublicProfileScreen = ({route}) => {
   const navigation = useNavigation();
   const [isFollowing, setIsFollowing] = useState(false);
   const [followUser, {isLoading: isFollowLoading}] = useFollowUserMutation();
+  const [unFollowUser, {isLoading: isUnFollowLoading}] =
+    useUnFollowUserMutation();
   const {data: followers, refetch: refetchFollowers} = useGetFollowersQuery(
     user?.id,
   );
@@ -109,13 +112,24 @@ export const PublicProfileScreen = ({route}) => {
   };
 
   const handleFollow = async () => {
-    try {
-      const data = await followUser({id: user?.id}).unwrap();
-      if (data) {
-        refetchFollowers();
+    if (isFollowing) {
+      try {
+        const data = await unFollowUser({id: user?.id}).unwrap();
+        if (data) {
+          refetchFollowers();
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const data = await followUser({id: user?.id}).unwrap();
+        if (data) {
+          refetchFollowers();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -169,8 +183,31 @@ export const PublicProfileScreen = ({route}) => {
                 />
               </Button>
             ) : (
-              <Button size="sm" height={s(20)} px={5} onPress={handleFollow}>
+              <Button
+                gap={2}
+                size="sm"
+                height={s(20)}
+                px={5}
+                onPress={handleFollow}>
+                {!isFollowing && (
+                  <Icon
+                    icon="add"
+                    size={6}
+                    variant="vector"
+                    type="ionicon"
+                    color="white"
+                  />
+                )}
                 <Button.Text title={isFollowing ? 'Following' : 'Follow'} />
+                {isFollowing && (
+                  <Icon
+                    icon="check"
+                    size={6}
+                    variant="vector"
+                    type="feather"
+                    color="white"
+                  />
+                )}
               </Button>
             )}
             <IconButton

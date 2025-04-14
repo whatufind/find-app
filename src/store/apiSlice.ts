@@ -127,6 +127,13 @@ export const apiSlice = createApi({
       }),
     }),
 
+    unFollowUser: builder.mutation<any, { id: number }>({
+      query: ({ id }) => ({
+        url: `/users/unfollow/${id}`,
+        method: 'POST',
+      }),
+    }),
+
 
     createPost: builder.mutation<any, FormData>({
       query: formData => ({
@@ -218,7 +225,7 @@ export const apiSlice = createApi({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          socket.emit('new message', data); // Emit message event after a successful request
+          socket.emit('new message', data); 
         } catch (error) {
           console.error('Message sending failed:', error);
         }
@@ -261,4 +268,5 @@ export const {
   useChangePasswordMutation,
   useFollowUserMutation,
   useGetFollowersQuery,
+  useUnFollowUserMutation,
 } = apiSlice;
