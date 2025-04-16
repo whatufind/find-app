@@ -36,7 +36,7 @@ const AccountHeader = ({user}) => {
   const navigation = useNavigation();
   return (
     <Header>
-      <Header.Content title="WF" />
+     <Header.Content title="WF" />
       <HStack>
         <IconButton
           variant="vector"
@@ -131,7 +131,7 @@ export const AccountScreen = () => {
   }
 
   return (
-    <Screen>
+    <Screen background="white">
       <ProfileSection user={user} />
       <ContentSafeAreaView flex={1}>
         <HStack g={5} mt={5} justifyContent="center" px={5}>
