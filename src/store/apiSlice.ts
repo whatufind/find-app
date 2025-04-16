@@ -5,7 +5,8 @@ import { socket } from '@/config/socketConfig';
 
 // Base URLs for the API and images
 // export const BASE_URL = 'http://173.249.59.88/v1';
-export const BASE_URL = 'http://192.168.1.3:3000/v1';
+// export const BASE_URL = 'http://192.168.1.3:3000/v1';
+export const BASE_URL = 'http://192.168.148.114:3000/v1';
 
 // Define the RTK Query API slice
 export const apiSlice = createApi({
@@ -225,7 +226,7 @@ export const apiSlice = createApi({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          socket.emit('new message', data); 
+          socket.emit('new message', data);
         } catch (error) {
           console.error('Message sending failed:', error);
         }
