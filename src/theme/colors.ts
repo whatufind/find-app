@@ -188,4 +188,5 @@ export const colors = {
   neutral700: palette.color71,
   neutral800: palette.color72,
   neutral900: palette.color73,
+  backdrop:'rgba(40, 38, 40, 0.5)',
 };

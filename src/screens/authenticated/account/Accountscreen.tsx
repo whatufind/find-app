@@ -58,6 +58,7 @@ const ProfileSection = ({user}) => {
     <ImageBackground
       source={{uri: getImageUrl(user?.coverPhoto)}}
       style={styles.imageBanner}>
+      <Box width="100%" height="100%"  bg="backdrop" alignItems="center" justifyContent="center">
       <Center>
         <Box position="absolute" zIndex={10} top={0} right={-10}>
           <IconButton
@@ -74,13 +75,14 @@ const ProfileSection = ({user}) => {
           height={100}
           source={{uri: getImageUrl(user?.profilePicture)}}
         />
-        <Text variant="heading3" color="primary">
+       <Text textAlign="center" variant="heading3" color="white">
           {user?.name}
         </Text>
-        <Text variant="b4regular" color="primary">
+        <Text textAlign="center" variant="b4regular" color="white">
           {user?.professions?.[0]?.name}
         </Text>
       </Center>
+      </Box>
     </ImageBackground>
   );
 };

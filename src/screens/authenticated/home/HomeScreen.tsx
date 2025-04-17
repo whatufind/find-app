@@ -9,23 +9,22 @@ import {
   HStack,
   IconButton,
   Input,
-  Radio,
   Screen,
   ServiceCard,
   Text,
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
+import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
   useUpdateUserMutation,
 } from '@/store/apiSlice';
-import {setLocation} from '@/store/slice/locationSlice';
-import {AppDispatch, RootState} from '@/store/store';
+import { setLocation } from '@/store/slice/locationSlice';
+import { AppDispatch, RootState } from '@/store/store';
 import theme from '@/theme';
-import {colors} from '@/theme/colors';
+import { colors } from '@/theme/colors';
 import BottomSheet, {
   BottomSheetFlashList,
   BottomSheetScrollView,
@@ -33,12 +32,12 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
 import messaging from '@react-native-firebase/messaging';
-import {useNavigation} from '@react-navigation/native';
-import {FlashList} from '@shopify/flash-list';
-import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
-import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
-import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
+import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
+import { useDispatch, useSelector } from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
