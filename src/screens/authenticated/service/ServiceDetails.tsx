@@ -57,7 +57,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [requestDetails, setRequestDetails] = useState(''); // State for capturing request details
   const {accessToken, userId} = useSelector((state: RootState) => state.user);
-  const {data: reviews} = useGetServieReviewsQuery({serviceId: id});
+  const {data: reviews,refetch:refetchReview} = useGetServieReviewsQuery({serviceId: id});
 
   const [requestAService, {isLoading: isReqLoading}] =
     useRequestAServiceMutation();
@@ -139,6 +139,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
       setReviewComment('');
       setReviewRating(0);
       refetch(); // Refresh reviews
+      refetchReview();
     } catch (err) {
       const errors = err?.message || err?.data?.message;
       toast.error(errors);
@@ -154,6 +155,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   };
 
   return (
+    <>
+
     <Screen safeAreaEdges={['top']} preset="auto">
       <ContentSafeAreaView
         mt={5}
@@ -324,7 +327,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
           </Button>
         </Box>
       ) : null}
-      <BottomSheet
+    </Screen>
+     <BottomSheet
         index={-1}
         ref={sheetRef}
         handleIndicatorStyle={{backgroundColor: colors.primary}}
@@ -345,6 +349,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
                 />
               </Box>
               <Button
+              mt={5}
                 loading={isReqLoading}
                 onPress={handleSubmit}
                 marginHorizontal={2}
@@ -404,7 +409,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
           </BottomSheetScrollView>
         </BottomSheetView>
       </BottomSheet>
-    </Screen>
+    </>
   );
 };
 export default ServiceDetails;
