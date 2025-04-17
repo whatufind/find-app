@@ -2,6 +2,7 @@
 import {
   Box,
   Button,
+  Card,
   Center,
   ContentSafeAreaView,
   FastImage,
@@ -20,6 +21,7 @@ import {
   useFollowUserMutation,
   useGetFollowersQuery,
   useGetServicesQuery,
+  useGetServieReviewsQuery,
   useGeUserQuery,
   useUnFollowUserMutation,
 } from '@/store/apiSlice';
@@ -77,14 +79,11 @@ const Services = ({user}) => {
   );
 };
 
-const Reviews = () => (
-  <Box p={5} backgroundColor="white" borderRadius="rounded-sm" mt={5}>
-    <Text variant="b3bold">User reviews coming soon...</Text>
-  </Box>
-);
+
 
 export const PublicProfileScreen = ({route}) => {
   const {data: user} = useGeUserQuery({userId: route?.params?.id});
+    const {data: reviewsData} = useGetServieReviewsQuery({owner: route?.params?.id,sortBy:'-createdAt'},{skip:!route?.params?.id});
   const tabs = ['Top services', 'Location', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const {latitude, longitude} = useSelector(
@@ -177,7 +176,9 @@ export const PublicProfileScreen = ({route}) => {
           </Box>
           <HStack position="absolute" right={theme.sizes.sideSpace} bottom={0}>
             {userId === user?.id ? (
-              <Button size="sm" height={s(20)} px={5}>
+              <Button size="sm"
+              marginBottom={3}
+              height={s(20)} px={5}>
                 <Button.Text
                   title={`${followers?.followers?.length} Followers`}
                 />
@@ -210,6 +211,8 @@ export const PublicProfileScreen = ({route}) => {
                 )}
               </Button>
             )}
+            {userId !== user?.id ?
+            <>
             <IconButton
               onPress={() => handleCreateChat()}
               icon="chatbubble-ellipses-outline"
@@ -222,6 +225,8 @@ export const PublicProfileScreen = ({route}) => {
               type="ant"
               variant="vector"
             />
+            </>
+            : null}
           </HStack>
         </Box>
         <Box
@@ -245,6 +250,56 @@ export const PublicProfileScreen = ({route}) => {
       </Box>
     );
   };
+
+
+  const Reviews = () => (
+   <Box flex={1} mt={5}>
+     <FlashList
+    data={reviewsData?.results}
+    ListEmptyComponent={() => <Text>No reviews yet</Text>}
+    ItemSeparatorComponent={() => <Box height={vs(10)} />}
+    keyExtractor={item => item?.id}
+    renderItem={({item}) => (
+      <Card variant="outlined" padding={5}>
+        <Box py={2} flexDirection="row" g={3} alignItems="center">
+          <Box
+            borderColor="primary"
+            borderWidth={2}
+            p={2}
+            borderRadius="rounded-full">
+            <FastImage
+              style={{borderRadius: theme.borderRadii['rounded-full']}}
+              width={s(25)}
+              height={s(25)}
+              source={{uri: item?.user?.profilePicture}}
+            />
+          </Box>
+          <VStack>
+            <Text variant="b2medium">{item?.user?.name}</Text>
+            <HStack g={2}>
+              {Array(Math.ceil(item?.rating))
+                ?.fill(null)
+                .map((_, index) => (
+                  <Icon
+                    key={index}
+                    icon="star"
+                    color="warning"
+                    size={6}
+                    type="ant"
+                    variant="vector"
+                  />
+                ))}
+            </HStack>
+          </VStack>
+        </Box>
+        <Text variant="b3regular">{item?.comment}</Text>
+      </Card>
+    )}
+    estimatedItemSize={43.3}
+  />
+   </Box>
+  );
+
 
   useHeader(PublicProfileScreenHeader);
   return (
