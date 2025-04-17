@@ -66,7 +66,7 @@ export const Input: FC<InputProps> = ({
     const theme = useTheme();
 
     return (
-        <RestyleView variant={variant} status={status} size={size}>
+        <RestyleView variant={variant} status={status} size={size} alignItems="center">
             {left ? <Box>{left()}</Box> : null}
             <RestyleInputField
                 flex={1}

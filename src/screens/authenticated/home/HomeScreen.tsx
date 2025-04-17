@@ -157,7 +157,6 @@ export const HomeScreen = () => {
     initPermissions();
   }, []);
 
-
   const safeAreaInset = useSafeAreaInsetsStyle(['top']);
   const [selectedAction, setSelectedAction] = useState<string>('service');
   const bottomSheetModalRef = useRef<BottomSheet>(null);
@@ -217,28 +216,32 @@ export const HomeScreen = () => {
   const renderBottomSheetContent = () => (
     <BottomSheetView style={{paddingBottom: 20, flex: 1}}>
       {bottomSheetFor === 'filter' ? (
-        <Radio
-          value={selectedCategory}
-          onValueChange={(value: string) => {
-            setselectedCategory(value);
-            setSearch('');
-            setSearchQuery('');
-          }}>
+        <ContentSafeAreaView flex={1}>
           <BottomSheetFlashList
+            numColumns={3}
+            ItemSeparatorComponent={() => <Box height={theme.sizes.sideSpace / 3} />}
             data={categories?.results}
+            extraData={[1]}
             keyExtractor={item => item?.id}
             renderItem={({item}) => (
-              <HStack>
-                <Radio.RadioButton value={item?.id} />
-                <Text variant="b3regular">{item?.name}</Text>
-              </HStack>
+            <Box width={theme.sizes.safeWidth / 3} alignItems="center">
+                <Button
+                onPress={()=>{
+                  setselectedCategory(item?.id);
+                  setBottomSheetFor('');
+                }}
+                type={selectedCategory === item?.id ? 'contained' : 'outlined'}
+                size="sm" width={theme.sizes.safeWidth / 3.2}>
+                <Button.Text title={item?.name} />
+              </Button>
+            </Box>
             )}
             estimatedItemSize={43.3}
           />
           <Button onPress={() => setselectedCategory('')} mx={5}>
             <Button.Text title="Clear Filter" />
           </Button>
-        </Radio>
+        </ContentSafeAreaView>
       ) : (
         <>
           <ContentSafeAreaView flexDirection="row" g={4}>

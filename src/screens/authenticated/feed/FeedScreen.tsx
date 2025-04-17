@@ -1,16 +1,20 @@
-import React, { useCallback } from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import React, {useCallback} from 'react';
 import {FlatList, ActivityIndicator} from 'react-native';
 import {
   Badge,
   Box,
+  Center,
   Clickable,
   Divider,
   FastImage,
   Header,
   HStack,
+  Icon,
   IconButton,
   Screen,
   Text,
+  VStack,
 } from '@/components';
 import useHeader from '@/hooks/useHeader';
 import {useGetChatsQuery} from '@/store/apiSlice';
@@ -52,7 +56,12 @@ const ChatItem = ({item}: {item: any}) => {
   const navigation = useNavigation();
 
   return (
-    <Box g={3} py={4} backgroundColor="white" elevation={1} shadowOpacity={0.05}>
+    <Box
+      g={3}
+      py={4}
+      backgroundColor="white"
+      elevation={1}
+      shadowOpacity={0.05}>
       <Clickable
         onPress={() =>
           navigation.navigate('Chat', {user: target, chatId: item?._id})
@@ -69,7 +78,7 @@ const ChatItem = ({item}: {item: any}) => {
           <Box>
             <Text variant="b2medium">{target?.name || 'Unknown'}</Text>
             <Text variant="b3regular" numberOfLines={1}>
-            {item?.latestMessage?.content}
+              {item?.latestMessage?.content}
             </Text>
           </Box>
         </HStack>
@@ -82,12 +91,12 @@ const ChatItem = ({item}: {item: any}) => {
 export const FeedScreen = () => {
   useHeader(HomeHeader);
 
-  const {data: chats = [], isLoading,refetch} = useGetChatsQuery();
+  const {data: chats = [], isLoading, refetch} = useGetChatsQuery();
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   if (isLoading) {
@@ -100,14 +109,28 @@ export const FeedScreen = () => {
 
   return (
     <Screen>
-     <Box flex={1} mt={5}>
-     <FlatList
-        data={chats}
-        ItemSeparatorComponent={()=><Divider/>}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => <ChatItem item={item} />}
-      />
-     </Box>
+      <Box flex={1} mt={5}>
+        <FlatList
+          data={chats}
+          ListEmptyComponent={() => (
+            <Box alignItems="center" flex={1} justifyContent="center">
+              <Center>
+              <Icon
+                size={26}
+                icon="wechat"
+                variant="vector"
+                type="fa"
+                color="neutral300"
+              />
+              <Text textAlign="center">You haven't any chat yet</Text>
+              </Center>
+            </Box>
+          )}
+          ItemSeparatorComponent={() => <Divider />}
+          keyExtractor={item => item._id.toString()}
+          renderItem={({item}) => <ChatItem item={item} />}
+        />
+      </Box>
     </Screen>
   );
 };
