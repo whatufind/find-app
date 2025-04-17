@@ -15,10 +15,15 @@ import {
 } from '@/store/apiSlice';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-import React from 'react';
+import React, {FC} from 'react';
 import {Linking} from 'react-native';
 
-const RequestCard = ({request}: any) => {
+type RequestCardProps = {
+  request: any;
+  onPress: () => void;
+};
+
+const RequestCard: FC<RequestCardProps> = ({request, onPress}) => {
   const [createChat, {isLoading}] = useCreateChatMutation();
   const [updateServiceRequest] = useUpdateServiceRequestMutation();
   const navigation = useNavigation();
@@ -29,6 +34,7 @@ const RequestCard = ({request}: any) => {
         id,
       }).unwrap();
       // refetch();
+      onPress();
     } catch (e) {
       toast.error(e?.data?.message || 'Failed to update the service requests');
     }
@@ -48,14 +54,14 @@ const RequestCard = ({request}: any) => {
 
   return (
     <Card variant="outlined" paddingHorizontal={3} paddingVertical={4}>
-      <HStack g={5} mt={3}>
+      <HStack g={5} my={3}>
         <Center>
           <IconButton
             onPress={() => updateStatus('pending', request?.id)}
             padding={0}
-            icon="pending"
+            icon="tasks"
             variant="vector"
-            type="material"
+            type="fa5"
             color={request?.status === 'pending' ? 'secondary' : 'secondary200'}
           />
           <Text variant="b5regular">Pending</Text>
@@ -95,7 +101,7 @@ const RequestCard = ({request}: any) => {
         </Center>
         <Center>
           <IconButton
-            onPress={() => updateStatus('completed', request?.id)}
+            onPress={() => navigation.navigate('ServiceDetails', request?.serviceId)}
             padding={0}
             icon="eye"
             variant="vector"
@@ -106,7 +112,7 @@ const RequestCard = ({request}: any) => {
         </Center>
       </HStack>
       <Divider borderWidth={0.5} />
-      <HStack justifyContent="space-between" py={3}>
+      <HStack justifyContent="space-between" py={3} my={3}>
         <HStack g={4}>
           <FastImage
             width={30}

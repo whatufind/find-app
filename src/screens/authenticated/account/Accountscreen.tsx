@@ -31,7 +31,7 @@ import {
 } from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import React, {useCallback} from 'react';
-import {ImageBackground, StyleSheet} from 'react-native';
+import {ActivityIndicator, ImageBackground, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import RequestCard from '../request/RequestCard';
 
@@ -123,8 +123,9 @@ export const AccountScreen = () => {
     error,
     refetch,
   } = useGetServicesQuery({user: userId, sortBy: '-createdAt'});
-  const {data: requests, isLoading: isRequestsLoading} =
-    useGetServiceRequestersQuery({owner: userId});
+
+  const {data: requests, isLoading: isRequestsLoading,refetch:refetchRequests} =
+    useGetServiceRequestersQuery({owner: userId,sortBy: '-createdAt'});
   useHeader(() => <AccountHeader user={user} />);
 
   useFocusEffect(
@@ -156,12 +157,10 @@ export const AccountScreen = () => {
   if (isUserLoading || isServicesLoading || isRequestsLoading) {
     return (
       <Center>
-        <Text variant="heading3">Loading...</Text>
+       <ActivityIndicator/>
       </Center>
     );
   }
-
-  console.log(requests);
 
   return (
     <Screen background="white">
@@ -222,7 +221,9 @@ export const AccountScreen = () => {
               data={requests?.results}
               extraData={[1]}
               ItemSeparatorComponent={() => <Box mb={5} />}
-              renderItem={({item}) => <RequestCard request={item} />}
+              renderItem={({item}) => <RequestCard onPress={()=>{
+                refetchRequests();
+              }} request={item} />}
               keyExtractor={item => item._id ?? item.id}
               estimatedItemSize={200}
             />
