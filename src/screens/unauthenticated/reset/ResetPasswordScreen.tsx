@@ -30,7 +30,6 @@ const ResetPasswordScreen = () => {
       const res =  await forgetPass({email}).unwrap();
       console.log(res,'what is re');
       if (res) {
-        console.log('execute');
         navigation.navigate('ConfirmResetPass',{email});
         setEmail('');
       }

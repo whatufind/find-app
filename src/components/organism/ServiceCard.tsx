@@ -60,12 +60,12 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
 
   const distance = getDistance(
     {
-      latitude: userLocation.latitude || 0,
-      longitude: userLocation.longitude || 0,
+      latitude: userLocation?.latitude || 0,
+      longitude: userLocation?.longitude || 0,
     },
     {
-      latitude: serviceLocation.latitude || 0,
-      longitude: serviceLocation.longitude || 0,
+      latitude: serviceLocation?.latitude || 0,
+      longitude: serviceLocation?.longitude || 0,
     },
   );
 
@@ -108,7 +108,6 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
 
     try {
       const shareResponse = await Share.open(shareOptions);
-      console.log('Share Response:', JSON.stringify(shareResponse));
     } catch (error) {
       console.log('Share Error:', error);
     }
@@ -139,7 +138,6 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
 
   const isLiked = service?.likedBy?.findIndex(liker => liker === userId) !== -1;
 
-  console.log(heroImage);
   return (
     <>
       <Card paddingBottom={3}>

@@ -55,7 +55,6 @@ const ChangePasswordScreen = () => {
 
     const handleChangePassword = async (data: { password: string }) => {
         try {
-            console.log(accessToken);
             const response = await changePassword({
                 password: data.password,
                 token:accessToken, // Pass refreshToken as query param

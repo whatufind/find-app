@@ -20,7 +20,6 @@ const ConfirmResetPassScreen = () => {
   const route = useRoute<any>();
   const email = route.params?.email || ''; // get email from navigation
 
-  console.log(email,'what is email');
   const [token, setToken] = useState('');
   const [password, setPassword] = useState('');
   const [changePassword, {isLoading, isError, error, isSuccess}] =
@@ -35,7 +34,6 @@ const ConfirmResetPassScreen = () => {
     try {
       const res = await changePassword({email, password, token}).unwrap();
       if (res) {
-        console.log(res,'what is this res');
         toast.success('Password changed successfully');
         navigation.navigate('Login');
       }

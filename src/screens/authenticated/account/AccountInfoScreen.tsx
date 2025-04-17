@@ -45,7 +45,6 @@ export const AccountInfoScreen = () => {
     </Center>
   );
 
-  console.log(getImageUrl(user?.profilePicture), '+++++');
   return (
     <Screen>
       <ProfileSection />
