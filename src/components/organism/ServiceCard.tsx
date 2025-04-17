@@ -139,7 +139,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
 
   const isLiked = service?.likedBy?.findIndex(liker => liker === userId) !== -1;
 
-  console.log(heroImage)
+  console.log(heroImage);
   return (
     <>
       <Card paddingBottom={3}>
@@ -175,18 +175,30 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
                   <Text>({userData?.professions?.[0]?.name})</Text>
                 ) : null}
                 {service?.averageRating > 0 && (
-                  <>
-                    <Icon
-                      icon="star"
-                      color="warning200"
-                      size={6}
-                      type="ant"
-                      variant="vector"
-                    />
-                    <Text color="black" textAlign="center">
-                      {service?.averageRating}
-                    </Text>
-                  </>
+                  <Box flexDirection="row" alignItems="center">
+                    {Array.from({
+                      length: Math.floor(service.averageRating),
+                    }).map((_, index) => (
+                      <Icon
+                        key={`full-${index}`}
+                        icon="star"
+                        type="fa"
+                        variant="vector"
+                        size={6}
+                        color="warning200"
+                      />
+                    ))}
+                    {service.averageRating % 1 !== 0 && (
+                      <Icon
+                        key="half"
+                        icon="star-half-o" // use half-star if available, or a custom one
+                        type="fa"
+                        variant="vector"
+                        size={6}
+                        color="warning200"
+                      />
+                    )}
+                  </Box>
                 )}
               </HStack>
               {distance ? (
@@ -238,7 +250,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
         </Clickable>
         <HStack justifyContent="space-between" px={5}>
           <HStack alignItems="center" justifyContent="center" mt={2}>
-            <Icon icon="heart" size={6} color="danger" />
+            {/* <Icon icon="heart" size={6} color="danger" /> */}
             <Icon
               icon="like1"
               color="primary"
@@ -246,7 +258,7 @@ export const ServiceCard: FC<any> = ({service, refetch}) => {
               size={5}
               variant="vector"
             />
-            <Text ml={3}>{likesCount}</Text>
+            <Text ml={2}>{likesCount}</Text>
           </HStack>
         </HStack>
         <Divider borderWidth={0.5} />

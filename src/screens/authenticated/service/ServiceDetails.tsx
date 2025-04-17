@@ -7,6 +7,7 @@ import {
   Header,
   HStack,
   Icon,
+  IconButton,
   Input,
   Screen,
   Text,
@@ -16,8 +17,10 @@ import Carousel from '@/components/ui/data-display/Carousel';
 import {getImageUrl} from '@/helper/image';
 import useHeader from '@/hooks/useHeader';
 import {
+  useAddReviewMutation,
   useGetServiceByIdQuery,
   useGetServieReviewsQuery,
+  useGeUserQuery,
   useRequestAServiceMutation,
 } from '@/store/apiSlice';
 import {RootState} from '@/store/store';
@@ -47,6 +50,10 @@ interface ServiceDetailsProps {
 const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
   const navigation = useNavigation();
   const {id} = route.params;
+  const [addReview, {isLoading: isReviewLoading}] = useAddReviewMutation();
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewRating, setReviewRating] = useState(0);
+  const reviewSheetRef = useRef<BottomSheet>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [requestDetails, setRequestDetails] = useState(''); // State for capturing request details
   const {accessToken, userId} = useSelector((state: RootState) => state.user);
@@ -54,6 +61,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
 
   const [requestAService, {isLoading: isReqLoading}] =
     useRequestAServiceMutation();
+
   const sheetRef = useRef<BottomSheet>(null);
 
   // Header component for the service details screen
@@ -74,6 +82,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
 
   // Fetching service details using the provided ID
   const {data, isLoading, refetch} = useGetServiceByIdQuery(id);
+
+  const {data: userFromApi} = useGeUserQuery({userId: data?.user?.id});
 
   if (isLoading) {
     return (
@@ -106,9 +116,40 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
         setRequestDetails('');
       } catch (err) {
         const errors = err?.message || err?.data?.message;
-        console.log(errors);
         toast.error(errors);
       }
+    }
+  };
+
+  const submitReview = async () => {
+    if (!reviewComment || reviewRating === 0) {
+      toast.error('Please add a comment and rating.');
+      return;
+    }
+
+    try {
+      await addReview({
+        serviceId: id,
+        comment: reviewComment,
+        rating: reviewRating,
+      }).unwrap();
+
+      toast.success('Review submitted successfully');
+      reviewSheetRef.current?.close();
+      setReviewComment('');
+      setReviewRating(0);
+      refetch(); // Refresh reviews
+    } catch (err) {
+      const errors = err?.message || err?.data?.message;
+      toast.error(errors);
+    }
+  };
+
+  const handleAddReview = () => {
+    if (!accessToken) {
+      navigation.navigate('Login');
+    } else {
+      reviewSheetRef.current?.expand();
     }
   };
 
@@ -193,22 +234,31 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
               </Box>
               <VStack flex={1}>
                 <Text variant="b2medium">{data?.user?.name}</Text>
-                <Text variant="b5regular">Technician</Text>
+                {userFromApi?.professions?.[0]?.name ? (
+                  <Text variant="b5regular">
+                    {userFromApi?.professions?.[0]?.name}
+                  </Text>
+                ) : null}
                 <Text variant="b5regular">{route?.params?.location}</Text>
               </VStack>
             </Box>
           </Card>
         </Box>
-        <Box flex={1} bg="white" borderRadius="rounded-sm" mt={5}>
+        <Box flex={1} bg="white" borderRadius="rounded-sm" mt={5} p={5}>
           <HStack
             flex={1}
             alignItems="center"
             justifyContent="space-between"
-            mt={5}>
+            mb={5}>
             <Box>
               <Text variant="b2semiBold">Reviews</Text>
             </Box>
-            <Button size="sm" height={25} px={3}>
+            <Button
+              disabled={userId === data?.user?.id}
+              size="sm"
+              height={25}
+              px={3}
+              onPress={handleAddReview}>
               <Button.Text title="Add Review" />
             </Button>
           </HStack>
@@ -300,6 +350,55 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({route}) => {
                 marginHorizontal={2}
                 variant="primary">
                 <Button.Text title="Send your request" />
+              </Button>
+            </ContentSafeAreaView>
+          </BottomSheetScrollView>
+        </BottomSheetView>
+      </BottomSheet>
+
+      <BottomSheet
+        index={-1}
+        ref={reviewSheetRef}
+        handleIndicatorStyle={{backgroundColor: colors.primary}}
+        enablePanDownToClose
+        snapPoints={['40%']}>
+        <BottomSheetView style={{flex: 1}}>
+          <BottomSheetScrollView>
+            <ContentSafeAreaView flex={1} p={4} g={4}>
+              <Text variant="b1semiBold" textAlign="center">
+                Add Your Review
+              </Text>
+
+              <HStack justifyContent="center" g={2} mt={2}>
+                {[1, 2, 3, 4, 5].map(num => (
+                  <IconButton
+                    key={num}
+                    icon="star"
+                    size={10}
+                    type="ant"
+                    variant="vector"
+                    color={reviewRating >= num ? 'warning' : 'neutral200'}
+                    onPress={() => setReviewRating(num)}
+                  />
+                ))}
+              </HStack>
+              <Box>
+                <Input
+                  placeholder="Write your review here..."
+                  size="hu"
+                  height={100}
+                  multiline
+                  textAlignVertical="top"
+                  value={reviewComment}
+                  onChangeText={setReviewComment}
+                />
+              </Box>
+              <Button
+                onPress={submitReview}
+                loading={isReviewLoading}
+                mt={4}
+                variant="primary">
+                <Button.Text title="Submit Review" />
               </Button>
             </ContentSafeAreaView>
           </BottomSheetScrollView>

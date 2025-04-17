@@ -163,24 +163,39 @@ export const apiSlice = createApi({
     getPosts: builder.query<any[], void>({
       query: () => 'posts?sortBy=-createdAt&page=1&limit=10',
     }),
+
     getServieReviews: builder.query<any[], any>({
       query: dynamicQuery => ({
         url: 'services/reviews/all',
         params: {...dynamicQuery},
       }),
     }),
+
+    addReview: builder.mutation<
+      void,
+      {serviceId: string; comment: string; rating: number}
+    >({
+      query: ({serviceId, comment, rating}) => ({
+        url: `/services/reviews/${serviceId}`,
+        method: 'POST',
+        body: {comment, rating},
+      }),
+    }),
+
     geUser: builder.query<any[], {userId: any}>({
       query: dynamicQuery => ({
         url: `/users/${dynamicQuery.userId}`,
         params: {...dynamicQuery},
       }),
     }),
+
     getServiceRequesters: builder.query<any[], any>({
       query: dynamicQuery => ({
         url: 'services/requests/all',
         params: {...dynamicQuery},
       }),
     }),
+
     updateServiceRequest: builder.mutation<any, any>({
       query: ({id, status}) => ({
         url: `services/requests/${id}`, // Use dynamic ID
@@ -194,6 +209,7 @@ export const apiSlice = createApi({
         },
       }),
     }),
+
     updateUser: builder.mutation<void, {id: string; userData: FormData | any}>({
       query: ({id, userData}) => {
         return {
@@ -276,4 +292,5 @@ export const {
   useGetFollowersQuery,
   useUnFollowUserMutation,
   useForgetPassMutation,
+  useAddReviewMutation,
 } = apiSlice;

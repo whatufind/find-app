@@ -264,6 +264,7 @@ export const HomeScreen = () => {
                 onPress={() => {
                   bottomSheetModalRef.current?.close();
                   refetch();
+                  setBottomSheetFor('');
                 }}
               />
             )}
@@ -272,6 +273,7 @@ export const HomeScreen = () => {
                 onPress={() => {
                   bottomSheetModalRef.current?.close();
                   refetch();
+                  setBottomSheetFor('');
                 }}
               />
             )}
