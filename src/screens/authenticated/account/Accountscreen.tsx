@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
+  Button,
   Card,
   Center,
   ContentSafeAreaView,
@@ -36,7 +37,7 @@ const AccountHeader = ({user}) => {
   const navigation = useNavigation();
   return (
     <Header>
-     <Header.Content title="WF" />
+      <Header.Content title="WF" />
       <HStack>
         <IconButton
           variant="vector"
@@ -104,7 +105,8 @@ const StatsCard = ({value, label}) => (
 );
 
 export const AccountScreen = () => {
-  const {userId} = useSelector((state: RootState) => state.user);
+  const {userId, accessToken} = useSelector((state: RootState) => state.user);
+  const navigation = useNavigation();
   const {data: user, isLoading: isUserLoading} = useGeUserQuery({userId});
   const {
     data: services,
@@ -121,6 +123,22 @@ export const AccountScreen = () => {
       refetch();
     }, []),
   );
+
+
+  if (!accessToken) {
+    return(<Screen>
+      <ContentSafeAreaView alignItems="center" justifyContent="center" flex={1}>
+        <Box g={5}>
+          <Text textAlign="center" color="danger">You are not logged in yet. Please login to continue</Text>
+          <Button
+          onPress={()=>navigation.navigate('Login')}
+          >
+            <Button.Text title="Go to login" />
+          </Button>
+        </Box>
+      </ContentSafeAreaView>
+    </Screen>);
+  }
 
   if (isUserLoading || isServicesLoading || isRequestsLoading) {
     return (

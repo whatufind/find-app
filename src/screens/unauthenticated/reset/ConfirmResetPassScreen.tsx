@@ -35,12 +35,13 @@ const ConfirmResetPassScreen = () => {
     try {
       const res = await changePassword({email, password, token}).unwrap();
       if (res) {
+        console.log(res,'what is this res');
         toast.success('Password changed successfully');
-        navigation.navigate('Login'); // or wherever you want
+        navigation.navigate('Login');
       }
     } catch (err) {
         console.log(err);
-      toast.error('Failed to reset password');
+    //   toast.error('Failed to reset password');
     }
   };
 

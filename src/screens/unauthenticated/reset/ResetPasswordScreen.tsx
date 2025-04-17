@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   Box,
   Button,
+  Card,
   ContentSafeAreaView,
   FastImage,
   Input,
@@ -35,7 +36,7 @@ const ResetPasswordScreen = () => {
       }
 
     } catch (err) {
-      toast.error('Something went wrong!');
+console.log('err');
     }
   };
 
@@ -56,9 +57,9 @@ const ResetPasswordScreen = () => {
           />
         </Box>
 
-        <VStack>
-          <Text variant="heading3">Forgot</Text>
-          <Text variant="heading3">Password?</Text>
+       <Card variant="elevated" padding={3} marginTop={5}>
+       <VStack>
+          <Text textAlign="center" variant="heading3">Forgot Password!</Text>
         </VStack>
 
         <Text variant="b4regular" my={5}>
@@ -77,7 +78,7 @@ const ResetPasswordScreen = () => {
           />
         </VStack>
 
-        <Button mt={5} onPress={handleSubmit} disabled={isLoading || !email}>
+        <Button  my={5} onPress={handleSubmit} disabled={isLoading || !email}>
           <Button.Text title={isLoading ? 'Sending...' : 'Continue'} />
         </Button>
 
@@ -86,6 +87,7 @@ const ResetPasswordScreen = () => {
             {error?.data?.message || 'Something went wrong.'}
           </Text>
         )}
+       </Card>
       </ContentSafeAreaView>
     </Screen>
   );

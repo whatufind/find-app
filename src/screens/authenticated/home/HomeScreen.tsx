@@ -147,9 +147,16 @@ export const HomeScreen = () => {
   };
 
   useEffect(() => {
-    requestNotificationPermissionAndroid();
-    enableLocationIfNeeded();
+    const initPermissions = async () => {
+      await requestNotificationPermissionAndroid();
+      // Wait briefly before requesting location
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await enableLocationIfNeeded();
+    };
+
+    initPermissions();
   }, []);
+
 
   const safeAreaInset = useSafeAreaInsetsStyle(['top']);
   const [selectedAction, setSelectedAction] = useState<string>('service');
