@@ -11,6 +11,8 @@ import RegisterScreen from '@/screens/unauthenticated/login/RegisterScreen';
 import ReqestersScreen from '@/screens/authenticated/request/ReqestersScreen';
 import PublicProfileScreen from '@/screens/authenticated/public/PublicProfileScreen';
 import ChatScreen from '@/screens/authenticated/chat/ChatScreen';
+import ResetPasswordScreen from '@/screens/unauthenticated/reset/ResetPasswordScreen';
+import ConfirmResetPassScreen from '@/screens/unauthenticated/reset/ConfirmResetPassScreen';
 
 const Stack = createNativeStackNavigator<AuthenticatedStackNavigatorParamList>();
 
@@ -25,6 +27,15 @@ export const AuthenticatedNavigator = (): ReactElement => {
             <Stack.Screen
                 name="Register"
                 component={RegisterScreen}
+            />
+
+            <Stack.Screen
+                name="ResetPass"
+                component={ResetPasswordScreen}
+            />
+            <Stack.Screen
+                name="ConfirmResetPass"
+                component={ConfirmResetPassScreen}
             />
 
             <Stack.Screen

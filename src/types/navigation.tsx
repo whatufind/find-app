@@ -34,6 +34,8 @@ export type AuthenticatedStackNavigatorParamList = {
   Register: undefined;
   ServiceDetails: undefined;
   Login: undefined;
+  ResetPass: undefined;
+  ConfirmResetPass: {email:string};
   Requesters: undefined;
   'Public Profile': undefined;
   Chat: {

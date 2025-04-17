@@ -1,33 +1,32 @@
-import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-  StatusBar,
-} from 'react-native';
 import {
   Box,
   Button,
   Clickable,
-  Input,
-  Screen,
-  Text,
-  VStack,
   HStack,
   IconButton,
+  Input,
+  Text,
+  VStack,
 } from '@/components';
-import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
-import {useLoginMutation} from '@/store/apiSlice';
-import {setUser} from '@/store/slice/userSlice';
-import {AppDispatch} from '@/store/store';
+import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
+import { useLoginMutation } from '@/store/apiSlice';
+import { setUser } from '@/store/slice/userSlice';
+import { AppDispatch } from '@/store/store';
 import theme from '@/theme';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {useNavigation} from '@react-navigation/native';
-import {Controller, useForm} from 'react-hook-form';
-import {s} from 'react-native-size-matters';
-import {useDispatch} from 'react-redux';
-import {toast} from 'sonner-native';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
+import { s } from 'react-native-size-matters';
+import { useDispatch } from 'react-redux';
+import { toast } from 'sonner-native';
 import * as yup from 'yup';
 
 const schema = yup.object().shape({
@@ -177,7 +176,12 @@ const LoginScreen = () => {
                 onPress={handleSubmit(handleLogin)}>
                 <Button.Text title={isLoading ? 'Logging in...' : 'Login'} />
               </Button>
-
+              <Clickable mt={5}
+               alignSelf="flex-end" onPress={() => navigation.navigate('ResetPass')}>
+                    <Text color="danger" fontWeight="700">
+                     Forgot Password?
+                    </Text>
+                  </Clickable>
               {/* Register Link */}
               <VStack mt={5}>
                 <HStack g={2}>
