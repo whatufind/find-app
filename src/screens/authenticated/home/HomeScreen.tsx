@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
@@ -40,13 +41,13 @@ import {promptForEnableLocationIfNeeded} from 'react-native-android-location-ena
 import {useDispatch, useSelector} from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
+
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const {accessToken, userId, profilePiture} = useSelector(
     (state: RootState) => state.user,
   );
-
   const [updateUser] = useUpdateUserMutation();
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -55,12 +56,12 @@ export const HomeScreen = () => {
         dispatch(setLocation({latitude, longitude}));
         if (userId) {
           try {
-            const res = await updateUser({
+            await updateUser({
               id: userId,
               userData: {location: {latitude, longitude}},
             }).unwrap();
           } catch (e) {
-            console.log(e, 'what is err');
+            console.log(e);
           }
         }
       },
@@ -89,15 +90,15 @@ export const HomeScreen = () => {
                 id: userId,
                 userData: {fcmToken: token},
               }).unwrap();
-            } catch (error) {
+            } catch (er) {
               console.log('failed to update user fcm token', updateUser);
             }
           }
         } else {
           console.log('Notification permission denied');
         }
-      } catch (error) {
-        console.error('Failed to request notification permission:', error);
+      } catch (err) {
+        console.error('Failed to request notification permission:', err);
       }
     } else {
       console.log(
@@ -141,8 +142,8 @@ export const HomeScreen = () => {
         Geolocation.requestAuthorization();
         fetchCurrentLocation();
       }
-    } catch (error) {
-      console.error('Error enabling location', error);
+    } catch (e) {
+      console.error('Error enabling location', e);
     }
   };
 
@@ -167,11 +168,12 @@ export const HomeScreen = () => {
   const [selectedCategory, setselectedCategory] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const {data, isLoading, error, refetch, isFetching} = useGetServicesQuery({
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const {data, isLoading, isFetching, refetch} = useGetServicesQuery({
     sortBy: '-createdAt',
     search: searchQuery,
-    page: page,
+    page,
     ...(selectedCategory && {category: selectedCategory}),
   });
 
@@ -181,32 +183,34 @@ export const HomeScreen = () => {
     error: categoriesErr,
   } = useGetServiceCategoriesQuery({});
 
+  const handleLoadMore = () => {
+    console.log(loadingMore ,hasMore,isFetching);
+    if (!loadingMore && hasMore && !isFetching) {
+      console.log('execute ');
+      setLoadingMore(true);
+      setPage(prev => prev + 1);
+    }
+  };
+  const PAGE_SIZE = 10;
+
   useEffect(() => {
     if (data) {
       if (page === 1) {
-        setServices(data.results); // Reset services when new data comes in
+        setServices(data.results);
       } else {
         setServices(prev => [...prev, ...data.results]);
       }
-      setHasMore(data.page < data.totalPages);
-      setIsFetchingMore(false);
-    }
-  }, [data, page]);
 
-  const fetchMoreData = () => {
-    if (hasMore && !isFetchingMore) {
-      setIsFetchingMore(true);
-      setPage(prevPage => prevPage + 1);
+      // 👇 Set hasMore based on how many items returned
+      setHasMore(data.results.length === PAGE_SIZE);
     }
-  };
+  }, [data]);
 
-  if (isLoading || isFetching) {
-    return (
-      <Box justifyContent="center" alignItems="center" flex={1}>
-        <ActivityIndicator size="large" />
-      </Box>
-    );
-  }
+  useEffect(() => {
+    if (!isFetching) {
+      setLoadingMore(false);
+    }
+  }, [isFetching]);
 
   const openBottomSheet = (sheetFor: bottomSheetType) => {
     bottomSheetModalRef.current?.expand();
@@ -378,30 +382,27 @@ export const HomeScreen = () => {
       </Box>
       <ContentSafeAreaView flex={1}>
         <FlashList
+          data={services}
+          renderItem={({item}) => (
+            <ServiceCard refetch={refetch} service={item} />
+          )}
+          keyExtractor={item => item._id ?? item.id}
+          estimatedItemSize={200}
+          ItemSeparatorComponent={() => <Box mb={5} />}
           ListEmptyComponent={() => (
             <Text textAlign="center" mt={3} variant="heading3" color="black">
               No Service Found
             </Text>
           )}
-          contentContainerStyle={{paddingTop: 10}}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          data={services}
-          ItemSeparatorComponent={() => <Box mb={5} />}
-          renderItem={({item}: {item: any}) => (
-            <ServiceCard refetch={refetch} service={item} />
-          )}
-          keyExtractor={item => item._id ?? item.id}
-          estimatedItemSize={200}
-          onEndReached={fetchMoreData}
-          onEndReachedThreshold={0.5}
           ListFooterComponent={
-            isFetchingMore ? (
-              <Box justifyContent="center" alignItems="center" py={3}>
-                <ActivityIndicator size="large" />
+            loadingMore ? (
+              <Box py={5}>
+                <ActivityIndicator color={colors.primary} size="large" />
               </Box>
             ) : null
           }
+          onEndReachedThreshold={0.5}
+          onEndReached={handleLoadMore}
         />
       </ContentSafeAreaView>
 
