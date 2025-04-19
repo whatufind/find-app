@@ -26,7 +26,6 @@ import {FastImage} from '../ui/media-icons/FastImage';
 import Icon from '../ui/media-icons/Icon';
 import IconButton from '../ui/media-icons/IconButton';
 import {Text} from '../ui/typography/Text';
-import {backgroundColor} from '@shopify/restyle';
 
 Geocoder.init('AIzaSyBYjtw327hGVGtIEEGiRKUBwgZBQC8zejk');
 

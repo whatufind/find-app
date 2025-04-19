@@ -8,15 +8,14 @@ import {
   IconButton,
   Text,
 } from '@/components';
-import {getImageUrl} from '@/helper/image';
+import { getImageUrl } from '@/helper/image';
 import {
   useCreateChatMutation,
   useUpdateServiceRequestMutation,
 } from '@/store/apiSlice';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import React, {FC} from 'react';
-import {Linking} from 'react-native';
+import React, { FC } from 'react';
 
 type RequestCardProps = {
   request: any;

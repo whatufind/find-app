@@ -34,6 +34,7 @@ import React, {useCallback} from 'react';
 import {ActivityIndicator, ImageBackground, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import RequestCard from '../request/RequestCard';
+import RequestOrderCard from '../request/RequestOrderCard';
 
 const AccountHeader = ({user}) => {
   const navigation = useNavigation();
@@ -110,10 +111,11 @@ const StatsCard = ({value, label, onPress, isSelected}) => (
 );
 
 export const AccountScreen = () => {
+  useHeader(() => <AccountHeader user={user} />);
   const {userId, accessToken} = useSelector((state: RootState) => state.user);
   const navigation = useNavigation();
   const {data: user, isLoading: isUserLoading} = useGeUserQuery({userId});
-  const [selectedTab, setSelectedTab] = React.useState<'services' | 'requests'>(
+  const [selectedTab, setSelectedTab] = React.useState<'services' | 'requests' | 'orders'>(
     'services',
   );
 
@@ -125,8 +127,10 @@ export const AccountScreen = () => {
   } = useGetServicesQuery({user: userId, sortBy: '-createdAt'});
 
   const {data: requests, isLoading: isRequestsLoading,refetch:refetchRequests} =
-    useGetServiceRequestersQuery({owner: userId,sortBy: '-createdAt'});
-  useHeader(() => <AccountHeader user={user} />);
+    useGetServiceRequestersQuery({owner: userId,sortBy: '-createdAt'},{skip:!userId});
+
+  const {data: orders, isLoading: isOrdersLoading,refetch:refetchOrders} =
+    useGetServiceRequestersQuery({requester: userId,sortBy: '-createdAt'},{skip:!userId});
 
   useFocusEffect(
     useCallback(() => {
@@ -162,6 +166,7 @@ export const AccountScreen = () => {
     );
   }
 
+
   return (
     <Screen background="white">
       <ProfileSection user={user} />
@@ -178,6 +183,12 @@ export const AccountScreen = () => {
             label="Requests"
             onPress={() => setSelectedTab('requests')}
             isSelected={selectedTab === 'requests'}
+          />
+          <StatsCard
+            value={orders?.results?.length || 0}
+            label="Orders"
+            onPress={() => setSelectedTab('orders')}
+            isSelected={selectedTab === 'orders'}
           />
         </HStack>
 
@@ -219,9 +230,31 @@ export const AccountScreen = () => {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               data={requests?.results}
-              extraData={[1]}
               ItemSeparatorComponent={() => <Box mb={5} />}
               renderItem={({item}) => <RequestCard onPress={()=>{
+                refetchRequests();
+              }} request={item} />}
+              keyExtractor={item => item._id ?? item.id}
+              estimatedItemSize={200}
+            />
+          ) : null}
+          {selectedTab === 'orders' ? (
+            <FlashList
+              ListEmptyComponent={() => (
+                <Text
+                  textAlign="center"
+                  mt={3}
+                  variant="heading3"
+                  color="black">
+                  No request found
+                </Text>
+              )}
+              contentContainerStyle={{paddingTop: 10}}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              data={orders?.results}
+              ItemSeparatorComponent={() => <Box mb={5} />}
+              renderItem={({item}) => <RequestOrderCard onPress={()=>{
                 refetchRequests();
               }} request={item} />}
               keyExtractor={item => item._id ?? item.id}

@@ -15,16 +15,16 @@ import {
 } from '@/components';
 import CreateService from '@/components/organism/CreateService';
 import FindService from '@/components/organism/FindService';
-import { useSafeAreaInsetsStyle } from '@/hooks/useSafeAreaInsetsStyle';
+import {useSafeAreaInsetsStyle} from '@/hooks/useSafeAreaInsetsStyle';
 import {
   useGetServiceCategoriesQuery,
   useGetServicesQuery,
   useUpdateUserMutation,
 } from '@/store/apiSlice';
-import { setLocation } from '@/store/slice/locationSlice';
-import { AppDispatch, RootState } from '@/store/store';
+import {setLocation} from '@/store/slice/locationSlice';
+import {AppDispatch, RootState} from '@/store/store';
 import theme from '@/theme';
-import { colors } from '@/theme/colors';
+import {colors} from '@/theme/colors';
 import BottomSheet, {
   BottomSheetFlashList,
   BottomSheetScrollView,
@@ -32,12 +32,12 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import Geolocation from '@react-native-community/geolocation';
 import messaging from '@react-native-firebase/messaging';
-import { useNavigation } from '@react-navigation/native';
-import { FlashList } from '@shopify/flash-list';
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
-import { promptForEnableLocationIfNeeded } from 'react-native-android-location-enabler';
-import { useDispatch, useSelector } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {FlashList} from '@shopify/flash-list';
+import React, {useEffect, useRef, useState} from 'react';
+import {ActivityIndicator, PermissionsAndroid, Platform} from 'react-native';
+import {promptForEnableLocationIfNeeded} from 'react-native-android-location-enabler';
+import {useDispatch, useSelector} from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 export const HomeScreen = () => {
@@ -46,19 +46,22 @@ export const HomeScreen = () => {
   const {accessToken, userId, profilePiture} = useSelector(
     (state: RootState) => state.user,
   );
+
   const [updateUser] = useUpdateUserMutation();
   const fetchCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
       async position => {
         const {latitude, longitude} = position.coords;
         dispatch(setLocation({latitude, longitude}));
-        try {
-          const res = await updateUser({
-            id: userId,
-            userData: {location: {latitude, longitude}},
-          }).unwrap();
-        } catch (e) {
-          console.log(e, 'what is err');
+        if (userId) {
+          try {
+            const res = await updateUser({
+              id: userId,
+              userData: {location: {latitude, longitude}},
+            }).unwrap();
+          } catch (e) {
+            console.log(e, 'what is err');
+          }
         }
       },
       error => console.log(error),
@@ -78,9 +81,7 @@ export const HomeScreen = () => {
         );
 
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Notification permission granted');
           const token = await getToken();
-          console.log(token);
           if (accessToken && token) {
             //set the fcm token
             try {
@@ -218,22 +219,27 @@ export const HomeScreen = () => {
         <ContentSafeAreaView flex={1}>
           <BottomSheetFlashList
             numColumns={3}
-            ItemSeparatorComponent={() => <Box height={theme.sizes.sideSpace / 3} />}
+            ItemSeparatorComponent={() => (
+              <Box height={theme.sizes.sideSpace / 3} />
+            )}
             data={categories?.results}
             extraData={[1]}
             keyExtractor={item => item?.id}
             renderItem={({item}) => (
-            <Box width={theme.sizes.safeWidth / 3} alignItems="center">
+              <Box width={theme.sizes.safeWidth / 3} alignItems="center">
                 <Button
-                onPress={()=>{
-                  setselectedCategory(item?.id);
-                  setBottomSheetFor('');
-                }}
-                type={selectedCategory === item?.id ? 'contained' : 'outlined'}
-                size="sm" width={theme.sizes.safeWidth / 3.2}>
-                <Button.Text title={item?.name} />
-              </Button>
-            </Box>
+                  onPress={() => {
+                    setselectedCategory(item?.id);
+                    setBottomSheetFor('');
+                  }}
+                  type={
+                    selectedCategory === item?.id ? 'contained' : 'outlined'
+                  }
+                  size="sm"
+                  width={theme.sizes.safeWidth / 3.2}>
+                  <Button.Text title={item?.name} />
+                </Button>
+              </Box>
             )}
             estimatedItemSize={43.3}
           />
