@@ -184,9 +184,7 @@ export const HomeScreen = () => {
   } = useGetServiceCategoriesQuery({});
 
   const handleLoadMore = () => {
-    console.log(loadingMore ,hasMore,isFetching);
     if (!loadingMore && hasMore && !isFetching) {
-      console.log('execute ');
       setLoadingMore(true);
       setPage(prev => prev + 1);
     }
@@ -380,9 +378,10 @@ export const HomeScreen = () => {
           />
         </HStack>
       </Box>
-      <ContentSafeAreaView flex={1}>
+      <ContentSafeAreaView flex={1} mt={2}>
         <FlashList
           data={services}
+        showsVerticalScrollIndicator={false}
           renderItem={({item}) => (
             <ServiceCard refetch={refetch} service={item} />
           )}

@@ -14,8 +14,28 @@ export const Stack = createNativeStackNavigator<RootNavigatorParamList>();
 
 export const Navigator = (props: NavigationProps): ReactElement => {
 
+    const linking = {
+        prefixes: ['whatufind://', 'http://173.249.59.88/v1'],
+        config: {
+          screens: {
+            AuthenticatedStack: {
+              screens: {
+                ServiceDetails: 'servicedetails/:id',
+              },
+            },
+            UnAuthenticatedStack: {
+              screens: {
+                Login: 'login',
+              },
+            },
+          },
+        },
+      };
+
+
     return (
         <NavigationContainer
+        linking={linking}
         ref={navigationRef}
             {...props}
 

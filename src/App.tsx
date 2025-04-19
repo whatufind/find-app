@@ -13,32 +13,59 @@ import { persistor, store } from './store/store';
 import messaging from '@react-native-firebase/messaging';
 
 import notifee from '@notifee/react-native';
+import { Linking } from 'react-native';
 
 const onDisplayNotification = async (remoteMessage): Promise<void> => {
+  console.log(remoteMessage);
   const channelId = await notifee.createChannel({
     id: 'default',
     name: 'Default Channel',
   });
   await notifee.displayNotification({
-    title: remoteMessage?.notification?.title,
+    title: 'tadadadafad',
+    body: remoteMessage?.notification?.body,
     android: {
       channelId,
       pressAction: {
         id: 'default',
       },
     },
+    data: remoteMessage?.data, // Include data for linking
   });
 };
 
 
 export const App = (): ReactElement => {
   useEffect(() => {
-    // Handle foreground notifications
+    // Foreground notification handler
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       await onDisplayNotification(remoteMessage);
     });
 
-    return unsubscribe;
+    // App opened from background
+    const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+      const url = remoteMessage?.data?.url;
+      console.log(url,'what is url');
+      if (url) {
+        Linking.openURL(url);
+      }
+    });
+
+    // App opened from quit state
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        console.log(remoteMessage,'what is this');
+        const url = remoteMessage?.data?.url;
+        if (url) {
+          Linking.openURL(url);
+        }
+      });
+
+    return () => {
+      unsubscribe();
+      unsubscribeOpened();
+    };
   }, []);
 
   return (
