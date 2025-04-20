@@ -2,6 +2,7 @@ import { ThemeProvider } from '@shopify/restyle';
 import React, { useEffect, type ReactElement } from 'react';
 
 import theme from '@/theme';
+
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -12,17 +13,16 @@ import { Navigator } from './navigators';
 import { persistor, store } from './store/store';
 import messaging from '@react-native-firebase/messaging';
 
-import notifee from '@notifee/react-native';
+import notifee, { EventType } from '@notifee/react-native';
 import { Linking } from 'react-native';
 
 const onDisplayNotification = async (remoteMessage): Promise<void> => {
-  console.log(remoteMessage);
   const channelId = await notifee.createChannel({
     id: 'default',
     name: 'Default Channel',
   });
   await notifee.displayNotification({
-    title: 'tadadadafad',
+    title: remoteMessage?.notification?.title,
     body: remoteMessage?.notification?.body,
     android: {
       channelId,
@@ -45,27 +45,27 @@ export const App = (): ReactElement => {
     // App opened from background
     const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
       const url = remoteMessage?.data?.url;
-      console.log(url,'what is url');
       if (url) {
         Linking.openURL(url);
       }
     });
 
-    // App opened from quit state
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        console.log(remoteMessage,'what is this');
-        const url = remoteMessage?.data?.url;
-        if (url) {
-          Linking.openURL(url);
-        }
-      });
 
     return () => {
       unsubscribe();
       unsubscribeOpened();
     };
+  }, []);
+
+
+  useEffect(() => {
+    return notifee.onForegroundEvent(({ type, detail }) => {
+      switch (type) {
+        case EventType?.PRESS:
+         Linking.openURL(detail?.notification?.data?.link);
+          break;
+      }
+    });
   }, []);
 
   return (

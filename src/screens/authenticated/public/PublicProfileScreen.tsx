@@ -87,7 +87,7 @@ export const PublicProfileScreen = ({route}) => {
   const tabs = ['Top services', 'Location', 'Reviews'];
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const {latitude, longitude} = useSelector(
-    (state: RootState) => state.location,
+  (state: RootState) => state.location,
   );
   const [createChat, {isLoading}] = useCreateChatMutation();
   const navigation = useNavigation();
