@@ -42,6 +42,13 @@ import {useDispatch, useSelector} from 'react-redux';
 
 type bottomSheetType = 'filter' | 'service' | '';
 
+type QueryPropsType = {
+  sortBy: string;
+  search?: string;
+  page: number;
+  category?: number;
+};
+
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
@@ -166,16 +173,16 @@ export const HomeScreen = () => {
   const [services, setServices] = useState<any[]>([]);
   const [bottomSheetFor, setBottomSheetFor] = useState<bottomSheetType>('');
   const [selectedCategory, setselectedCategory] = useState('');
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const {data, isLoading, isFetching, refetch} = useGetServicesQuery({
+  const [query, setQuery] = useState({
     sortBy: '-createdAt',
-    search: searchQuery,
-    page,
-    ...(selectedCategory && {category: selectedCategory}),
+    search: '',
+    page: 1,
   });
+  const {data, isLoading, isFetching, refetch} =
+    useGetServicesQuery<QueryPropsType>(query);
 
   const {
     data: categories,
@@ -186,14 +193,14 @@ export const HomeScreen = () => {
   const handleLoadMore = () => {
     if (!loadingMore && hasMore && !isFetching) {
       setLoadingMore(true);
-      setPage(prev => prev + 1);
+      setQuery(prev => ({...prev, page: prev.page + 1}));
     }
   };
   const PAGE_SIZE = 10;
 
   useEffect(() => {
     if (data) {
-      if (page === 1) {
+      if (query.page === 1) {
         setServices(data.results);
       } else {
         setServices(prev => [...prev, ...data.results]);
@@ -219,6 +226,7 @@ export const HomeScreen = () => {
     <BottomSheetView style={{paddingBottom: 20, flex: 1}}>
       {bottomSheetFor === 'filter' ? (
         <ContentSafeAreaView flex={1}>
+          <Text mb={5}>Filter By Category</Text>
           <BottomSheetFlashList
             numColumns={3}
             ItemSeparatorComponent={() => (
@@ -233,6 +241,13 @@ export const HomeScreen = () => {
                   onPress={() => {
                     setselectedCategory(item?.id);
                     setBottomSheetFor('');
+                    setQuery(prev => ({
+                      ...prev,
+                      category: item?.id,
+                      page: 1,
+                      search: '',
+                    }));
+                    bottomSheetModalRef?.current?.close();
                   }}
                   type={
                     selectedCategory === item?.id ? 'contained' : 'outlined'
@@ -309,7 +324,7 @@ export const HomeScreen = () => {
           onPress={
             bottomSheetFor
               ? () => {
-                  bottomSheetModalRef?.current?.close();
+                  bottomSheetModalRef?.current?.coll();
                   setBottomSheetFor('');
                 }
               : () => openBottomSheet('service')
@@ -354,7 +369,14 @@ export const HomeScreen = () => {
           placeholder="Find What You Need"
           value={search}
           size="sm"
-          onChangeText={text => setSearch(text)}
+          onChangeText={text => {
+            setSearch(text);
+            setQuery(prev => ({
+              ...prev,
+              page: 1,
+              search: text,
+            }));
+          }}
           right={() => (
             <IconButton
               padding={0}
@@ -381,7 +403,7 @@ export const HomeScreen = () => {
       <ContentSafeAreaView flex={1} mt={2}>
         <FlashList
           data={services}
-        showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           renderItem={({item}) => (
             <ServiceCard refetch={refetch} service={item} />
           )}
@@ -389,9 +411,17 @@ export const HomeScreen = () => {
           estimatedItemSize={200}
           ItemSeparatorComponent={() => <Box mb={5} />}
           ListEmptyComponent={() => (
-            <Text textAlign="center" mt={3} variant="heading3" color="black">
-              No Service Found
-            </Text>
+            <>
+              {!isLoading && (
+                <Text
+                  textAlign="center"
+                  mt={3}
+                  variant="heading3"
+                  color="black">
+                  No Service Found
+                </Text>
+              )}
+            </>
           )}
           ListFooterComponent={
             loadingMore ? (
