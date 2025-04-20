@@ -324,7 +324,7 @@ export const HomeScreen = () => {
           onPress={
             bottomSheetFor
               ? () => {
-                  bottomSheetModalRef?.current?.coll();
+                  bottomSheetModalRef?.current?.close();
                   setBottomSheetFor('');
                 }
               : () => openBottomSheet('service')
